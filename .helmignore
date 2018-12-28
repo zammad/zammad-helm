@@ -21,4 +21,3 @@
 *.tmproj
 .travis.yaml
 .ci
-charts

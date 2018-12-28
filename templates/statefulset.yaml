@@ -62,8 +62,8 @@ spec:
             port: 80
           initialDelaySeconds: 60
           periodSeconds: 10
-          resources:
-{{ toYaml .Values.resources.nginx | indent 12 }}
+        resources:
+{{ toYaml .Values.resources.nginx | indent 10 }}
       - name: {{ .Chart.Name }}-railsserver
         image: {{ .Values.image.repository }}:zammad-{{ .Values.image.tag }}
         args: ["zammad-railsserver"]
@@ -91,8 +91,8 @@ spec:
             port: 3000
           initialDelaySeconds: 90
           periodSeconds: 10
-          resources:
-{{ toYaml .Values.resources.railsserver | indent 12 }}
+        resources:
+{{ toYaml .Values.resources.railsserver | indent 10 }}
       - name: {{ .Chart.Name }}-scheduler
         image: {{ .Values.image.repository }}:zammad-{{ .Values.image.tag }}
         args: [ "zammad-scheduler" ]
@@ -105,8 +105,8 @@ spec:
         volumeMounts:
          - name: {{ template "zammad.fullname" . }}
            mountPath: /opt/zammad
-           resources:
-{{ toYaml .Values.resources.scheduler | indent 12 }}
+        resources:
+{{ toYaml .Values.resources.scheduler | indent 10 }}
       - name: {{ .Chart.Name }}-websocket
         image: {{ .Values.image.repository }}:zammad-{{ .Values.image.tag }}
         args: [ "zammad-websocket" ]
@@ -132,8 +132,8 @@ spec:
             port: 6042
           initialDelaySeconds: 60
           periodSeconds: 10
-          resources:
-{{ toYaml .Values.resources.websocket | indent 12 }}
+        resources:
+{{ toYaml .Values.resources.websocket | indent 10 }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
