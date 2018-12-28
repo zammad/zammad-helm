@@ -14,5 +14,6 @@ script:
   - cd .ci
   - sudo ./ci.sh
 after_success:
-  - set -ex
+  - ls -al
+  - ls -al .ci
   - .ci/trigger-chart-build.sh
