@@ -8,9 +8,7 @@ icon: https://zammad.org/assets/images/zammad%20community%20logo.svg
 sources:
   - https://github.com/zammad/zammad
 maintainers:
-  - name: André Bauer
+  - name: monotek
     email: monotek23@gmail.com
-    url: http://monotek.github.io
-  - name: Martin Edenhofer
+  - name: martini
     email: contact@zammad.com
-    url: http://edenhofer.de
