@@ -4,7 +4,7 @@
 #
 
 REPO_USER="zammad"
-REPO="helm"
+REPO="zammad.github.io"
 BRANCH="master"
 
 if [ "${TRAVIS_BRANCH}" == 'master' ]; then
