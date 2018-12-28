@@ -1,3 +1,5 @@
+charts: .
+chart-dirs:
 chart-repos:
 excluded-charts:
 helm-extra-args: --timeout 800
