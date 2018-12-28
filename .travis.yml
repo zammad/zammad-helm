@@ -13,3 +13,5 @@ script:
   - shellcheck -x .ci/ci.sh
   - cd .ci
   - sudo ./ci.sh
+after_success:
+  - .ci/trigger-chart-build.sh
