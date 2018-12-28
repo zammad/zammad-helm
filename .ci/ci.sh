@@ -114,7 +114,7 @@ if [ "${LINT}" == "yes" ]; then
   lint
 fi
 
-if [ "${INSTALL}" == "yes" ]; then
+if [ "${TRAVIS_BRANCH}" != 'master' ] && [ "${INSTALL}" == "yes" ]; then
   for K8S_VERSION in "${KUBERNETES_VERSIONS[@]}"; do
     echo -e "\\nTesting in Kubernetes ${K8S_VERSION}\\n"
     main
