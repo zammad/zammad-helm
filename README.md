@@ -2,6 +2,7 @@
 
 This directory contains a Kubernetes chart to deploy Zammad ticket system
 
+
 ## Prerequisites Details
 
 * Kubernetes 1.8+
@@ -23,6 +24,7 @@ To install the chart use the following:
 $ helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
 $ helm install incubator/zammad
 ```
+
 
 ## Configuration
 
