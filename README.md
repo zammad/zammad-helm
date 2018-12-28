@@ -1,6 +1,6 @@
 # Zammad Helm Chart
 
-This directory contains a Kubernetes chart to deploy Zammad
+This directory contains a Kubernetes chart to deploy Zammad ticket system
 
 
 ## Prerequisites Details
