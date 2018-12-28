@@ -1,5 +1,5 @@
-charts: .
-chart-dirs:
+charts: zammad
+chart-dirs: zammad
 chart-repos:
 excluded-charts:
 helm-extra-args: --timeout 800
