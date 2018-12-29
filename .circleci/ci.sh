@@ -114,7 +114,7 @@ if [ "${LINT}" == "yes" ]; then
   lint
 fi
 
-if [ "${TRAVIS_PULL_REQUEST}" != "false" ] && [ "${INSTALL}" == "yes" ]; then
+if [ -n "${CIRCLE_PR_NUMBER}" ] && [ "${INSTALL}" == "yes" ]; then
   for K8S_VERSION in "${KUBERNETES_VERSIONS[@]}"; do
     echo -e "\\nTesting in Kubernetes ${K8S_VERSION}\\n"
     main
