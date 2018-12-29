@@ -8,7 +8,7 @@ jobs:
       - run:
           name: lint
           command: |
-            shellcheck -x .ci/ci.sh
+            shellcheck -x .circleci/ci.sh
   lint-charts:
     docker:
       - image: quay.io/helmpack/chart-testing:v2.0.1
@@ -19,7 +19,7 @@ jobs:
           command: |
             git remote add k8s https://github.com/zammad/helm
             git fetch k8s master
-            ct lint --config .ci/ct.yaml
+            ct lint --config .circleci/ct.yaml
   install-charts:
     machine: true
     environment:
@@ -32,7 +32,7 @@ jobs:
       - run:
           name: install
           command: |
-            .ci/ci.sh
+            .circleci/ci.sh
           no_output_timeout: 3600
 workflows:
   version: 2
