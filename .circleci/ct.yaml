@@ -1,5 +1,4 @@
 charts: zammad
 chart-dirs: zammad
-helm-extra-args: --timeout 3600 --debug --dry-run
-validate-maintainers: true
+helm-extra-args: --timeout 3600 --debug
 check-version-increment: true
