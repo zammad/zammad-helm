@@ -97,7 +97,7 @@ main() {
     install_hostpath-provisioner
 
     # shellcheck disable=SC2086
-    docker exec "$config_container_id" ct install --config=${WORKDIR}/.circleci/ct.yaml --chart-yaml-schema=${WORKDIR}/.circleci/chart_schema.yaml
+    docker exec "$config_container_id" ct install --config=${WORKDIR}/.circleci/ct.yaml
 
     echo "Done Testing!"
 }
