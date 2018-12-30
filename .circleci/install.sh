@@ -6,10 +6,10 @@
 set -o errexit
 set -o nounset
 set -o pipefail
-set -x
+set -o xtrace
 
 KIND_DOCKER_NAME="kind-1-control-plane"
-KUBERNETES_VERSIONS=('v1.11.3' 'v1.12.2')
+KUBERNETES_VERSIONS=('v1.11.3' 'v1.12.3')
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 WORKDIR="/workdir"
 
@@ -22,7 +22,7 @@ run_kind() {
     echo
 
     echo "Cleanup old kind clusters ..."
-    cleanup
+    #cleanup
 
     echo "Create Kubernetes cluster with kind..."
     kind create cluster --image=kindest/node:"$K8S_VERSION"

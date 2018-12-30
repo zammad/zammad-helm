@@ -3,7 +3,10 @@
 # build zammad chart and upload to zammad.github.io
 #
 
-set -ex
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o xtrace
 
 CHART_DIR="zammad"
 CHART_REPO="git@github.com:zammad/zammad.github.io.git"
@@ -39,5 +42,5 @@ if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
   git commit -m "push zammad chart version ${CHART_VERSION} via circleci build nr: ${CIRCLE_BUILD_NUM}"
   git push --set-upstream origin master
 else
-  echo "skipped deploy as only master is deployed..."  
+  echo "skipped deploy as only master is deployed..."
 fi
