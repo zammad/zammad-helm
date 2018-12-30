@@ -100,9 +100,7 @@ main() {
     echo "Done Testing!"
 }
 
-if [ -n "${CI_PULL_REUQEST}" ]; then
-  for K8S_VERSION in "${KUBERNETES_VERSIONS[@]}"; do
-    echo -e "\\nTesting in Kubernetes ${K8S_VERSION}\\n"
-    main
-  done
-fi
+for K8S_VERSION in "${KUBERNETES_VERSIONS[@]}"; do
+  echo -e "\\nTesting in Kubernetes ${K8S_VERSION}\\n"
+  main
+done

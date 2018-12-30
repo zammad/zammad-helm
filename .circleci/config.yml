@@ -8,7 +8,7 @@ jobs:
       - run:
           name: lint-scripts
           command: |
-            shellcheck -x .circleci/ci.sh
+            shellcheck -x .circleci/install.sh
             shellcheck -x .circleci/deploy.sh
   lint-chart:
     docker:
@@ -33,7 +33,7 @@ jobs:
       - run:
           name: install
           command: |
-            .circleci/ci.sh
+            .circleci/install.sh
           no_output_timeout: 3600
   deploy-chart:
     docker:
@@ -49,7 +49,7 @@ jobs:
             .circleci/deploy.sh
 workflows:
   version: 2
-  lint_and_install:
+  lint_install_deploy:
     jobs:
       - lint-scripts
       - lint-chart:
