@@ -106,5 +106,5 @@ if [ "${CIRCLECI}" == 'true' ] && [ -n "${CIRCLE_PULL_REQUEST}" ]; then
     main
   done
 else
-  echo "skipped install as its no pull request"
+  echo "skipped chart install as its not a pull request..."
 fi
