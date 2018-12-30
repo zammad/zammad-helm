@@ -8,10 +8,8 @@ set -o nounset
 set -o pipefail
 set -x
 
-K8S_VERSIONS=('v1.11.3' 'v1.12.2')
-
 KIND_DOCKER_NAME="kind-1-control-plane"
-KUBERNETES_VERSIONS="${K8S_VERSIONS}"
+KUBERNETES_VERSIONS="${K8S_VERSIONS[@]}"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 WORKDIR="/workdir"
 
