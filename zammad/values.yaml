@@ -61,35 +61,35 @@ persistence:
   size: 15Gi
 
 # Zammad resources
-# resources:
-#   nginx:
-#     requests:
-#       cpu: 50m
-#       memory: 32Mi
-#     limits:
-#       cpu: 100m
-#       memory: 64Mi
-#   railsserver:
-#     requests:
-#       cpu: 100m
-#       memory: 512Mi
-#     limits:
-#       cpu: 200m
-#       memory: 1024Mi
-#   scheduler:
-#     requests:
-#       cpu: 100m
-#       memory: 256Mi
-#     limits:
-#       cpu: 200m
-#       memory: 512Mi
-#   websocket:
-#     requests:
-#       cpu: 100m
-#       memory: 256Mi
-#     limits:
-#       cpu: 200m
-#       memory: 512Mi
+resources:
+  nginx: {}
+    # requests:
+    #   cpu: 50m
+    #   memory: 32Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 64Mi
+  railsserver: {}
+    # requests:
+    #   cpu: 100m
+    #   memory: 512Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 1024Mi
+  scheduler: {}
+    # requests:
+    #   cpu: 100m
+    #   memory: 256Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 512Mi
+  websocket: {}
+    # requests:
+    #   cpu: 100m
+    #   memory: 256Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 512Mi
 
 nodeSelector: {}
 
