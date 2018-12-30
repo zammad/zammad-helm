@@ -7,21 +7,11 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-CHART_TESTING_IMAGE="quay.io/helmpack/chart-testing"
-CHART_TESTING_TAG="v2.0.1"
-INSTALL="yes"
 KIND_DOCKER_NAME="kind-1-control-plane"
-KUBERNETES_VERSIONS=('v1.11.3' 'v1.12.2')
-LINT="yes"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 WORKDIR="/workdir"
 
-lint() {
-  docker run -it --rm -v "${REPO_ROOT}:${WORKDIR}" --workdir "${WORKDIR}" "${CHART_TESTING_IMAGE}:${CHART_TESTING_TAG}" ct lint --config="${WORKDIR}/.circleci/ct.yaml" --lint-conf="${WORKDIR}/.circleci/lintconf.yaml" --chart-yaml-schema="${WORKDIR}/.circleci/chart_schema.yaml"
-}
-
 run_kind() {
-
     echo "Get kind binary..."
     docker run --rm -it -v "$(pwd)":/go/bin golang go get sigs.k8s.io/kind && chmod +x kind && sudo mv kind /usr/local/bin/
 
@@ -110,11 +100,7 @@ main() {
     echo "Done Testing!"
 }
 
-if [ "${LINT}" == "yes" ]; then
-  lint
-fi
-
-if [ -n "${CIRCLE_PR_NUMBER}" ] && [ "${INSTALL}" == "yes" ]; then
+if [ -n "${CIRCLE_PR_NUMBER}" ]; then
   for K8S_VERSION in "${KUBERNETES_VERSIONS[@]}"; do
     echo -e "\\nTesting in Kubernetes ${K8S_VERSION}\\n"
     main

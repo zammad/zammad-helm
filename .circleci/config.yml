@@ -6,10 +6,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: lint
+          name: lint-scripts
           command: |
             shellcheck -x .circleci/ci.sh
-  lint-charts:
+            shellcheck -x .circleci/deploy.sh
+  lint-chart:
     docker:
       - image: quay.io/helmpack/chart-testing:v2.0.1
     steps:
@@ -19,14 +20,14 @@ jobs:
           command: |
             git remote add k8s https://github.com/zammad/helm
             git fetch k8s master
-            ct lint --config .circleci/ct.yaml
-  install-charts:
+            ct lint --config=.circleci/ct.yaml --lint-conf=.circleci/lintconf.yaml --chart-yaml-schema=.circleci/chart_schema.yaml
+  install-chart:
     machine: true
     environment:
       CHART_TESTING_IMAGE: quay.io/helmpack/chart-testing
       CHART_TESTING_TAG: v2.0.1
       CHARTS_REPO: https://github.com/zammad/helm
-      K8S_VERSION: "v1.11.3"
+      KUBERNETES_VERSIONS: "('v1.11.3' 'v1.12.2')"
     steps:
       - checkout
       - run:
@@ -34,14 +35,29 @@ jobs:
           command: |
             .circleci/ci.sh
           no_output_timeout: 3600
+  deploy-chart:
+    docker:
+      - image: kiwigrid/gcloud-kubectl-helm:2.12.0-228.0.0
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "81:19:ad:15:3c:a5:a4:83:8f:41:68:a5:2c:be:f5:05"
+      - checkout
+      - run:
+          name: deploy
+          command: |
+            .circleci/deploy.sh
 workflows:
   version: 2
   lint_and_install:
     jobs:
       - lint-scripts
-      - lint-charts:
+      - lint-chart:
           requires:
             - lint-scripts
-      - install-charts:
+      - install-chart:
           requires:
-            - lint-charts
+            - lint-chart
+      - deploy-chart:
+          requires:
+            - install-charts
