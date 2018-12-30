@@ -77,7 +77,7 @@ main() {
     run_kind
 
     local config_container_id
-    config_container_id=$(docker run -it -d -v "${REPO_ROOT}/.circleci:${WORKDIR}" --workdir "${WORKDIR}" "$CHART_TESTING_IMAGE:$CHART_TESTING_TAG" cat)
+    config_container_id=$(docker run -it -d -v "${REPO_ROOT}:${WORKDIR}" --workdir "${WORKDIR}" "$CHART_TESTING_IMAGE:$CHART_TESTING_TAG" cat)
 
     # shellcheck disable=SC2064
     trap "docker rm -f $config_container_id > /dev/null" EXIT
@@ -97,7 +97,7 @@ main() {
     install_hostpath-provisioner
 
     # shellcheck disable=SC2086
-    docker exec "$config_container_id" ct install --config=${WORKDIR}/ct.yaml
+    docker exec "$config_container_id" ct install --config=${WORKDIR}/.circleci/ct.yaml
 
     echo "Done Testing!"
 }
