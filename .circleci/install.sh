@@ -106,4 +106,6 @@ if [ "${CIRCLECI}" == 'true' ] && [ -n "${CIRCLE_PULL_REQUEST}" ]; then
     echo -e "\\nTesting in Kubernetes ${K8S_VERSION}\\n"
     main
   done
+else
+  echo "skipped install as its no pull request"  
 fi
