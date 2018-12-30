@@ -36,6 +36,8 @@ if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
   git config --global user.email "CircleCi@circleci.com"
   git config --global user.name "Circle CI"
   git add --all .
-  git commit -m "push zammad chart version ${CHART_VERSION} via circleci build nr: ${CIRCLE_BUILD_NUM} - [skip ci]"
+  git commit -m "push zammad chart version ${CHART_VERSION} via circleci build nr: ${CIRCLE_BUILD_NUM}"
   git push --set-upstream origin master
+else
+  echo "skipped deploy as only master is deployed..."  
 fi
