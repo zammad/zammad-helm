@@ -3,3 +3,5 @@ chart-dirs: zammad
 chart-repos:
 excluded-charts:
 helm-extra-args: --timeout 1200
+ValidateMaintainers: true
+CheckVersionIncrement: true
