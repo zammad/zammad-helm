@@ -34,7 +34,6 @@ if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
   helm repo index --merge "${REPO_ROOT}"/"${REPO_DIR}"/index.yaml --url https://zammad.github.io "${REPO_ROOT}"/"${REPO_DIR}"
 
   # push changes to github
-
   cd "${REPO_ROOT}"/"${REPO_DIR}"
   git config --global user.email "CircleCi@circleci.com"
   git config --global user.name "Circle CI"
