@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# build zammad chart and upload to zammad.github.io
+# deploy zammad chart to zammad.github.io
 #
 
 set -o errexit
