@@ -104,5 +104,5 @@ main() {
 
 for K8S_VERSION in "${KUBERNETES_VERSIONS[@]}"; do
   echo -e "\\nTesting in Kubernetes ${K8S_VERSION}\\n"
-  #main
+  main
 done
