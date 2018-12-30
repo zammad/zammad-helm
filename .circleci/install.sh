@@ -6,6 +6,7 @@
 set -o errexit
 set -o nounset
 set -o pipefail
+set -x
 
 KIND_DOCKER_NAME="kind-1-control-plane"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
