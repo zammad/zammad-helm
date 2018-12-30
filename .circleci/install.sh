@@ -4,7 +4,6 @@
 #
 
 set -o errexit
-set -o nounset
 set -o pipefail
 set -o xtrace
 
@@ -102,7 +101,9 @@ main() {
     echo "Done Testing!"
 }
 
-for K8S_VERSION in "${KUBERNETES_VERSIONS[@]}"; do
-  echo -e "\\nTesting in Kubernetes ${K8S_VERSION}\\n"
-  main
-done
+if [ "${CIRCLECI}" == 'true' ] && [ -n "${CIRCLE_PULL_REQUEST}" ]; then
+  for K8S_VERSION in "${KUBERNETES_VERSIONS[@]}"; do
+    echo -e "\\nTesting in Kubernetes ${K8S_VERSION}\\n"
+    main
+  done
+fi
