@@ -9,6 +9,7 @@ set -o pipefail
 set -x
 
 KIND_DOCKER_NAME="kind-1-control-plane"
+KUBERNETES_VERSIONS=("${K8S_VERSIONS}")
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 WORKDIR="/workdir"
 
