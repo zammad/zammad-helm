@@ -5,7 +5,6 @@
 
 set -o errexit
 set -o pipefail
-set -o xtrace
 
 CHART_DIR="zammad"
 CHART_REPO="git@github.com:zammad/zammad.github.io.git"
