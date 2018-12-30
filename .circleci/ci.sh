@@ -100,7 +100,7 @@ main() {
     echo "Done Testing!"
 }
 
-if [ -n "${CIRCLE_PR_NUMBER}" ]; then
+if [ -n "${CI_PULL_REUQEST}" ]; then
   for K8S_VERSION in "${KUBERNETES_VERSIONS[@]}"; do
     echo -e "\\nTesting in Kubernetes ${K8S_VERSION}\\n"
     main
