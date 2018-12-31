@@ -1,11 +1,10 @@
 #!/bin/bash
 #
-# build zammad chart and upload to zammad.github.io
+# deploy zammad chart to zammad.github.io
 #
 
 set -o errexit
 set -o pipefail
-set -o xtrace
 
 CHART_DIR="zammad"
 CHART_REPO="git@github.com:zammad/zammad.github.io.git"

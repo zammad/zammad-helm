@@ -21,7 +21,7 @@ ingress:
   hosts:
     - chart-example.local
   tls: []
-  #  - secretName: chart-example-tls
+  #  - secretName: zammad-tls
   #    hosts:
   #      - chart-example.local
 
@@ -108,47 +108,48 @@ elasticsearch:
   cluster:
     xpackEnable: false
     env:
-      MINIMUM_MASTER_NODES: "2"
+      MINIMUM_MASTER_NODES: "1"
       XPACK_MONITORING_ENABLED: false
   client:
-    replicas: 2
+    replicas: 1
     # resources:
-    #   limits:
-    #     cpu: "300m"
-    #     memory: "1024Mi"
-    #   requests:
-    #     cpu: "25m"
-    #     memory: "768Mi"
-  data:
-    terminationGracePeriodSeconds: 60
-    replicas: 2
-    # resources:
-    #   limits:
-    #     cpu: "350m"
-    #     memory: "2048Mi"
-    #   requests:
-    #     cpu: "175m"
-    #     memory: "1536Mi"
-  master:
-    replicas: 2
-    # resources:
-    #   limits:
-    #     cpu: "300m"
-    #     memory: "1024Mi"
     #   requests:
     #     cpu: "25m"
     #     memory: "512Mi"
+    #   limits:
+    #     cpu: "300m"
+    #     memory: "1024Mi"
+  data:
+    terminationGracePeriodSeconds: 60
+    replicas: 1
+    # resources:
+    #   requests:
+    #     cpu: "175m"
+    #     memory: "1536Mi"
+    #   limits:
+    #     cpu: "350m"
+    #     memory: "2048Mi"
+  master:
+    replicas: 1
+    # resources:
+    #   requests:
+    #     cpu: "25m"
+    #     memory: "512Mi"
+    #   limits:
+    #     cpu: "300m"
+    #     memory: "1024Mi"
 
 
 memcached:
   replicaCount: 1
   # resources:
   #   requests:
-  #     memory: 64Mi
   #     cpu: 50m
+  #     memory: 64Mi
   #   limits:
-  #     memory: 128Mi
   #     cpu: 100m
+  #     memory: 128Mi
+
 
 postgresql:
   postgresqlUsername: zammad
@@ -156,8 +157,8 @@ postgresql:
   postgresqlDatabase: zammad_production
   # resources:
   #   requests:
-  #     memory: 256Mi
   #     cpu: 250m
+  #     memory: 256Mi
   #   limits:
-  #     memory: 512Mi
   #     cpu: 500m
+  #     memory: 512Mi

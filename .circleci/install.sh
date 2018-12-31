@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 #
-# ci with chart-testing & kind
+# install zammad in kubernetes kind
 #
 
 set -o errexit
 set -o pipefail
-set -o xtrace
 
 KIND_DOCKER_NAME="kind-1-control-plane"
 KUBERNETES_VERSIONS=('v1.11.3' 'v1.12.3')
@@ -107,5 +106,5 @@ if [ "${CIRCLECI}" == 'true' ] && [ -n "${CIRCLE_PULL_REQUEST}" ]; then
     main
   done
 else
-  echo "skipped install as its no pull request"  
+  echo "skipped chart install as its not a pull request..."
 fi
