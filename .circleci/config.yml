@@ -20,7 +20,7 @@ jobs:
           command: |
             git remote add k8s https://github.com/zammad/helm
             git fetch k8s master
-            ct lint --config=.circleci/ct.yaml --lint-conf=.circleci/lintconf.yaml --chart-yaml-schema=.circleci/chart_schema.yaml --check-version-increment
+            ct lint --config=.circleci/ct.yaml --lint-conf=.circleci/lintconf.yaml --chart-yaml-schema=.circleci/chart_schema.yaml
   install-chart:
     machine: true
     environment:
