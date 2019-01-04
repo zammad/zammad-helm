@@ -15,7 +15,7 @@ jobs:
       - checkout
       - run:
           name: lint
-          command: circleci/lint-charts.sh
+          command: .circleci/lint-charts.sh
   install-chart:
     machine: true
     environment:
