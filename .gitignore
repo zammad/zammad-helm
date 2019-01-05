@@ -1,3 +1,4 @@
 zammad.github.io
 zammad/charts
 zammad/index.yaml
+.circleci/test.sh
