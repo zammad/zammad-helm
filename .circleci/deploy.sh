@@ -23,11 +23,13 @@ if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
   # set original file dates
   (
   cd "${REPO_ROOT}"/"${REPO_DIR}" || exit
+  ls -al
   while read -r FILE; do
-    ORG_FILE_TIME=$(git log --pretty=format:%cd -n 1 --date=local "${FILE}")
+    ORG_FILE_TIME=$(git log --pretty=format:%cd -n 1 --date=format:'%y%m%d%H%M' "${FILE}")
     echo "set original time ${ORG_FILE_TIME} to ${FILE}"
-    touch -c -d "${ORG_FILE_TIME}" -m "${FILE}"
+    touch -c -t "${ORG_FILE_TIME}" -m "${FILE}"
   done < <(git ls-files)
+  ls -al
   )
 
   # build helm dependencies in subshell
