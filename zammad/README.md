@@ -34,7 +34,7 @@ The following table lists the configurable parameters of the zammad chart and th
 |-----------------------------------|------------------------------------------|-------------------------------------|
 | `useElasticsearch`                | use Elasticsearch dependcy               | `true`                              |
 | `useMemcached`                    | use Memcached dependency                 | `true`                              |
-| `usePostgresql                    | use PostgreSQL dependency                | `true`                              |
+| `usePostgresql`                   | use PostgreSQL dependency                | `true`                              |
 | `image.repository`                | Container image to use                   | `zammad/zammad-docker-compose`      |
 | `image.tag`                       | Container image tag to deploy            | `2.8.0-21`                          |
 | `image.pullPolicy`                | Container pull policy                    | `IfNotPresent`                      |
