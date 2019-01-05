@@ -35,7 +35,7 @@ if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
   while read -r FILE; do
     ORG_FILE_TIME=$(git log --pretty=format:%cd --date=format:'%y%m%d%H%M' "${FILE}" | tail -n 1)
     echo "set original time ${ORG_FILE_TIME} to ${FILE}"
-    touch -c -t "${ORG_FILE_TIME}" -m "${FILE}"
+    touch -c -t "${ORG_FILE_TIME}" "${FILE}"
   done < <(git ls-files)
   )
 
