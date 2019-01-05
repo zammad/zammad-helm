@@ -20,6 +20,15 @@ if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
   # get chart version
   CHART_VERSION="$(grep version: "${REPO_ROOT}"/"${CHART_DIR}"/Chart.yaml | sed 's/version: //')"
 
+  # build helm dependencies in subshell
+  (
+  cd "${REPO_ROOT}"/"${CHART_DIR}" || exit
+  helm dependency build
+  )
+
+  # build chart
+  helm package "${REPO_ROOT}"/"${CHART_DIR}" --destination "${REPO_ROOT}"/"${REPO_DIR}"
+
   # set original file dates
   (
   cd "${REPO_ROOT}"/"${REPO_DIR}" || exit
@@ -30,14 +39,6 @@ if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
   done < <(git ls-files)
   )
 
-  # build helm dependencies in subshell
-  (
-  cd "${REPO_ROOT}"/"${CHART_DIR}" || exit
-  helm dependency build
-  )
-
-  # build chart
-  helm package "${REPO_ROOT}"/"${CHART_DIR}" --destination "${REPO_ROOT}"/"${REPO_DIR}"
 
   # build index
   helm repo index --merge "${REPO_ROOT}"/"${REPO_DIR}"/index.yaml --url https://zammad.github.io "${REPO_ROOT}"/"${REPO_DIR}"
