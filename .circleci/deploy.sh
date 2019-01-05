@@ -45,7 +45,7 @@ if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
   helm package "${REPO_ROOT}"/"${CHART_DIR}" --destination "${REPO_ROOT}"/"${REPO_DIR}"
 
   # build index
-  helm repo index --merge "${REPO_ROOT}"/"${TMP_DIR}"/index.yaml --url https://zammad.github.io "${REPO_ROOT}"/"${REPO_DIR}"
+  helm repo index --merge "${REPO_ROOT}"/"${TMP_DIR}"/index.yaml --url https://"${REPO_DIR}" "${REPO_ROOT}"/"${REPO_DIR}"
 
   # move old charts back into git repo
   mv "${REPO_ROOT}"/"${TMP_DIR}"/*.tgz "${REPO_ROOT}"/"${REPO_DIR}"
