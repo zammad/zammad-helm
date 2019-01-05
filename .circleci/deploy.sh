@@ -40,9 +40,7 @@ if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
   )
 
   # build index
-  mv "${REPO_ROOT}"/"${REPO_DIR}"/index.yaml "${REPO_ROOT}"/"${REPO_DIR}"/old-index.yaml
-  helm repo index --merge "${REPO_ROOT}"/"${REPO_DIR}"/old-index.yaml --url https://zammad.github.io "${REPO_ROOT}"/"${REPO_DIR}"
-  rm "${REPO_ROOT}"/"${REPO_DIR}"/old-index.yaml
+  helm repo index --merge "${REPO_ROOT}"/"${REPO_DIR}"/index.yaml --url https://zammad.github.io "${REPO_ROOT}"/"${REPO_DIR}"
 
   # push changes to github
   cd "${REPO_ROOT}"/"${REPO_DIR}"
