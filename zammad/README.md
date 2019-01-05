@@ -36,7 +36,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `useMemcached`                    | use Memcached dependency                 | `true`                              |
 | `usePostgresql                    | use PostgreSQL dependency                | `true`                              |
 | `image.repository`                | Container image to use                   | `zammad/zammad-docker-compose`      |
-| `image.tag`                       | Container image tag to deploy            | `2.8.0-35c3`                        |
+| `image.tag`                       | Container image tag to deploy            | `2.8.0-21`                          |
 | `image.pullPolicy`                | Container pull policy                    | `IfNotPresent`                      |
 | `service.type`                    | Service type                             | `ClusterIP`                         |
 | `service.port`                    | Service port                             | `80`                                |
@@ -57,13 +57,13 @@ The following table lists the configurable parameters of the zammad chart and th
 | `tolerations`                     | Tolerations                              | `[]`                                |
 | `affinity`                        | affinity                                 | `{}`                                |
 | `elasticsearch.image.repository`  | Elasticsearch image repo                 | `zammad/zammad-docker-compose`      |
-| `elasticsearch.image.tag`         | Elasticsearch image tag                  | `zammad-elasticsearch-2.8.0-35c3`   |
+| `elasticsearch.image.tag`         | Elasticsearch image tag                  | `zammad-elasticsearch-2.8.0-23`     |
 | `elasticsearch.cluster.xpackEnable` | Elasticsearch Xpack option             | `false`                             |
 | `elasticsearch.cluster.env`       | Elasticsearch environment variables      | ``                                  |
-| `elasticsearch.client.replicas`   | Elasticsearch client replicas            | `2`                                 |
+| `elasticsearch.client.replicas`   | Elasticsearch client replicas            | `1`                                 |
 | `elasticsearch.data.terminationGracePeriodSeconds` | Elasticsearch termination Grace Period | `60`                 |
-| `elasticsearch.data.replicas`     | Elasticsearch data replicas              | `2`                                 |
-| `elasticsearch.master.replicas`   | Elasticsearch master replicas            | `2`                                 |
+| `elasticsearch.data.replicas`     | Elasticsearch data replicas              | `1`                                 |
+| `elasticsearch.master.replicas`   | Elasticsearch master replicas            | `1`                                 |
 | `memcached.replicaCount`          | Memcached replicas                       | `1`                                 |
 | `postgresql.postgresqlUsername`   | PostgreSQL user                          | `zammad`                            |
 | `postgresql.postgresqlPassword`   | PostgreSQL password                      | `zammad`                            |
