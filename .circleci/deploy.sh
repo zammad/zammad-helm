@@ -16,7 +16,6 @@ if ! git diff --name-only HEAD~1 | grep -q 'zammad/Chart.yaml'; then
   exit 0
 fi
 
-
 if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
 
   # get zammad.github.io
