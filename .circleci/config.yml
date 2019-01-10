@@ -8,14 +8,6 @@ jobs:
       - run:
           name: lint-scripts
           command: .circleci/lint-scripts.sh
-  check-stop:
-    docker:
-      - image: circleci/golang:1.11
-    steps:
-      - checkout
-      - run:
-          name: check-stop
-          command: .circleci/check-stop.sh         
   lint-chart:
     docker:
       - image: quay.io/helmpack/chart-testing:v2.0.1
@@ -52,7 +44,6 @@ workflows:
   lint_install_deploy:
     jobs:
       - lint-scripts
-      - check-stop
       - lint-chart:
           requires:
             - lint-scripts
