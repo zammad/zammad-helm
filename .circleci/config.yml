@@ -8,9 +8,17 @@ jobs:
       - run:
           name: lint-scripts
           command: .circleci/lint-scripts.sh
+  check-stop:
+    docker:
+      - image: circleci/golang:1.11
+    steps:
+      - checkout
+      - run:
+          name: check-stop
+          command: .circleci/check-stop.sh         
   lint-chart:
     docker:
-      - image: quay.io/helmpack/chart-testing:v2.1.0
+      - image: quay.io/helmpack/chart-testing:v2.0.1
     steps:
       - checkout
       - run:
@@ -30,7 +38,7 @@ jobs:
           no_output_timeout: 3600
   deploy-chart:
     docker:
-      - image: kiwigrid/gcloud-kubectl-helm:2.12.1-228.0.0-74
+      - image: kiwigrid/gcloud-kubectl-helm:2.12.1-228.0.0
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -44,6 +52,7 @@ workflows:
   lint_install_deploy:
     jobs:
       - lint-scripts
+      - check-stop
       - lint-chart:
           requires:
             - lint-scripts
@@ -53,3 +62,18 @@ workflows:
       - deploy-chart:
           requires:
             - install-chart
+
+
+gke_test: &gke_test
+  docker:
+    - image: circleci/golang:1.11
+  steps:
+    - checkout
+    - run: |
+        source ./script/chart_sync_utils.sh
+        # In case of GKE we will only want to build if it is
+        # a build of a branch in the kubeapps repository
+        if [[ -z "$GKE_ADMIN" ]]; then
+          echo "Step aborted, we are not in the Kubeapps repository"
+          circleci step halt
+        fi
