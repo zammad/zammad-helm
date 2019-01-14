@@ -36,7 +36,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `useMemcached`                    | use Memcached dependency                 | `true`                              |
 | `usePostgresql`                   | use PostgreSQL dependency                | `true`                              |
 | `image.repository`                | Container image to use                   | `zammad/zammad-docker-compose`      |
-| `image.tag`                       | Container image tag to deploy            | `2.8.0-21`                          |
+| `image.tag`                       | Container image tag to deploy            | `2.8.0-22`                          |
 | `image.pullPolicy`                | Container pull policy                    | `IfNotPresent`                      |
 | `service.type`                    | Service type                             | `ClusterIP`                         |
 | `service.port`                    | Service port                             | `80`                                |
@@ -57,7 +57,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `tolerations`                     | Tolerations                              | `[]`                                |
 | `affinity`                        | affinity                                 | `{}`                                |
 | `elasticsearch.image.repository`  | Elasticsearch image repo                 | `zammad/zammad-docker-compose`      |
-| `elasticsearch.image.tag`         | Elasticsearch image tag                  | `zammad-elasticsearch-2.8.0-23`     |
+| `elasticsearch.image.tag`         | Elasticsearch image tag                  | `zammad-elasticsearch-2.8.0-22`     |
 | `elasticsearch.cluster.xpackEnable` | Elasticsearch Xpack option             | `false`                             |
 | `elasticsearch.cluster.env`       | Elasticsearch environment variables      | ``                                  |
 | `elasticsearch.client.replicas`   | Elasticsearch client replicas            | `1`                                 |
