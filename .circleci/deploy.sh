@@ -11,12 +11,12 @@ CHART_REPO="git@github.com:zammad/zammad.github.io.git"
 REPO_DIR="zammad.github.io"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
-if ! git diff --name-only HEAD~1 | grep -q 'zammad/Chart.yaml'; then
-  echo "no chart changes... so no chart build and upload needed... exiting..."
-  exit 0
-fi
-
 if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
+
+  if ! git diff --name-only HEAD~1 | grep -q 'zammad/Chart.yaml'; then
+    echo "no chart changes... so no chart build and upload needed... exiting..."
+    exit 0
+  fi
 
   # get zammad.github.io
   test -d "${REPO_ROOT}"/"${REPO_DIR}" && rm -rf "${REPO_ROOT:=?}"/"${REPO_DIR:=?}"
@@ -63,5 +63,5 @@ if [ "${CIRCLECI}" == 'true' ] && [ -z "${CIRCLE_PULL_REQUEST}" ]; then
   git commit -m "push zammad chart version ${CHART_VERSION} via circleci build nr: ${CIRCLE_BUILD_NUM}"
   git push --set-upstream origin master
 else
-  echo "skipped deploy as only master is deployed..."
+  echo "skipped deploy as only merged pr in master is deployed..."
 fi
