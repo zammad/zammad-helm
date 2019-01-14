@@ -1,4 +1,2 @@
-charts: zammad
 chart-dirs: .
 helm-extra-args: --timeout 3600
-check-version-increment: true
