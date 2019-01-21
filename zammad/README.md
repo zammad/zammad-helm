@@ -21,8 +21,8 @@ This chart will do the following:
 To install the chart use the following:
 
 ```console
-$ helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
-$ helm install incubator/zammad
+$ helm repo add zammad https://zammad.github.io
+$ helm upgrade --install zammad zammad/zammad  --namespace zammad
 ```
 
 
@@ -89,6 +89,13 @@ elasticsearch:
   master:
     replicas: 1
 ```
+
+### Important note for  NFS filesystems
+For persistent volumes, NFS filesystems should work correctly for **Elasticsearch** and **PostgreSQL**; however, errors will occur if Zammad itself uses an NFS-based persistent volume.  Websockets will break completely.  This is particularly bad news for receiving notifications from the application and using the Chat module.
+
+Don't use an NFS-based storage class for Zammad's persistent volume.
+
+This is relevant to **EFS** for AWS users, as well.
 
 ## Using zammad
 
