@@ -107,8 +107,11 @@ elasticsearch:
     tag: "zammad-elasticsearch-2.8.0-22"
   cluster:
     xpackEnable: false
+    # See README for proper configuration
     env:
+      EXPECTED_MASTER_NODES: "1"
       MINIMUM_MASTER_NODES: "1"
+      RECOVER_AFTER_MASTER_NODES: "1"
       XPACK_MONITORING_ENABLED: false
   client:
     replicas: 1
