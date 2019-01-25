@@ -73,7 +73,7 @@ The default **elasticsearch.yml** set by the Elasticsearch chart expects 2 maste
 
 Set the following environment variables under **elasticsearch.cluster.env**.  The Zammad StatefulSet will most likely fail without setting these correctly.
 
-Refer to the Elasticsearch documentation for info on these variables.  \[[1](https://www.elastic.co/guide/en/elasticsearch/reference/5.6/modules-gateway.html)] \[[2](https://www.elastic.co/guide/en/elasticsearch/reference/5.6/modules-node.html#split-brain)]
+Refer to the Elasticsearch documentation for info on these variables. \[[1](https://www.elastic.co/guide/en/elasticsearch/reference/5.6/modules-gateway.html)] \[[2](https://www.elastic.co/guide/en/elasticsearch/reference/5.6/modules-node.html#split-brain)]
 
 ```yaml
 elasticsearch:
