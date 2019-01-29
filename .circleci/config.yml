@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:
   lint-scripts:
     docker:
@@ -8,6 +8,7 @@ jobs:
       - run:
           name: lint-scripts
           command: .circleci/lint-scripts.sh
+
   lint-chart:
     docker:
       - image: quay.io/helmpack/chart-testing:v2.2.0
@@ -16,21 +17,24 @@ jobs:
       - run:
           name: lint
           command: .circleci/lint-charts.sh
+
   install-chart:
     machine: true
     environment:
       CHART_TESTING_IMAGE: quay.io/helmpack/chart-testing
       CHART_TESTING_TAG: v2.2.0
       CHARTS_REPO: https://github.com/zammad/helm
+      KIND_VERSION: 0.1.0
     steps:
       - checkout
       - run:
           name: install
-          command: .circleci/install.sh
+          command: .circleci/install-chart.sh
           no_output_timeout: 3600
+
   deploy-chart:
     docker:
-      - image: kiwigrid/gcloud-kubectl-helm:2.12.2-228.0.0-80
+      - image: kiwigrid/gcloud-kubectl-helm:2.12.3-228.0.0-82
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -38,7 +42,8 @@ jobs:
       - checkout
       - run:
           name: deploy
-          command: .circleci/deploy.sh
+          command: .circleci/deploy-chart.sh
+
 workflows:
   version: 2
   lint_install_deploy:
