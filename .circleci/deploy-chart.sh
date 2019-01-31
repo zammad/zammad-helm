@@ -57,8 +57,8 @@ if [ -z "${CIRCLE_PULL_REQUEST}" ]; then
 
   # push changes to github
   cd "${REPO_ROOT}"/"${REPO_DIR}"
-  git config --global user.email "CircleCi@circleci.com"
-  git config --global user.name "Circle CI"
+  git config --global user.email "info@zammad.org"
+  git config --global user.name "zammad-sync"
   git add --all .
   git commit -m "push zammad chart version ${CHART_VERSION} via circleci build nr: ${CIRCLE_BUILD_NUM}"
   git push --set-upstream origin master
