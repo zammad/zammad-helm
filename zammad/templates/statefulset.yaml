@@ -186,7 +186,7 @@ spec:
             secretKeyRef:
               name: {{ .Release.Name }}-autowizard
               key: autowizard
-        {{ end }}          
+        {{ end }}
         {{- range $key, $value := .Values.extraEnv }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
@@ -224,6 +224,13 @@ spec:
           value: {{ .Values.envConfig.postgresql.db }}
         - name: POSTGRESQL_DB_CREATE
           value: {{ .Values.envConfig.postgresql.dbCreate }}
+        {{- if .Values.autoWizard.enabled  }}
+        - name: AUTOWIZARD_JSON
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-autowizard
+              key: autowizard
+        {{ end }}          
         {{- range $key, $value := .Values.extraEnv }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
