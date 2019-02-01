@@ -51,7 +51,7 @@ envConfig:
 # additional environemnt vars
 extraEnv: {}
 
-# varibales used
+# varibales used to generate the
 autoWizard:
   enabled: false
   # string with the autowizard config as yaml
