@@ -37,16 +37,16 @@ env:
   ZAMMAD_WEBSOCKET_PORT: 6042
 
 # some env vars can only be configured when providing own instances
-providedelasticsearchenv:
-  ELASTICSEARCH_HOST: zammad-elasticsearch-client
+externalElasticsearchHost:
+  ELASTICSEARCH_HOST: elasticsearch
   ELASTICSEARCH_PORT: 9200
 
-providedmemcachedenv:
-  MEMCACHED_HOST: zammad-memcached
+externalMemcachedHost:
+  MEMCACHED_HOST: memcached
   MEMCACHED_PORT: 11211
 
-providedpostgresenv:
-  POSTGRESQL_HOST: zammad-postgresql
+externalPostgresHost:
+  POSTGRESQL_HOST: postgresql
   POSTGRESQL_PORT: 5432
 
 persistence:

@@ -30,7 +30,7 @@ spec:
         - name: "ELASTICSEARCH_PORT"
           value: "9200"
         {{- else }}
-        {{- range $key, $value := .Values.providedelasticsearchenv }}
+        {{- range $key, $value := .Values.externalElasticsearchHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -41,7 +41,7 @@ spec:
         - name: "MEMCACHED_PORT"
           value: "11211"
         {{- else }}
-        {{- range $key, $value := .Values.providedmemcachedenv }}
+        {{- range $key, $value := .Values.externalMemcachedHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -52,7 +52,7 @@ spec:
         - name: "POSTGRESQL_PORT"
           value: "5432"
         {{- else }}
-        {{- range $key, $value := .Values.providedpostgresenv }}
+        {{- range $key, $value := .Values.externalPostgresHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -76,7 +76,7 @@ spec:
         - name: "ELASTICSEARCH_PORT"
           value: "9200"
         {{- else }}
-        {{- range $key, $value := .Values.providedelasticsearchenv }}
+        {{- range $key, $value := .Values.externalElasticsearchHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -87,7 +87,7 @@ spec:
         - name: "MEMCACHED_PORT"
           value: "11211"
         {{- else }}
-        {{- range $key, $value := .Values.providedmemcachedenv }}
+        {{- range $key, $value := .Values.externalMemcachedHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -98,7 +98,7 @@ spec:
         - name: "POSTGRESQL_PORT"
           value: "5432"
         {{- else }}
-        {{- range $key, $value := .Values.providedpostgresenv }}
+        {{- range $key, $value := .Values.externalPostgresHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -140,7 +140,7 @@ spec:
         - name: "ELASTICSEARCH_PORT"
           value: "9200"
         {{- else }}
-        {{- range $key, $value := .Values.providedelasticsearchenv }}
+        {{- range $key, $value := .Values.externalElasticsearchHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -151,7 +151,7 @@ spec:
         - name: "MEMCACHED_PORT"
           value: "11211"
         {{- else }}
-        {{- range $key, $value := .Values.providedmemcachedenv }}
+        {{- range $key, $value := .Values.externalMemcachedHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -162,7 +162,7 @@ spec:
         - name: "POSTGRESQL_PORT"
           value: "5432"
         {{- else }}
-        {{- range $key, $value := .Values.providedpostgresenv }}
+        {{- range $key, $value := .Values.externalPostgresHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -202,7 +202,7 @@ spec:
         - name: "ELASTICSEARCH_PORT"
           value: "9200"
         {{- else }}
-        {{- range $key, $value := .Values.providedelasticsearchenv }}
+        {{- range $key, $value := .Values.externalElasticsearchHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -213,7 +213,7 @@ spec:
         - name: "MEMCACHED_PORT"
           value: "11211"
         {{- else }}
-        {{- range $key, $value := .Values.providedmemcachedenv }}
+        {{- range $key, $value := .Values.externalMemcachedHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -224,7 +224,7 @@ spec:
         - name: "POSTGRESQL_PORT"
           value: "5432"
         {{- else }}
-        {{- range $key, $value := .Values.providedpostgresenv }}
+        {{- range $key, $value := .Values.externalPostgresHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -249,7 +249,7 @@ spec:
         - name: "ELASTICSEARCH_PORT"
           value: "9200"
         {{- else }}
-        {{- range $key, $value := .Values.providedelasticsearchenv }}
+        {{- range $key, $value := .Values.externalElasticsearchHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -260,7 +260,7 @@ spec:
         - name: "MEMCACHED_PORT"
           value: "11211"
         {{- else }}
-        {{- range $key, $value := .Values.providedmemcachedenv }}
+        {{- range $key, $value := .Values.externalMemcachedHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
@@ -271,7 +271,7 @@ spec:
         - name: "POSTGRESQL_PORT"
           value: "5432"
         {{- else }}
-        {{- range $key, $value := .Values.providedpostgresenv }}
+        {{- range $key, $value := .Values.externalPostgresHost }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
