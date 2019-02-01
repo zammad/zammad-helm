@@ -41,7 +41,16 @@ The following table lists the configurable parameters of the zammad chart and th
 | `ingress.path`                                     | Ingress path                                     | ``                              |
 | `ingress.hosts`                                    | Ingress hosts                                    | ``                              |
 | `ingress.tls`                                      | Ingress TLS                                      | `[]`                            |
-| `env`                                              | Environment variables                            | `See values.yaml`               |
+| `enConfig.elasticsearch.host`                      | Elasticsearch host                               | `zammad-elasticsearch-client`   |
+| `enConfig.elasticsearch.port`                      | Elasticsearch port                               | `9200`                          |
+| `enConfig.memcached.host`                          | Memcached host                                   | `zammad-memcached`              |
+| `enConfig.memcached.port`                          | Memcached port                                   | `11211`                         |
+| `enConfig.postgresql.host`                         | PostgreSql host                                  | `zammad-postgresql`             |
+| `enConfig.postgresql.port`                         | PostgreSql port                                  | `5432`                          |
+| `enConfig.postgreql.pass`                          | PostgreSql pass                                  | ``                              |
+| `enConfig.postgresql.user`                         | PostgreSql user                                  | `zammad`                        |
+| `enConfig.postgresql.db`                           | PostgreSql database                              | `zammad_production`             |
+| `enConfig.postgresql.dbCreate`                     | Create PostgreSql database                       | `false`                         |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |
 | `persistence.accessMode`                           | Access mode                                      | `ReadWriteOnce`                 |
 | `persistence.size`                                 | Volume size                                      | `15Gi`                          |
