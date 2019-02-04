@@ -54,6 +54,7 @@ extraEnv: {}
 # varibales used to generate the
 autoWizard:
   enabled: false
+  # string with the autowizard config as json
   # config: |
   #   {
   #     "Token": "secret_zammad_autowizard_token",
