@@ -55,24 +55,24 @@ extraEnv: {}
 autoWizard:
   enabled: false
   # string with the autowizard config as yaml
-  config: {}
-    # Token: secret_zammad_autowizard_token
-    # TextModuleLocale:
-    #   Locale: en-us
-    # Users:
-    #   - login: email@example.org
-    #     firstname: Zammad
-    #     lastname: Admin
-    #     email: email@example.org
-    #     organization: ZammadTest
-    #     password: test1234
-    # Settings:
-    #   - name: product_name
-    #     value: ZammadTestSystem
-    #   - name: system_online_service
-    #     value: true
-    # Organizations:
-    #   - name: ZammadTest
+  # config:
+  #   Token: secret_zammad_autowizard_token
+  #   TextModuleLocale:
+  #     Locale: en-us
+  #   Users:
+  #     - login: email@example.org
+  #       firstname: Zammad
+  #       lastname: Admin
+  #       email: email@example.org
+  #       organization: ZammadTest
+  #       password: test1234
+  #   Settings:
+  #     - name: product_name
+  #       value: ZammadTestSystem
+  #     - name: system_online_service
+  #       value: true
+  #   Organizations:
+  #     - name: ZammadTest
 
 
 persistence:

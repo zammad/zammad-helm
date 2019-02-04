@@ -24,35 +24,35 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         args: [ "zammad-init" ]
         env:
-        - name: ELASTICSEARCH_HOST
-          value: {{ if .Values.useElasticsearch }}{{ .Release.Name }}-elasticsearch-client{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}
-        - name: ELASTICSEARCH_PORT
-          value: {{ .Values.envConfig.elasticsearch.port }}
-        - name: MEMCACHED_HOST
-          value: {{ if .Values.useMemcached }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}
-        - name: MEMCACHED_PORT
-          value: {{ .Values.envConfig.memcached.port }}
-        - name: POSTGRESQL_HOST
-          value: {{ if .Values.usePostgresql }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}
-        - name: POSTGRESQL_PORT
-          value: {{ .Values.envConfig.postgresql.port }}
-        - name: POSTGRESQL_USER
-          value: {{ .Values.envConfig.postgresql.user }}
-        - name: POSTGRESQL_PASS
+        - name: "ELASTICSEARCH_HOST"
+          value: "{{ if .Values.useElasticsearch }}{{ .Release.Name }}-elasticsearch-client{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}"
+        - name: "ELASTICSEARCH_PORT"
+          value: "{{ .Values.envConfig.elasticsearch.port }}"
+        - name: "MEMCACHED_HOST"
+          value: "{{ if .Values.useMemcached }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}"
+        - name: "MEMCACHED_PORT"
+          value: "{{ .Values.envConfig.memcached.port }}"
+        - name: "POSTGRESQL_HOST"
+          value: "{{ if .Values.usePostgresql }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}"
+        - name: "POSTGRESQL_PORT"
+          value: "{{ .Values.envConfig.postgresql.port }}"
+        - name: "POSTGRESQL_USER"
+          value: "{{ .Values.envConfig.postgresql.user }}"
+        - name: "POSTGRESQL_PASS"
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-postgresql-pass
-              key: postgresql-pass
-        - name: POSTGRESQL_DB
-          value: {{ .Values.envConfig.postgresql.db }}
-        - name: POSTGRESQL_DB_CREATE
-          value: {{ .Values.envConfig.postgresql.dbCreate }}
+              name: "{{ .Release.Name }}-postgresql-pass"
+              key: "postgresql-pass"
+        - name: "POSTGRESQL_DB"
+          value: "{{ .Values.envConfig.postgresql.db }}"
+        - name: "POSTGRESQL_DB_CREATE"
+          value: "{{ .Values.envConfig.postgresql.dbCreate }}"
         {{- if .Values.autoWizard.enabled  }}
-        - name: AUTOWIZARD_JSON
+        - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-autowizard
-              key: autowizard
+              name: "{{ .Release.Name }}-autowizard"
+              key: "autowizard"
         {{ end }}
         {{- range $key, $value := .Values.extraEnv }}
         - name: "{{ $key }}"
@@ -67,41 +67,40 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         args: [ "zammad-nginx" ]
         env:
-        - name: ELASTICSEARCH_HOST
-          value: {{ if .Values.useElasticsearch }}{{ .Release.Name }}-elasticsearch-client{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}
-        - name: ELASTICSEARCH_PORT
-          value: {{ .Values.envConfig.elasticsearch.port }}
-        - name: MEMCACHED_HOST
-          value: {{ if .Values.useMemcached }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}
-        - name: MEMCACHED_PORT
-          value: {{ .Values.envConfig.memcached.port }}
-        - name: POSTGRESQL_HOST
-          value: {{ if .Values.usePostgresql }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}
-        - name: POSTGRESQL_PORT
-          value: {{ .Values.envConfig.postgresql.port }}
-        - name: POSTGRESQL_USER
-          value: {{ .Values.envConfig.postgresql.user }}
-        - name: POSTGRESQL_PASS
+        - name: "ELASTICSEARCH_HOST"
+          value: "{{ if .Values.useElasticsearch }}{{ .Release.Name }}-elasticsearch-client{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}"
+        - name: "ELASTICSEARCH_PORT"
+          value: "{{ .Values.envConfig.elasticsearch.port }}"
+        - name: "MEMCACHED_HOST"
+          value: "{{ if .Values.useMemcached }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}"
+        - name: "MEMCACHED_PORT"
+          value: "{{ .Values.envConfig.memcached.port }}"
+        - name: "POSTGRESQL_HOST"
+          value: "{{ if .Values.usePostgresql }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}"
+        - name: "POSTGRESQL_PORT"
+          value: "{{ .Values.envConfig.postgresql.port }}"
+        - name: "POSTGRESQL_USER"
+          value: "{{ .Values.envConfig.postgresql.user }}"
+        - name: "POSTGRESQL_PASS"
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-postgresql-pass
-              key: postgresql-pass
-        - name: POSTGRESQL_DB
-          value: {{ .Values.envConfig.postgresql.db }}
-        - name: POSTGRESQL_DB_CREATE
-          value: {{ .Values.envConfig.postgresql.dbCreate }}
+              name: "{{ .Release.Name }}-postgresql-pass"
+              key: "postgresql-pass"
+        - name: "POSTGRESQL_DB"
+          value: "{{ .Values.envConfig.postgresql.db }}"
+        - name: "POSTGRESQL_DB_CREATE"
+          value: "{{ .Values.envConfig.postgresql.dbCreate }}"
         {{- if .Values.autoWizard.enabled  }}
-        - name: AUTOWIZARD_JSON
+        - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-autowizard
-              key: autowizard
+              name: "{{ .Release.Name }}-autowizard"
+              key: "autowizard"
         {{ end }}
         {{- range $key, $value := .Values.extraEnv }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
-        {{- end }}
-        ports:
+        {{- end }}        ports:
         - containerPort: 80
           name: http
         imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -157,35 +156,35 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         args: [ "zammad-scheduler" ]
         env:
-        - name: ELASTICSEARCH_HOST
-          value: {{ if .Values.useElasticsearch }}{{ .Release.Name }}-elasticsearch-client{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}
-        - name: ELASTICSEARCH_PORT
-          value: {{ .Values.envConfig.elasticsearch.port }}
-        - name: MEMCACHED_HOST
-          value: {{ if .Values.useMemcached }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}
-        - name: MEMCACHED_PORT
-          value: {{ .Values.envConfig.memcached.port }}
-        - name: POSTGRESQL_HOST
-          value: {{ if .Values.usePostgresql }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}
-        - name: POSTGRESQL_PORT
-          value: {{ .Values.envConfig.postgresql.port }}
-        - name: POSTGRESQL_USER
-          value: {{ .Values.envConfig.postgresql.user }}
-        - name: POSTGRESQL_PASS
+        - name: "ELASTICSEARCH_HOST"
+          value: "{{ if .Values.useElasticsearch }}{{ .Release.Name }}-elasticsearch-client{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}"
+        - name: "ELASTICSEARCH_PORT"
+          value: "{{ .Values.envConfig.elasticsearch.port }}"
+        - name: "MEMCACHED_HOST"
+          value: "{{ if .Values.useMemcached }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}"
+        - name: "MEMCACHED_PORT"
+          value: "{{ .Values.envConfig.memcached.port }}"
+        - name: "POSTGRESQL_HOST"
+          value: "{{ if .Values.usePostgresql }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}"
+        - name: "POSTGRESQL_PORT"
+          value: "{{ .Values.envConfig.postgresql.port }}"
+        - name: "POSTGRESQL_USER"
+          value: "{{ .Values.envConfig.postgresql.user }}"
+        - name: "POSTGRESQL_PASS"
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-postgresql-pass
-              key: postgresql-password
-        - name: POSTGRESQL_DB
-          value: {{ .Values.envConfig.postgresql.db }}
-        - name: POSTGRESQL_DB_CREATE
-          value: {{ .Values.envConfig.postgresql.dbCreate }}
+              name: "{{ .Release.Name }}-postgresql-pass"
+              key: "postgresql-pass"
+        - name: "POSTGRESQL_DB"
+          value: "{{ .Values.envConfig.postgresql.db }}"
+        - name: "POSTGRESQL_DB_CREATE"
+          value: "{{ .Values.envConfig.postgresql.dbCreate }}"
         {{- if .Values.autoWizard.enabled  }}
-        - name: AUTOWIZARD_JSON
+        - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-autowizard
-              key: autowizard
+              name: "{{ .Release.Name }}-autowizard"
+              key: "autowizard"
         {{ end }}
         {{- range $key, $value := .Values.extraEnv }}
         - name: "{{ $key }}"
@@ -201,35 +200,35 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         args: [ "zammad-websocket" ]
         env:
-        - name: ELASTICSEARCH_HOST
-          value: {{ if .Values.useElasticsearch }}{{ .Release.Name }}-elasticsearch-client{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}
-        - name: ELASTICSEARCH_PORT
-          value: {{ .Values.envConfig.elasticsearch.port }}
-        - name: MEMCACHED_HOST
-          value: {{ if .Values.useMemcached }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}
-        - name: MEMCACHED_PORT
-          value: {{ .Values.envConfig.memcached.port }}
-        - name: POSTGRESQL_HOST
-          value: {{ if .Values.usePostgresql }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}
-        - name: POSTGRESQL_PORT
-          value: {{ .Values.envConfig.postgresql.port }}
-        - name: POSTGRESQL_USER
-          value: {{ .Values.envConfig.postgresql.user }}
-        - name: POSTGRESQL_PASS
+        - name: "ELASTICSEARCH_HOST"
+          value: "{{ if .Values.useElasticsearch }}{{ .Release.Name }}-elasticsearch-client{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}"
+        - name: "ELASTICSEARCH_PORT"
+          value: "{{ .Values.envConfig.elasticsearch.port }}"
+        - name: "MEMCACHED_HOST"
+          value: "{{ if .Values.useMemcached }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}"
+        - name: "MEMCACHED_PORT"
+          value: "{{ .Values.envConfig.memcached.port }}"
+        - name: "POSTGRESQL_HOST"
+          value: "{{ if .Values.usePostgresql }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}"
+        - name: "POSTGRESQL_PORT"
+          value: "{{ .Values.envConfig.postgresql.port }}"
+        - name: "POSTGRESQL_USER"
+          value: "{{ .Values.envConfig.postgresql.user }}"
+        - name: "POSTGRESQL_PASS"
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-postgresql-pass
-              key: postgresql-password
-        - name: POSTGRESQL_DB
-          value: {{ .Values.envConfig.postgresql.db }}
-        - name: POSTGRESQL_DB_CREATE
-          value: {{ .Values.envConfig.postgresql.dbCreate }}
+              name: "{{ .Release.Name }}-postgresql-pass"
+              key: "postgresql-pass"
+        - name: "POSTGRESQL_DB"
+          value: "{{ .Values.envConfig.postgresql.db }}"
+        - name: "POSTGRESQL_DB_CREATE"
+          value: "{{ .Values.envConfig.postgresql.dbCreate }}"
         {{- if .Values.autoWizard.enabled  }}
-        - name: AUTOWIZARD_JSON
+        - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-autowizard
-              key: autowizard
+              name: "{{ .Release.Name }}-autowizard"
+              key: "autowizard"
         {{ end }}
         {{- range $key, $value := .Values.extraEnv }}
         - name: "{{ $key }}"
