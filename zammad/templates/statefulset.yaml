@@ -240,7 +240,7 @@ spec:
         - name: websocket
           containerPort: 6042
         volumeMounts:
-         - name: zammad
+         - name: {{ template "zammad.fullname" . }}
            mountPath: /opt/zammad
         readinessProbe:
           tcpSocket:
