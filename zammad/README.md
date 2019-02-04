@@ -41,16 +41,16 @@ The following table lists the configurable parameters of the zammad chart and th
 | `ingress.path`                                     | Ingress path                                     | ``                              |
 | `ingress.hosts`                                    | Ingress hosts                                    | ``                              |
 | `ingress.tls`                                      | Ingress TLS                                      | `[]`                            |
-| `enConfig.elasticsearch.host`                      | Elasticsearch host                               | `zammad-elasticsearch-client`   |
-| `enConfig.elasticsearch.port`                      | Elasticsearch port                               | `9200`                          |
-| `enConfig.memcached.host`                          | Memcached host                                   | `zammad-memcached`              |
-| `enConfig.memcached.port`                          | Memcached port                                   | `11211`                         |
-| `enConfig.postgresql.host`                         | PostgreSql host                                  | `zammad-postgresql`             |
-| `enConfig.postgresql.port`                         | PostgreSql port                                  | `5432`                          |
-| `enConfig.postgreql.pass`                          | PostgreSql pass                                  | ``                              |
-| `enConfig.postgresql.user`                         | PostgreSql user                                  | `zammad`                        |
-| `enConfig.postgresql.db`                           | PostgreSql database                              | `zammad_production`             |
-| `enConfig.postgresql.dbCreate`                     | Create PostgreSql database                       | `false`                         |
+| `envConfig.elasticsearch.host`                     | Elasticsearch host                               | `zammad-elasticsearch-client`   |
+| `envConfig.elasticsearch.port`                     | Elasticsearch port                               | `9200`                          |
+| `envConfig.memcached.host`                         | Memcached host                                   | `zammad-memcached`              |
+| `envConfig.memcached.port`                         | Memcached port                                   | `11211`                         |
+| `envConfig.postgresql.host`                        | PostgreSql host                                  | `zammad-postgresql`             |
+| `envConfig.postgresql.port`                        | PostgreSql port                                  | `5432`                          |
+| `envConfig.postgreql.pass`                         | PostgreSql pass                                  | ``                              |
+| `envConfig.postgresql.user`                        | PostgreSql user                                  | `zammad`                        |
+| `envConfig.postgresql.db`                          | PostgreSql database                              | `zammad_production`             |
+| `envConfig.postgresql.dbCreate`                    | Create PostgreSql database                       | `false`                         |
 | `autoWizard.enabled`                               | enable autowizard                                | `false`                         |
 | `autoWizard.config`                                | autowizard yaml config                           | `""`                            |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |

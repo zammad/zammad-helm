@@ -55,7 +55,7 @@ extraEnv: {}
 autoWizard:
   enabled: false
   # string with the autowizard config as yaml
-  config: ""
+  config: {}
     # Token: secret_zammad_autowizard_token
     # TextModuleLocale:
     #   Locale: en-us
