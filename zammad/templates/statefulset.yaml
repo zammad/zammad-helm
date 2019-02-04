@@ -100,7 +100,8 @@ spec:
         {{- range $key, $value := .Values.extraEnv }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
-        {{- end }}        ports:
+        {{- end }}
+        ports:
         - containerPort: 80
           name: http
         imagePullPolicy: {{ .Values.image.pullPolicy }}
