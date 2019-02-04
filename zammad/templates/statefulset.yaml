@@ -47,7 +47,7 @@ spec:
           value: "{{ .Values.envConfig.postgresql.db }}"
         - name: "POSTGRESQL_DB_CREATE"
           value: "{{ .Values.envConfig.postgresql.dbCreate }}"
-        {{- if .Values.autoWizard.enabled  }}
+        {{ if .Values.autoWizard.enabled }}
         - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
@@ -90,7 +90,7 @@ spec:
           value: "{{ .Values.envConfig.postgresql.db }}"
         - name: "POSTGRESQL_DB_CREATE"
           value: "{{ .Values.envConfig.postgresql.dbCreate }}"
-        {{- if .Values.autoWizard.enabled  }}
+        {{ if .Values.autoWizard.enabled }}
         - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
@@ -179,7 +179,7 @@ spec:
           value: "{{ .Values.envConfig.postgresql.db }}"
         - name: "POSTGRESQL_DB_CREATE"
           value: "{{ .Values.envConfig.postgresql.dbCreate }}"
-        {{- if .Values.autoWizard.enabled  }}
+        {{ if .Values.autoWizard.enabled }}
         - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
@@ -223,7 +223,7 @@ spec:
           value: "{{ .Values.envConfig.postgresql.db }}"
         - name: "POSTGRESQL_DB_CREATE"
           value: "{{ .Values.envConfig.postgresql.dbCreate }}"
-        {{- if .Values.autoWizard.enabled  }}
+        {{ if .Values.autoWizard.enabled }}
         - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
