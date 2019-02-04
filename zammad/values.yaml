@@ -26,7 +26,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-# zammad container can be configured by env vars
+# zammad container config
 envConfig:
   elasticsearch:
     # host env var is only used when useElasticsearch is false
