@@ -230,7 +230,7 @@ spec:
             secretKeyRef:
               name: {{ .Release.Name }}-autowizard
               key: autowizard
-        {{ end }}          
+        {{ end }}
         {{- range $key, $value := .Values.extraEnv }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
