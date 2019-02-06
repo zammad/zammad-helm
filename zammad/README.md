@@ -64,17 +64,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `postgresql.postgresqlUsername`                    | PostgreSQL user                                  | `zammad`                        |
 | `postgresql.postgresqlPassword`                    | PostgreSQL password                              | `zammad`                        |
 | `postgresql.postgresqlDatabase`                    | PostgreSQL DB                                    | `zammad_production`             |
-
-When `useElasticsearch`, `useMemcached` and/or `usePostgresql` are set to `false` you will need to provide the name and port of the external Elasticsearch, Memcached and/or PostgreSQL services that you wish Zammad to use, the following chart values can be used for this:
-
-| Parameter                                          | Description                                      | Default                         |
-| -------------------------------------------------- | ------------------------------------------------ | ------------------------------- |                                                                                                                
-| `externalElasticsearchHost.ELASTICSEARCH_HOST`     | Hostname of external Elasticsearch installation  | `elasticsearch`                 |                                                                                                                
-| `externalElasticsearchHost.ELASTICSEARCH_PORT`     | Port for external Elasticsearch installation     | `9200`                          |                                                                                                                
-| `externalMemcachedHost.MEMCACHED_HOST`             | Hostname of external Memcached installation      | `memcached`                     |                                                                                                                
-| `externalMemcachedHost.MEMCACHED_PORT`             | Port for external Memcached installation         | `11211`                         |                                                                                                                
-| `externalPostgresHost.POSTGRESQL_HOST`             | Hostname of external PostgreSQL installation     | `postgresql`                    |                                                                                                                
-| `externalPostgresHost.POSTGRESQL_PORT`             | Port for external PostgreSQL installation        | `5432`                          |                                                                                                                
+       
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
