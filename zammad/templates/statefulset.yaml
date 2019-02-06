@@ -24,39 +24,6 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         args: [ "zammad-init" ]
         env:
-        {{- if .Values.useElasticsearch }}
-        - name: "ELASTICSEARCH_HOST"
-          value: {{ .Release.Name }}-elasticsearch-client
-        - name: "ELASTICSEARCH_PORT"
-          value: "9200"
-        {{- else }}
-        {{- range $key, $value := .Values.externalElasticsearchHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.useMemcached }}
-        - name: "MEMCACHED_HOST"
-          value: {{ .Release.Name }}-memcached
-        - name: "MEMCACHED_PORT"
-          value: "11211"
-        {{- else }}
-        {{- range $key, $value := .Values.externalMemcachedHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.usePostgresql }}
-        - name: "POSTGRESQL_HOST"
-          value: {{ .Release.Name }}-postgresql
-        - name: "POSTGRESQL_PORT"
-          value: "5432"
-        {{- else }}
-        {{- range $key, $value := .Values.externalPostgresHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
         {{- range $key, $value := .Values.env }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
@@ -70,39 +37,6 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         args: [ "zammad-nginx" ]
         env:
-        {{- if .Values.useElasticsearch }}
-        - name: "ELASTICSEARCH_HOST"
-          value: {{ .Release.Name }}-elasticsearch-client
-        - name: "ELASTICSEARCH_PORT"
-          value: "9200"
-        {{- else }}
-        {{- range $key, $value := .Values.externalElasticsearchHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.useMemcached }}
-        - name: "MEMCACHED_HOST"
-          value: {{ .Release.Name }}-memcached
-        - name: "MEMCACHED_PORT"
-          value: "11211"
-        {{- else }}
-        {{- range $key, $value := .Values.externalMemcachedHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.usePostgresql }}
-        - name: "POSTGRESQL_HOST"
-          value: {{ .Release.Name }}-postgresql
-        - name: "POSTGRESQL_PORT"
-          value: "5432"
-        {{- else }}
-        {{- range $key, $value := .Values.externalPostgresHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
         {{- range $key, $value := .Values.env }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
@@ -134,39 +68,6 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         args: ["zammad-railsserver"]
         env:
-        {{- if .Values.useElasticsearch }}
-        - name: "ELASTICSEARCH_HOST"
-          value: {{ .Release.Name }}-elasticsearch-client
-        - name: "ELASTICSEARCH_PORT"
-          value: "9200"
-        {{- else }}
-        {{- range $key, $value := .Values.externalElasticsearchHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.useMemcached }}
-        - name: "MEMCACHED_HOST"
-          value: {{ .Release.Name }}-memcached
-        - name: "MEMCACHED_PORT"
-          value: "11211"
-        {{- else }}
-        {{- range $key, $value := .Values.externalMemcachedHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.usePostgresql }}
-        - name: "POSTGRESQL_HOST"
-          value: {{ .Release.Name }}-postgresql
-        - name: "POSTGRESQL_PORT"
-          value: "5432"
-        {{- else }}
-        {{- range $key, $value := .Values.externalPostgresHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
         {{- range $key, $value := .Values.env }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
@@ -196,39 +97,6 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         args: [ "zammad-scheduler" ]
         env:
-        {{- if .Values.useElasticsearch }}
-        - name: "ELASTICSEARCH_HOST"
-          value: {{ .Release.Name }}-elasticsearch-client
-        - name: "ELASTICSEARCH_PORT"
-          value: "9200"
-        {{- else }}
-        {{- range $key, $value := .Values.externalElasticsearchHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.useMemcached }}
-        - name: "MEMCACHED_HOST"
-          value: {{ .Release.Name }}-memcached
-        - name: "MEMCACHED_PORT"
-          value: "11211"
-        {{- else }}
-        {{- range $key, $value := .Values.externalMemcachedHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.usePostgresql }}
-        - name: "POSTGRESQL_HOST"
-          value: {{ .Release.Name }}-postgresql
-        - name: "POSTGRESQL_PORT"
-          value: "5432"
-        {{- else }}
-        {{- range $key, $value := .Values.externalPostgresHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
         {{- range $key, $value := .Values.env }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
@@ -243,39 +111,6 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         args: [ "zammad-websocket" ]
         env:
-        {{- if .Values.useElasticsearch }}
-        - name: "ELASTICSEARCH_HOST"
-          value: {{ .Release.Name }}-elasticsearch-client
-        - name: "ELASTICSEARCH_PORT"
-          value: "9200"
-        {{- else }}
-        {{- range $key, $value := .Values.externalElasticsearchHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.useMemcached }}
-        - name: "MEMCACHED_HOST"
-          value: {{ .Release.Name }}-memcached
-        - name: "MEMCACHED_PORT"
-          value: "11211"
-        {{- else }}
-        {{- range $key, $value := .Values.externalMemcachedHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.usePostgresql }}
-        - name: "POSTGRESQL_HOST"
-          value: {{ .Release.Name }}-postgresql
-        - name: "POSTGRESQL_PORT"
-          value: "5432"
-        {{- else }}
-        {{- range $key, $value := .Values.externalPostgresHost }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        {{- end }}
         {{- range $key, $value := .Values.env }}
         - name: "{{ $key }}"
           value: "{{ $value }}"
