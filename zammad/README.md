@@ -64,6 +64,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `postgresql.postgresqlUsername`                    | PostgreSQL user                                  | `zammad`                        |
 | `postgresql.postgresqlPassword`                    | PostgreSQL password                              | `zammad`                        |
 | `postgresql.postgresqlDatabase`                    | PostgreSQL DB                                    | `zammad_production`             |
+       
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
