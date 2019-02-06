@@ -27,6 +27,12 @@ ingress:
 
 # zammad containers can be configured by env vars
 env:
+  ELASTICSEARCH_HOST: zammad-elasticsearch-client
+  ELASTICSEARCH_PORT: 9200
+  MEMCACHED_HOST: zammad-memcached
+  MEMCACHED_PORT: 11211
+  POSTGRESQL_HOST: zammad-postgresql
+  POSTGRESQL_PORT: 5432
   POSTGRESQL_USER: zammad
   POSTGRESQL_PASS: zammad
   POSTGRESQL_DB: zammad_production
@@ -35,19 +41,6 @@ env:
   ZAMMAD_RAILSSERVER_PORT: 3000
   ZAMMAD_WEBSOCKET_HOST: zammad-websocket
   ZAMMAD_WEBSOCKET_PORT: 6042
-
-# some env vars can only be configured when providing own instances
-externalElasticsearchHost:
-  ELASTICSEARCH_HOST: elasticsearch
-  ELASTICSEARCH_PORT: 9200
-
-externalMemcachedHost:
-  MEMCACHED_HOST: memcached
-  MEMCACHED_PORT: 11211
-
-externalPostgresHost:
-  POSTGRESQL_HOST: postgresql
-  POSTGRESQL_PORT: 5432
 
 persistence:
   enabled: true
