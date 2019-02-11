@@ -1,10 +1,9 @@
 #!/bin/sh
 #
-# lint charts
+# lint chart
 #
 
 set -o errexit
-set -o pipefail
 
 CONFIG_DIR=".circleci"
 GIT_REPO="https://github.com/zammad/helm"
