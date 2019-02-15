@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # deploy zammad chart to zammad.github.io
 #

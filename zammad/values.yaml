@@ -1,10 +1,11 @@
+# use dependency charts
 useElasticsearch: true
 useMemcached: true
 usePostgresql: true
 
 image:
   repository: zammad/zammad-docker-compose
-  tag: 2.8.0-26
+  tag: 2.9.0-1
   pullPolicy: IfNotPresent
 
 service:
@@ -25,22 +26,69 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-# zammad containers can be configured by env vars
-env:
-  ELASTICSEARCH_HOST: zammad-elasticsearch-client
-  ELASTICSEARCH_PORT: 9200
-  MEMCACHED_HOST: zammad-memcached
-  MEMCACHED_PORT: 11211
-  POSTGRESQL_HOST: zammad-postgresql
-  POSTGRESQL_PORT: 5432
-  POSTGRESQL_USER: zammad
-  POSTGRESQL_PASS: zammad
-  POSTGRESQL_DB: zammad_production
-  POSTGRESQL_DB_CREATE: false
-  ZAMMAD_RAILSSERVER_HOST: zammad-railsserver
-  ZAMMAD_RAILSSERVER_PORT: 3000
-  ZAMMAD_WEBSOCKET_HOST: zammad-websocket
-  ZAMMAD_WEBSOCKET_PORT: 6042
+# zammad container config
+envConfig:
+  elasticsearch:
+    # host env var is only used when useElasticsearch is false
+    host: zammad-elasticsearch-client
+    port: 9200
+  memcached:
+    # host env var is only used when useMemcached is false
+    host: zammad-memcached
+    port: 11211
+  postgresql:
+    # host env var is only used when usePostgresql is false
+    host: zammad-postgresql
+    port: 5432
+    # needs to be the same as the postgresql.postgresqlUsername
+    user: zammad
+    # needs to be the same as the postgresql.postgresqlPassword
+    pass: "zammad"
+    # needs to be the same as the postgresql.postgresqlDatabase
+    db: zammad_production
+    dbCreate: false
+
+# additional environemnt vars
+extraEnv: {}
+
+# autowizard config
+# if a token is used the url hast to look like: http://zammad/#getting_started/auto_wizard/your_token_here
+autoWizard:
+  enabled: false
+  # string with the autowizard config as json
+  # config: |
+  #   {
+  #     "Token": "secret_zammad_autowizard_token",
+  #     "TextModuleLocale": {
+  #       "Locale": "en-us"
+  #     },
+  #     "Users": [
+  #       {
+  #         "login": "email@example.org",
+  #         "firstname": "Zammad",
+  #         "lastname": "Admin",
+  #         "email": "email@example.org",
+  #         "organization": "ZammadTest",
+  #         "password": "test1234"
+  #       }
+  #     ],
+  #     "Settings": [
+  #       {
+  #         "name": "product_name",
+  #         "value": "ZammadTestSystem"
+  #       },
+  #       {
+  #         "name": "system_online_service",
+  #         "value": true
+  #       }
+  #     ],
+  #     "Organizations": [
+  #       {
+  #         "name": "ZammadTest"
+  #       }
+  #     ]
+  #   }
+
 
 persistence:
   enabled: true
@@ -104,7 +152,7 @@ affinity: {}
 elasticsearch:
   image:
     repository: "zammad/zammad-docker-compose"
-    tag: "zammad-elasticsearch-2.8.0-26"
+    tag: "zammad-elasticsearch-2.9.0-1"
   cluster:
     xpackEnable: false
     # See README for proper configuration
