@@ -5,7 +5,7 @@ usePostgresql: true
 
 image:
   repository: zammad/zammad-docker-compose
-  tag: 2.8.0-31
+  tag: 2.9.0-1
   pullPolicy: IfNotPresent
 
 service:
@@ -51,7 +51,8 @@ envConfig:
 # additional environemnt vars
 extraEnv: {}
 
-# varibales used to generate the
+# autowizard config
+# if a token is used the url hast to look like: http://zammad/#getting_started/auto_wizard/your_token_here
 autoWizard:
   enabled: false
   # string with the autowizard config as json
@@ -151,7 +152,7 @@ affinity: {}
 elasticsearch:
   image:
     repository: "zammad/zammad-docker-compose"
-    tag: "zammad-elasticsearch-2.8.0-31"
+    tag: "zammad-elasticsearch-2.9.0-1"
   cluster:
     xpackEnable: false
     # See README for proper configuration

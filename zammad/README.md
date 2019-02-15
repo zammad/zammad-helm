@@ -52,7 +52,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `envConfig.postgresql.db`                          | PostgreSql database                              | `zammad_production`             |
 | `envConfig.postgresql.dbCreate`                    | Create PostgreSql database                       | `false`                         |
 | `autoWizard.enabled`                               | enable autowizard                                | `false`                         |
-| `autoWizard.config`                                | autowizard yaml config                           | `""`                            |
+| `autoWizard.config`                                | autowizard json config                           | `""`                            |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |
 | `persistence.accessMode`                           | Access mode                                      | `ReadWriteOnce`                 |
 | `persistence.size`                                 | Volume size                                      | `15Gi`                          |
