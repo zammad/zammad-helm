@@ -41,7 +41,18 @@ The following table lists the configurable parameters of the zammad chart and th
 | `ingress.path`                                     | Ingress path                                     | ``                              |
 | `ingress.hosts`                                    | Ingress hosts                                    | ``                              |
 | `ingress.tls`                                      | Ingress TLS                                      | `[]`                            |
-| `env`                                              | Environment variables                            | `See values.yaml`               |
+| `envConfig.elasticsearch.host`                     | Elasticsearch host                               | `zammad-elasticsearch-client`   |
+| `envConfig.elasticsearch.port`                     | Elasticsearch port                               | `9200`                          |
+| `envConfig.memcached.host`                         | Memcached host                                   | `zammad-memcached`              |
+| `envConfig.memcached.port`                         | Memcached port                                   | `11211`                         |
+| `envConfig.postgresql.host`                        | PostgreSql host                                  | `zammad-postgresql`             |
+| `envConfig.postgresql.port`                        | PostgreSql port                                  | `5432`                          |
+| `envConfig.postgreql.pass`                         | PostgreSql pass                                  | ``                              |
+| `envConfig.postgresql.user`                        | PostgreSql user                                  | `zammad`                        |
+| `envConfig.postgresql.db`                          | PostgreSql database                              | `zammad_production`             |
+| `envConfig.postgresql.dbCreate`                    | Create PostgreSql database                       | `false`                         |
+| `autoWizard.enabled`                               | enable autowizard                                | `false`                         |
+| `autoWizard.config`                                | autowizard json config                           | `""`                            |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |
 | `persistence.accessMode`                           | Access mode                                      | `ReadWriteOnce`                 |
 | `persistence.size`                                 | Volume size                                      | `15Gi`                          |
@@ -64,6 +75,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `postgresql.postgresqlUsername`                    | PostgreSQL user                                  | `zammad`                        |
 | `postgresql.postgresqlPassword`                    | PostgreSQL password                              | `zammad`                        |
 | `postgresql.postgresqlDatabase`                    | PostgreSQL DB                                    | `zammad_production`             |
+       
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
