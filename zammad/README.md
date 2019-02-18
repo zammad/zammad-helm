@@ -5,13 +5,15 @@ This directory contains a Kubernetes chart to deploy [Zammad](https://zammad.org
 ## Prerequisites Details
 
 -   Kubernetes 1.8+
+-   Cluster with at least 4GB of free RAM
 
 ## Chart Details
 
 This chart will do the following:
 
--   Install Zammad deployment
+-   Install Zammad statefulset
 -   Install Elasticsearch, Memcached & PostgreSQL as requirements
+
 
 ## Installing the Chart
 
@@ -75,7 +77,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `postgresql.postgresqlUsername`                    | PostgreSQL user                                  | `zammad`                        |
 | `postgresql.postgresqlPassword`                    | PostgreSQL password                              | `zammad`                        |
 | `postgresql.postgresqlDatabase`                    | PostgreSQL DB                                    | `zammad_production`             |
-       
+
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
