@@ -154,6 +154,7 @@ elasticsearch:
     repository: "zammad/zammad-docker-compose"
     tag: "zammad-elasticsearch-3.0.0-5"
   cluster:
+    name: zammad
     xpackEnable: false
     # See README for proper configuration
     env:
