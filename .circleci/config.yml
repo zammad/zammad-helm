@@ -65,7 +65,7 @@ jobs:
 
   deploy-chart:
     docker:
-      - image: kiwigrid/gcloud-kubectl-helm:2.13.0-234.0.0-90
+      - image: kiwigrid/gcloud-kubectl-helm:2.14.1-249.0.0-148
     steps:
       - add_ssh_keys:
           fingerprints:
