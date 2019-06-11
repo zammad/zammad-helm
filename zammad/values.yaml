@@ -5,7 +5,7 @@ usePostgresql: true
 
 image:
   repository: zammad/zammad-docker-compose
-  tag: 2.9.0-3
+  tag: 3.0.0-5
   pullPolicy: IfNotPresent
 
 service:
@@ -152,7 +152,7 @@ affinity: {}
 elasticsearch:
   image:
     repository: "zammad/zammad-docker-compose"
-    tag: "zammad-elasticsearch-2.9.0-3"
+    tag: "zammad-elasticsearch-3.0.0-5"
   cluster:
     xpackEnable: false
     # See README for proper configuration
