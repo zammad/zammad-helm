@@ -84,7 +84,7 @@ spec:
         - name: "POSTGRESQL_PASS"
           valueFrom:
             secretKeyRef:
-              name: "{{ .Release.Name }}-postgresql-pass"
+              name: "{{ template "zammad.fullname" . }}-postgresql-pass"
               key: "postgresql-pass"
         - name: "POSTGRESQL_DB"
           value: "{{ .Values.envConfig.postgresql.db }}"
