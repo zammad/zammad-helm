@@ -270,10 +270,15 @@ spec:
       - name: {{ template "zammad.fullname" . }}-nginx
         configMap:
           name: {{ template "zammad.fullname" . }}-nginx
+      {{- if not .Values.persistence.enabled }}
       - name: {{ template "zammad.fullname" . }}
-      {{- if .Values.persistence.enabled }}
+        emptyDir: {}
+      {{ else if not .Values.persistence.volumeClaimTemplates }}
+      - name: {{ template "zammad.fullname" . }}
         persistentVolumeClaim:
           claimName: {{ .Values.persistence.existingClaim | default (include "zammad.fullname" .) }}
-      {{- else }}
-        emptyDir: {}
       {{- end -}}
+{{- if and .Values.persistence.enabled .Values.persistence.volumeClaimTemplates }}
+  volumeClaimTemplates:
+{{ toYaml .Values.persistence.volumeClaimTemplates | indent 4 }}
+{{- end -}}

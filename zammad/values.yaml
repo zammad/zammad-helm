@@ -108,6 +108,19 @@ persistence:
   accessMode: ReadWriteOnce
   size: 15Gi
 
+  ## Use volume claim templates instead for greater customizability (don't mix with the properties above):
+  # volumeClaimTemplates:
+  #   - metadata:
+  #       # when using helm template to generate manifests, the name to use is the value of `--name` parameter + "-zammad" suffix
+  #       # e.g. when using `helm template --name example-support-center -f values.yaml ...` it'd be:
+  #       name: example-support-center-zammad
+  #     spec:
+  #       accessModes: ["ReadWriteOnce"]
+  #       storageClassName: "-"
+  #       resources:
+  #         requests:
+  #           storage: 15Gi
+
 # We usually recommend not to specify default resources and to leave this as a conscious
 # choice for the user. This also increases chances charts run on environments with little
 # resources, such as Minikube. If you do want to specify resources, uncomment the following
