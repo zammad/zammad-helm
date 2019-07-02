@@ -51,7 +51,7 @@ spec:
         - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
-              name: "{{ .Release.Name }}-autowizard"
+              name: "{{ template "zammad.fullname" . }}-autowizard"
               key: "autowizard"
         {{ end }}
         {{- range $key, $value := .Values.extraEnv }}
@@ -94,7 +94,7 @@ spec:
         - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
-              name: "{{ .Release.Name }}-autowizard"
+              name: "{{ template "zammad.fullname" . }}-autowizard"
               key: "autowizard"
         {{ end }}
         {{- range $key, $value := .Values.extraEnv }}
@@ -184,7 +184,7 @@ spec:
         - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
-              name: "{{ .Release.Name }}-autowizard"
+              name: "{{ template "zammad.fullname" . }}-autowizard"
               key: "autowizard"
         {{ end }}
         {{- range $key, $value := .Values.extraEnv }}
@@ -228,7 +228,7 @@ spec:
         - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
-              name: "{{ .Release.Name }}-autowizard"
+              name: "{{ template "zammad.fullname" . }}-autowizard"
               key: "autowizard"
         {{ end }}
         {{- range $key, $value := .Values.extraEnv }}
