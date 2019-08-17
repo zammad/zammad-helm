@@ -34,7 +34,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `useMemcached`                                     | Use Memcached dependency                         | `true`                          |
 | `usePostgresql`                                    | Use PostgreSQL dependency                        | `true`                          |
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                        | Container image tag to deploy                    | `3.0.0-5`                       |
+| `image.tag`                                        | Container image tag to deploy                    | `3.1.0-10`                       |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
 | `service.type`                                     | Service type                                     | `ClusterIP`                     |
 | `service.port`                                     | Service port                                     | `80`                            |
@@ -66,7 +66,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `tolerations`                                      | Tolerations                                      | `[]`                            |
 | `affinity`                                         | Affinity                                         | `{}`                            |
 | `elasticsearch.image.repository`                   | Elasticsearch image repo                         | `zammad/zammad-docker-compose`  |
-| `elasticsearch.image.tag`                          | Elasticsearch image tag                          | `zammad-elasticsearch-3.0.0-5`  |
+| `elasticsearch.image.tag`                          | Elasticsearch image tag                          | `zammad-elasticsearch-3.1.0-10`  |
 | `elasticsearch.cluster.xpackEnable`                | Enable Elasticsearch Xpack option                | `false`                         |
 | `elasticsearch.cluster.env`                        | Elasticsearch environment variables              | ``                              |
 | `elasticsearch.client.replicas`                    | Elasticsearch client replicas                    | `1`                             |
