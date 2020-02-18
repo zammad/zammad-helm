@@ -53,8 +53,10 @@ The following table lists the configurable parameters of the zammad chart and th
 | `autoWizard.enabled`                               | enable autowizard                                | `false`                         |
 | `autoWizard.config`                                | autowizard json config                           | `""`                            |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |
-| `persistence.accessMode`                           | Access mode                                      | `ReadWriteOnce`                 |
+| `persistence.accessModes`                          | Access modes                                     | `["ReadWriteOnce"]`             |
 | `persistence.size`                                 | Volume size                                      | `15Gi`                          |
+| `persistence.storageClass`                         | storage class                                    | `""`                            |
+| `persistence.annotations`                          | annotations                                      | `{}`                            |
 | `resources.nginx`                                  | Resource usage of Zammad's nginx container       | `{}`                            |
 | `resources.railsserver`                            | Resource usage of Zammad's railsserver container | `{}`                            |
 | `resources.scheduler`                              | Resource usage of Zammad's scheduler container   | `{}`                            |

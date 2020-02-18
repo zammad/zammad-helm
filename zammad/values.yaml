@@ -23,18 +23,18 @@ ingress:
 # zammad container config
 envConfig:
   elasticsearch:
-    # host env var is only used when useElasticsearch is false
+    # host env var is only used when elasticsearch.enabled is false
     schema: http
     host: zammad-master
     port: 9200
     user:
     pass:
   memcached:
-    # host env var is only used when useMemcached is false
+    # host env var is only used when memcached.enabled is false
     host: zammad-memcached
     port: 11211
   postgresql:
-    # host env var is only used when usePostgresql is false
+    # host env var is only used when postgresql.enabled is false
     host: zammad-postgresql
     port: 5432
     # needs to be the same as the postgresql.postgresqlUsername
@@ -142,7 +142,7 @@ affinity: {}
 elasticsearch:
   enabled: true
   image: "zammad/zammad-docker-compose"
-  imageTag: "zammad-elasticsearch-3.2.0-12"
+  imageTag: "zammad-elasticsearch-latest"
   clusterName: zammad
   replicas: 1
   resources: {}
