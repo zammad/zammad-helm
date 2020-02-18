@@ -142,7 +142,7 @@ affinity: {}
 elasticsearch:
   enabled: true
   image: "zammad/zammad-docker-compose"
-  imageTag: "zammad-elasticsearch-latest"
+  imageTag: "zammad-elasticsearch"
   clusterName: zammad
   replicas: 1
   resources: {}
