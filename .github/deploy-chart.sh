@@ -6,7 +6,7 @@
 set -o errexit
 set -o pipefail
 
-CHART_DIR="charts"
+CHART_DIR="zammad"
 CHART_REPO="git@github.com:zammad/zammad.github.io.git"
 REPO_DIR="zammad.github.io"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
