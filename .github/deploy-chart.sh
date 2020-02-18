@@ -57,8 +57,10 @@ mv "${REPO_ROOT}"/"${REPO_DIR}"/*.tgz "${REPO_ROOT}"/"${TMP_DIR}"
 if ! helm repo list | grep -q "^stable"; then
   helm repo add stable https://kubernetes-charts.storage.googleapis.com
 fi
+
 helm repo add bitnami https://charts.bitnami.com
 helm repo add elastic https://helm.elastic.co
+
 helm repo update
 
 # build helm dependencies for all charts
