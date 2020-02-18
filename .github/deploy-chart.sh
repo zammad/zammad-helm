@@ -31,7 +31,7 @@ while read -r FILE; do
     echo "append chart ${FILE}"
     CHARTS="${CHARTS} $(yq r - name < "${FILE}")"
   fi
-done < <(find "${REPO_ROOT}/${CHART_DIR}" -maxdepth 2 -mindepth 2 -type f -name "[Cc]hart.yaml")
+done < <(find "${REPO_ROOT}/${CHART_DIR}" -maxdepth 1 -mindepth 1 -type f -name "[Cc]hart.yaml")
 
 if [ -z "${CHARTS}" ]; then
   echo "no chart changes... so no chart build and upload needed... exiting..."
@@ -57,7 +57,10 @@ mv "${REPO_ROOT}"/"${REPO_DIR}"/*.tgz "${REPO_ROOT}"/"${TMP_DIR}"
 if ! helm repo list | grep -q "^stable"; then
   helm repo add stable https://kubernetes-charts.storage.googleapis.com
 fi
-helm repo add zammad https://zammad.github.io
+
+helm repo add bitnami https://charts.bitnami.com
+helm repo add elastic https://helm.elastic.co
+
 helm repo update
 
 # build helm dependencies for all charts
