@@ -50,7 +50,6 @@ The following table lists the configurable parameters of the zammad chart and th
 | `envConfig.postgresql.pass`                        | PostgreSql pass                                  | `""`                            |
 | `envConfig.postgresql.user`                        | PostgreSql user                                  | `zammad`                        |
 | `envConfig.postgresql.db`                          | PostgreSql database                              | `zammad_production`             |
-| `envConfig.postgresql.dbCreate`                    | Create PostgreSql database                       | `false`                         |
 | `autoWizard.enabled`                               | enable autowizard                                | `false`                         |
 | `autoWizard.config`                                | autowizard json config                           | `""`                            |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |
@@ -68,7 +67,6 @@ The following table lists the configurable parameters of the zammad chart and th
 | `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.2.0-12` |
 | `elasticsearch.clusterName`                        | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                           | Elasticsearch replicas                           | `1`                             |
-| `elasticsearch.minimumMasterNodes`                 | Elasticsearch minimum Master Nodes               | `1`                             |
 | `memcached.enabled`                                | Use Memcached dependency                         | `true`                          |
 | `memcached.replicaCount`                           | Memcached replicas                               | `1`                             |
 | `postgresql.enabled`                               | Use PostgreSQL dependency                        | `true`                          |
