@@ -1,0 +1,7 @@
+chart-dirs: .
+helm-extra-args: --timeout 1200
+check-version-increment: true
+debug: true
+chart-repos:
+  - bitnami=https://charts.bitnami.com
+  - elastic=https://helm.elastic.co

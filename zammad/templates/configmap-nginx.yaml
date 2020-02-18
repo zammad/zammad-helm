@@ -3,10 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ template "zammad.fullname" . }}-nginx
   labels:
-    app.kubernetes.io/name: {{ include "zammad.name" . }}
-    helm.sh/chart: {{ include "zammad.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "zammad.labels" . | nindent 4 }}
 data:
   config: |-
     #
@@ -24,7 +21,7 @@ data:
     }
 
     server {
-        listen 80;
+        listen 8080;
 
         server_name _;
 
@@ -37,6 +34,10 @@ data:
 
         location ~ ^/(assets/|robots.txt|humans.txt|favicon.ico) {
             expires max;
+        }
+
+        location ^~ auto_wizard.json {
+            return 500;
         }
 
         location /ws {

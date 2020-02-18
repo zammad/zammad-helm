@@ -1,43 +1,40 @@
-# use dependency charts
-useElasticsearch: true
-useMemcached: true
-usePostgresql: true
-
 image:
   repository: zammad/zammad-docker-compose
-  tag: 3.1.0-10
+  tag: 3.2.0-12
   pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
 
 ingress:
   enabled: false
-  annotations:
-    ingress.kubernetes.io/proxy-body-size: 50m
+  annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  path: /
   hosts:
-    - chart-example.local
+    - host: example.local
+      paths: ["/"]
   tls: []
   #  - secretName: zammad-tls
   #    hosts:
-  #      - chart-example.local
+  #      - example.local
 
 # zammad container config
 envConfig:
   elasticsearch:
-    # host env var is only used when useElasticsearch is false
-    host: zammad-elasticsearch-client
+    # host env var is only used when elasticsearch.enabled is false
+    schema: http
+    host: zammad-master
     port: 9200
+    user:
+    pass:
   memcached:
-    # host env var is only used when useMemcached is false
+    # host env var is only used when memcached.enabled is false
     host: zammad-memcached
     port: 11211
   postgresql:
-    # host env var is only used when usePostgresql is false
+    # host env var is only used when postgresql.enabled is false
     host: zammad-postgresql
     port: 5432
     # needs to be the same as the postgresql.postgresqlUsername
@@ -46,7 +43,6 @@ envConfig:
     pass: "zammad"
     # needs to be the same as the postgresql.postgresqlDatabase
     db: zammad_production
-    dbCreate: false
 
 # additional environemnt vars
 extraEnv: {}
@@ -69,7 +65,7 @@ autoWizard:
   #         "lastname": "Admin",
   #         "email": "email@example.org",
   #         "organization": "ZammadTest",
-  #         "password": "test1234"
+  #         "password": "YourPassword"
   #       }
   #     ],
   #     "Settings": [
@@ -89,24 +85,18 @@ autoWizard:
   #     ]
   #   }
 
-
 persistence:
   enabled: true
   ## A manually managed Persistent Volume and Claim
-  ## Requires persistence.enabled: true
   ## If defined, PVC must be created manually before volume will be bound
-  # existingClaim:
-
-  ## Zammad data Persistent Volume Storage Class
-  ## If defined, storageClassName: <storageClass>
-  ## If set to "-", storageClassName: "", which disables dynamic provisioning
-  ## If undefined (the default) or set to null, no storageClassName spec is
-  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-  ##   GKE, AWS & OpenStack)
+  ## The value is evaluated as a template, so, for example, the name can depend on .Release or .Chart
   ##
-  # storageClass: "-"
-  accessMode: ReadWriteOnce
+  # existingClaim:
+  accessModes:
+    - ReadWriteOnce
+  storageClass: ""
   size: 15Gi
+  annotations: {}
 
 # We usually recommend not to specify default resources and to leave this as a conscious
 # choice for the user. This also increases chances charts run on environments with little
@@ -150,49 +140,36 @@ affinity: {}
 
 
 elasticsearch:
-  image:
-    repository: "zammad/zammad-docker-compose"
-    tag: "zammad-elasticsearch-3.1.0-10"
-  cluster:
-    name: zammad
-    xpackEnable: false
-    # See README for proper configuration
-    env:
-      EXPECTED_MASTER_NODES: "1"
-      MINIMUM_MASTER_NODES: "1"
-      RECOVER_AFTER_MASTER_NODES: "1"
-      XPACK_MONITORING_ENABLED: false
-  client:
-    replicas: 1
-    # resources:
-    #   requests:
-    #     cpu: "25m"
-    #     memory: "512Mi"
-    #   limits:
-    #     cpu: "300m"
-    #     memory: "1024Mi"
-  data:
-    terminationGracePeriodSeconds: 60
-    replicas: 1
-    # resources:
-    #   requests:
-    #     cpu: "175m"
-    #     memory: "1536Mi"
-    #   limits:
-    #     cpu: "350m"
-    #     memory: "2048Mi"
-  master:
-    replicas: 1
-    # resources:
-    #   requests:
-    #     cpu: "25m"
-    #     memory: "512Mi"
-    #   limits:
-    #     cpu: "300m"
-    #     memory: "1024Mi"
-
+  enabled: true
+  image: "zammad/zammad-docker-compose"
+  imageTag: "zammad-elasticsearch"
+  clusterName: zammad
+  replicas: 1
+  clusterHealthCheckParams: "timeout=1s"
+  resources: {}
+    # requests:
+    #   cpu: "100m"
+    #   memory: "2Gi"
+    # limits:
+    #   cpu: "1000m"
+    #   memory: "2Gi"
+  initResources: {}
+    # limits:
+    #   cpu: "25m"
+    #   # memory: "128Mi"
+    # requests:
+    #   cpu: "25m"
+    #   memory: "128Mi"
+  sidecarResources: {}
+    # limits:
+    #   cpu: "25m"
+    #   # memory: "128Mi"
+    # requests:
+    #   cpu: "25m"
+    #   memory: "128Mi"
 
 memcached:
+  enabled: true
   replicaCount: 1
   # resources:
   #   requests:
@@ -202,8 +179,8 @@ memcached:
   #     cpu: 100m
   #     memory: 128Mi
 
-
 postgresql:
+  enabled: true
   postgresqlUsername: zammad
   postgresqlPassword: zammad
   postgresqlDatabase: zammad_production
