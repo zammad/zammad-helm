@@ -26,7 +26,8 @@ helm upgrade --install zammad zammad/zammad --namespace zammad
 ## Configuration
 
 The following table lists the configurable parameters of the zammad chart and their default values.
-| Description                                        | Default                                          |
+
+| Parameter                                          | Description                                      | Default                         |
 | -------------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
 | `image.tag`                                        | Container image tag to deploy                    | `3.2.0-12`                      |
