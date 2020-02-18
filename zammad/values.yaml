@@ -145,8 +145,8 @@ elasticsearch:
   imageTag: "zammad-elasticsearch"
   clusterName: zammad
   replicas: 1
-  resources: {}
   clusterHealthCheckParams: "timeout=1s"
+  resources: {}
     # requests:
     #   cpu: "100m"
     #   memory: "2Gi"
