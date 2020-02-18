@@ -1,2 +1,0 @@
-chart-dirs: .
-helm-extra-args: --timeout 3600
