@@ -64,12 +64,12 @@ helm repo add elastic https://helm.elastic.co
 helm repo update
 
 # build helm dependencies for all charts
-find "${REPO_ROOT}"/"${CHART_DIR}" -mindepth 1 -maxdepth 1 -type d -exec helm dependency build {} \;
+find "${REPO_ROOT}"/"${CHART_DIR}" -mindepth 0 -maxdepth 0 -type d -exec helm dependency build {} \;
 
 # package only changed charts
 for CHART in ${CHARTS}; do
   echo "building ${CHART} chart..."
-  helm package "${REPO_ROOT}"/"${CHART_DIR}"/"${CHART}" --destination "${REPO_ROOT}"/"${REPO_DIR}"
+  helm package "${REPO_ROOT}"/"${CHART_DIR}" --destination "${REPO_ROOT}"/"${REPO_DIR}"
 done
 
 # Create index and merge with previous index which contains the non-changed charts
