@@ -83,5 +83,5 @@ cd "${REPO_ROOT}"/"${REPO_DIR}"
 git config --global user.email "ci@zammad-robot.com"
 git config --global user.name "zammad-ci-bot"
 git add --all .
-git commit -m "Push zammad charts via Github actions"
+git commit -m "Push zammad chart via Github actions"
 git push --set-upstream origin master
