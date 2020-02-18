@@ -23,4 +23,3 @@ jobs:
         uses: docker://kiwigrid/gcloud-kubectl-helm:2.16.1-272.0.0-184
         with:
           args: .github/deploy-chart.sh
-
