@@ -141,8 +141,8 @@ affinity: {}
 
 elasticsearch:
   enabled: true
-  image: "monotek/zammad-docker-compose"
-  imageTag: "zammad-elasticsearch"
+  image: "zammad/zammad-docker-compose"
+  imageTag: "zammad-elasticsearch-3.2.0-12"
   clusterName: zammad
   replicas: 1
   resources: {}

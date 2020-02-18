@@ -56,9 +56,7 @@ spec:
             set -e
             sed -e "s#.*adapter:.*#  adapter: postgresql#g" -e "s#.*database:.*#  database: {{ .Values.envConfig.postgresql.db }}#g" -e "s#.*username:.*#  username: {{ .Values.envConfig.postgresql.user }}#g" -e "s#.*password:.*#  password: ${POSTGRESQL_PASS}\\n  host: {{ if .Values.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}\\n  port: {{ .Values.envConfig.postgresql.port }}#g" < contrib/packager.io/database.yml.pkgr > config/database.yml
             bundle exec rake db:migrate
-            set +e
             bundle exec rake db:seed
-            set -e
             bundle exec rake db:migrate
         env:
         - name: "POSTGRESQL_PASS"
