@@ -103,55 +103,40 @@ Open your browser on <http://localhost:8080>
 
 ### From chart version 1.x
 
-**Before the update backup Zammad files and make a PostgreSQL backup, as you will need these backups later!**
-
-There is no upgrade path as nearly everything has changed:
-
+This has changed:
 - requirement chart condition variable name was changed
 - the lables have changed
+- the persistent volume claim was changed to persistent volume claim template
+  - import your filebackup here
 - all requirement charts has been updated to the latest versions
   - Elasticsearch
-    - Docker image was changed to elastic/elasticsearch
+    - docker image was changed to elastic/elasticsearch
     - version was raised from 5.6 to 7.6
     - reindexing will be done automatically
   - Postgres
     - bitnami/postgresql chart is used instead of stable/postgresql
-    - ersion was raised  from 10.6.0 to 11.7.0
-    - There is no automated upgrade path
-    - You have to import a backup manually
+    - version was raised from 10.6.0 to 11.7.0
+    - there is no automated upgrade path
+    - you have to import a backup manually
   - Memcached
     - bitnami/memcached chart is used instead of stable/memcached
     - version was raised from 1.5.6 to 1.5.22
     - nothing to do here
 
-The only way is:
+**Before the update backup Zammad files and make a PostgreSQL backup, as you will need these backups later!**
+
+- If your helm release was named "zammad" and also installed in the namespace "zammad" like:
+
+```
+helm upgrade --install zammad zammad/zammad --namespace=zammad --version=1.2.1
+```
+
+- Do the upgrade like this:
 
 ```
 helm delete --purge zammad
+kubectl -n zammad delete pvc data-zammad-postgresql-0 data-zammad-elasticsearch-data-0 data-zammad-elasticsearch-master-0
+helm upgrade --install zammad zammad/zammad --namespace=zammad --version=2.0.3
 ```
 
-- After that check the remaining PVCs as statefulset PVCs are not deleted when statefuleset is deleted.
-
-```
-kubectl -n zammad get pvc
-```
-
-- Delete the PVCs
-
-```
-kubectl -n zammad delete pvc PVC-Name1 PVC-Name2 ...
-```
-
-If you installed Zammad in an own namespace you can also just delete that namespace after the helm delete
-
-```
-kubectl delete ns zammad
-```
-
-- Install Zammad again
-
-```
-helm upgrade --install zammad zammad/zammad --namespace zammad
-```
-
-- Import your file and SQL backups
+- Import your file and SQL backups inside the Zammad & Postgresql containers

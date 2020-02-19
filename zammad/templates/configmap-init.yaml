@@ -21,8 +21,9 @@ data:
     if ! (bundle exec rails r 'puts User.any?' 2> /dev/null | grep -q true); then
         bundle exec rake db:migrate
         bundle exec rake db:seed
+    else
+        bundle exec rake db:migrate
     fi
-    bundle exec rake db:migrate
   zammad-init: |-
     #!/bin/bash
     set -ex
