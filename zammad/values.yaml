@@ -145,7 +145,7 @@ elasticsearch:
   imageTag: "zammad-elasticsearch"
   clusterName: zammad
   replicas: 1
-  # Workaround to get ES test work in GitHubCI 
+  # Workaround to get ES test work in GitHubCI
   # the [ES chart](https://github.com/elastic/helm-charts/tree/master/elasticsearch) default would be: "wait_for_status=green&timeout=1s"
   # see: <https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html#request-params>
   clusterHealthCheckParams: "timeout=1s"
