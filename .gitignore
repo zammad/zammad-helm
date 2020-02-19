@@ -1,4 +1,3 @@
-.circleci/test.sh
 tmp
 zammad.github.io
 zammad/charts

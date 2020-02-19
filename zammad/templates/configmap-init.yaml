@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "zammad.fullname" . }}-init
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+data:
+  elasticsearch-init: |-
+    #!/bin/bash
+    set -ex
+    bundle exec rails r 'Setting.set("es_url", "{{ .Values.envConfig.elasticsearch.schema }}://{{ if .Values.elasticsearch.enabled }}zammad-master{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}:{{ .Values.envConfig.elasticsearch.port }}")'
+    {{- if and .Values.elasticsearch.user .Values.elasticsearch.pass }}
+    bundle exec rails r 'Setting.set("es_user", "{{ .Values.envConfig.elasticsearch.user }}")'
+    bundle exec rails r 'Setting.set("es_password", "{{ .Values.envConfig.elasticsearch.pass }}")'
+    {{ end }}
+    bundle exec rake searchindex:rebuild
+  postgresql-init: |-
+    #!/bin/bash
+    set -ex
+    sed -e "s#.*adapter:.*#  adapter: postgresql#g" -e "s#.*database:.*#  database: {{ .Values.envConfig.postgresql.db }}#g" -e "s#.*username:.*#  username: {{ .Values.envConfig.postgresql.user }}#g" -e "s#.*password:.*#  password: ${POSTGRESQL_PASS}\\n  host: {{ if .Values.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}\\n  port: {{ .Values.envConfig.postgresql.port }}#g" < contrib/packager.io/database.yml.pkgr > config/database.yml
+    if ! (bundle exec rails r 'puts User.any?' 2> /dev/null | grep -q true); then
+        bundle exec rake db:migrate
+        bundle exec rake db:seed
+    else
+        bundle exec rake db:migrate
+    fi
+  zammad-init: |-
+    #!/bin/bash
+    set -ex
+    rsync -av --delete --exclude 'config/database.yml' --exclude 'public/assets/images/*' --exclude 'storage/fs/*' "${ZAMMAD_TMP_DIR}/" "${ZAMMAD_DIR}"
+    rsync -av "${ZAMMAD_TMP_DIR}"/public/assets/images/ "${ZAMMAD_DIR}"/public/assets/images
+    sed -i -e "s/.*config.cache_store.*file_store.*cache_file_store.*/    config.cache_store = :dalli_store, '{{ if .Values.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}:{{ .Values.envConfig.memcached.port }}'\\n    config.session_store = :dalli_store, '{{ if .Values.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}:{{ .Values.envConfig.memcached.port }}'/" config/application.rb
+    if [ -n "${AUTOWIZARD_JSON}" ]; then
+        echo "${AUTOWIZARD_JSON}" | base64 -d > auto_wizard.json
+    fi
+    chown -R "${ZAMMAD_USER}":"${ZAMMAD_USER}" "${ZAMMAD_DIR}"

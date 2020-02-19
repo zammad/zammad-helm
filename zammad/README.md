@@ -70,6 +70,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.2.0-12` |
 | `elasticsearch.clusterName`                        | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                           | Elasticsearch replicas                           | `1`                             |
+| `elasticsearch.clusterHealthCheckParams`           | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
 | `memcached.enabled`                                | Use Memcached dependency                         | `true`                          |
 | `memcached.replicaCount`                           | Memcached replicas                               | `1`                             |
 | `postgresql.enabled`                               | Use PostgreSQL dependency                        | `true`                          |
@@ -78,25 +79,6 @@ The following table lists the configurable parameters of the zammad chart and th
 | `postgresql.postgresqlDatabase`                    | PostgreSQL DB                                    | `zammad_production`             |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
-
-### Properly configuring Elasticsearch
-
-The default **elasticsearch.yml** set by the Elasticsearch chart expects 2 masters.  If using just 1 master replica, there are 3 environment variables which should be set equally to avoid issues starting Elasticsearch.
-
-Set the following environment variables under **elasticsearch.cluster.env**.  The Zammad StatefulSet will most likely fail without setting these correctly.
-
-Refer to the Elasticsearch documentation for info on these variables.  \[[1](https://www.elastic.co/guide/en/elasticsearch/reference/5.6/modules-gateway.html)] \[[2](https://www.elastic.co/guide/en/elasticsearch/reference/5.6/modules-node.html#split-brain)]
-
-```yaml
-elasticsearch:
-  cluster:
-    env:
-      EXPECTED_MASTER_NODES: "1"
-      MINIMUM_MASTER_NODES: "1"
-      RECOVER_AFTER_MASTER_NODES: "1"
-  master:
-    replicas: 1
-```
 
 ### Important note for  NFS filesystems
 
@@ -108,19 +90,53 @@ This is relevant to **EFS** for AWS users, as well.
 
 ## Using zammad
 
-Once the zammad pod is ready, it can be accessed using the ingress or port forwarding:
+Once the zammad pod is ready, it can be accessed using the ingress or port forwarding. 
+To use port forwarding:
 
 ```console
-kubectl port-forward service/zammad 8080:80
+kubectl -n zammad port-forward service/zammad 8080
 ```
+
+Open your browser on <http://localhost:8080>
 
 ## Upgrading
 
 ### From chart version 1.x
 
-- the Elasticsearch Docker image is changed to stable/elasticsearch
-  - reindexing will be done automatically
+This has changed:
+- requirement chart condition variable name was changed
+- the lables have changed
+- the persistent volume claim was changed to persistent volume claim template
+  - import your filebackup here
 - all requirement charts has been updated to the latest versions
-  - Postgres version has changed
-    - There is no upgrade path
-    - You have to import a backup manually
+  - Elasticsearch
+    - docker image was changed to elastic/elasticsearch
+    - version was raised from 5.6 to 7.6
+    - reindexing will be done automatically
+  - Postgres
+    - bitnami/postgresql chart is used instead of stable/postgresql
+    - version was raised from 10.6.0 to 11.7.0
+    - there is no automated upgrade path
+    - you have to import a backup manually
+  - Memcached
+    - bitnami/memcached chart is used instead of stable/memcached
+    - version was raised from 1.5.6 to 1.5.22
+    - nothing to do here
+
+**Before the update backup Zammad files and make a PostgreSQL backup, as you will need these backups later!**
+
+- If your helm release was named "zammad" and also installed in the namespace "zammad" like:
+
+```
+helm upgrade --install zammad zammad/zammad --namespace=zammad --version=1.2.1
+```
+
+- Do the upgrade like this:
+
+```
+helm delete --purge zammad
+kubectl -n zammad delete pvc data-zammad-postgresql-0 data-zammad-elasticsearch-data-0 data-zammad-elasticsearch-master-0
+helm upgrade --install zammad zammad/zammad --namespace=zammad --version=2.0.3
+```
+
+- Import your file and SQL backups inside the Zammad & Postgresql containers

@@ -27,8 +27,8 @@ envConfig:
     schema: http
     host: zammad-master
     port: 9200
-    user:
-    pass:
+    user: ""
+    pass: ""
   memcached:
     # host env var is only used when memcached.enabled is false
     host: zammad-memcached
@@ -145,6 +145,9 @@ elasticsearch:
   imageTag: "zammad-elasticsearch"
   clusterName: zammad
   replicas: 1
+  # Workaround to get helm test to work in GitHub action CI
+  # the [ES chart](https://github.com/elastic/helm-charts/tree/master/elasticsearch) default would be: "wait_for_status=green&timeout=1s"
+  # see: <https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html#request-params>
   clusterHealthCheckParams: "timeout=1s"
   resources: {}
     # requests:
