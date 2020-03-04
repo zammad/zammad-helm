@@ -41,7 +41,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Run kubeval    
-        run: .github/kubeval.sh  
+        uses: docker://kiwigrid/gcloud-kubectl-helm
+        with:
+          args: .github/kubeval.sh
 
   install-chart:
     name: install-chart
