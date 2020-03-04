@@ -16,5 +16,5 @@ for CHART_DIR in ${CHART_DIRS};do
   helm dependency build "${CHART_DIR}"
 
   echo "kubeval(idating) ${CHART_DIR##charts/} chart..."
-  helm template "${CHART_DIR}" | docker run -i kiwigrid/gcloud-kubectl-helm:latest kubeval
+  helm template "${CHART_DIR}" | kubeval
 done
