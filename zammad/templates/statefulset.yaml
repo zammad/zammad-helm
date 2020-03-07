@@ -15,6 +15,8 @@ spec:
       labels:
         {{- include "zammad.labels" . | nindent 8 }}
     spec:
+      securityContext:
+        fsGroup: 1000
       initContainers:
       - name: zammad-init
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
@@ -40,7 +42,6 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-          fsGroup: 1000
         env:
         - name: "POSTGRESQL_PASS"
           valueFrom:
@@ -60,7 +61,6 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-          fsGroup: 1000
         env:
         {{- range $key, $value := .Values.extraEnv }}
         - name: "{{ $key }}"
@@ -114,7 +114,6 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-          fsGroup: 1000
         command: 
           - "bundle"
           - "exec"
@@ -158,7 +157,6 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-          fsGroup: 1000
         command: 
           - "bundle"
           - "exec"
@@ -180,7 +178,6 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-          fsGroup: 1000
         command: 
           - "bundle"
           - "exec"
