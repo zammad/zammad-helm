@@ -22,7 +22,7 @@ sudo tar -C /usr/local/bin -xf /tmp/kubeval.tar.gz kubeval
 
 # add helm repos to resolve dependencies
 helm repo add bitnami https://charts.bitnami.com
-helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo add elastic https://helm.elastic.co
 
 # validate charts
 for CHART_DIR in ${CHART_DIRS};do
