@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Lint Bash scripts
         uses: docker://koalaman/shellcheck-alpine:v0.7.0
         with:
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Check for chart changes    
         run: .github/check-for-chart-changes.sh
 
@@ -27,7 +27,7 @@ jobs:
     needs: check-for-chart-changes
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Run chart-testing (lint)
         uses: helm/chart-testing-action@master
         with:
@@ -48,7 +48,7 @@ jobs:
           - v1.17.0
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Run kubeval
         env:
           KUBERNETES_VERSION: ${{ matrix.k8s }}         
@@ -71,7 +71,7 @@ jobs:
           - v1.17.2
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Create kind ${{ matrix.k8s }} cluster
         uses: helm/kind-action@master
         with:
