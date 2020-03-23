@@ -5,7 +5,7 @@
 
 set -o errexit
 set -o pipefail
-
+git fetch --prune --unshallow
 CHART_DIRS="$(git diff --find-renames --name-only "$(git rev-parse --abbrev-ref HEAD)" remotes/origin/master -- zammad | grep '[cC]hart.yaml' | sed -e 's#/[Cc]hart.yaml##g')"
 HELM_VERSION="v3.1.1"
 KUBEVAL_VERSION="0.14.0"
