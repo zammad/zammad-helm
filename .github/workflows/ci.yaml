@@ -1,7 +1,9 @@
 name: ci
 
-on: 
+on:
   pull_request:
+    paths:
+      - 'charts/**'
 
 jobs:
   lint-bash-scripts:
@@ -14,17 +16,18 @@ jobs:
         with:
           args: .github/lint-scripts.sh
 
-  check-for-chart-changes:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Check for chart changes    
-        run: .github/check-for-chart-changes.sh
+  # check-for-chart-changes:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #     - name: Check for chart changes    
+  #       run: .github/check-for-chart-changes.sh
 
   lint-chart:
     runs-on: ubuntu-latest
-    needs: check-for-chart-changes
+    #needs: check-for-chart-changes
+    needs: lint-bash-scripts
     steps:
       - name: Checkout
         uses: actions/checkout@v2
