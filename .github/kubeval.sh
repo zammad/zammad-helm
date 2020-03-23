@@ -20,9 +20,9 @@ chmod 700 get_helm.sh
 curl --silent --show-error --fail --location --output /tmp/kubeval.tar.gz https://github.com/instrumenta/kubeval/releases/download/"${KUBEVAL_VERSION}"/kubeval-linux-amd64.tar.gz
 sudo tar -C /usr/local/bin -xf /tmp/kubeval.tar.gz kubeval
 
-# add helm repos to resolve dependencies
-helm repo add bitnami https://charts.bitnami.com
-helm repo add elastic https://helm.elastic.co
+# # add helm repos to resolve dependencies
+# helm repo add bitnami https://charts.bitnami.com
+# helm repo add elastic https://helm.elastic.co
 
 # validate charts
 for CHART_DIR in ${CHART_DIRS};do
