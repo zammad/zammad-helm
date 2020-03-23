@@ -6,6 +6,8 @@
 set -o errexit
 set -o pipefail
 
+git branch -a
+
 echo "Check for chart changes to speedup ci..."
 
 CHART_CHANGES="$(git diff --find-renames --name-only "$(git rev-parse --abbrev-ref HEAD)" remotes/origin/master -- zammad)"
