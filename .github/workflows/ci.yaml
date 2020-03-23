@@ -36,16 +36,23 @@ jobs:
 
   kubeval-chart:
     runs-on: ubuntu-latest
-    needs: check-for-chart-changes
+    needs: lint-chart
+    strategy:
+      matrix:
+        k8s:
+          - v1.12.10
+          - v1.13.11
+          - v1.14.10
+          - v1.15.7
+          - v1.16.4
+          - v1.17.0
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      - name: Set user permissions
-        run: chmod -R 777 /home/runner/work
       - name: Run kubeval
-        uses: docker://kiwigrid/gcloud-kubectl-helm
-        with:
-          args: .github/kubeval.sh
+        env:
+          KUBERNETES_VERSION: ${{ matrix.k8s }}         
+        run: .github/kubeval.sh 
 
   install-chart:
     name: install-chart
