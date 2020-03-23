@@ -12,6 +12,8 @@ git rev-parse --abbrev-ref HEAD
 
 echo "Check for chart changes to speedup ci..."
 
+git checkout master
+
 #CHART_CHANGES="$(git diff --find-renames --name-only "$(git rev-parse --abbrev-ref HEAD)" remotes/origin/master -- zammad)"
 CHART_CHANGES="$(git diff --find-renames --name-only "$(git rev-parse --abbrev-ref HEAD)" master -- zammad)"
 
