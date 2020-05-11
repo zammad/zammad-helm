@@ -30,7 +30,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | Parameter                                          | Description                                      | Default                         |
 | -------------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                        | Container image tag to deploy                    | `3.3.0-19`                      |
+| `image.tag`                                        | Container image tag to deploy                    | `3.3.0-24`                      |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
 | `service.type`                                     | Service type                                     | `ClusterIP`                     |
 | `service.port`                                     | Service port                                     | `8080`                          |
@@ -67,7 +67,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `affinity`                                         | Affinity                                         | `{}`                            |
 | `elasticsearch.enabled`                            | Use Elasticsearch dependency                     | `true`                          |
 | `elasticsearch.image`                              | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.3.0-19` |
+| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.3.0-24` |
 | `elasticsearch.clusterName`                        | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                           | Elasticsearch replicas                           | `1`                             |
 | `elasticsearch.clusterHealthCheckParams`           | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
@@ -90,7 +90,7 @@ This is relevant to **EFS** for AWS users, as well.
 
 ## Using zammad
 
-Once the zammad pod is ready, it can be accessed using the ingress or port forwarding. 
+Once the zammad pod is ready, it can be accessed using the ingress or port forwarding.
 To use port forwarding:
 
 ```console
@@ -104,6 +104,7 @@ Open your browser on <http://localhost:8080>
 ### From chart version 1.x
 
 This has changed:
+
 - requirement chart condition variable name was changed
 - the lables have changed
 - the persistent volume claim was changed to persistent volume claim template
@@ -127,13 +128,13 @@ This has changed:
 
 - If your helm release was named "zammad" and also installed in the namespace "zammad" like:
 
-```
+```bash
 helm upgrade --install zammad zammad/zammad --namespace=zammad --version=1.2.1
 ```
 
 - Do the upgrade like this:
 
-```
+```bash
 helm delete --purge zammad
 kubectl -n zammad delete pvc data-zammad-postgresql-0 data-zammad-elasticsearch-data-0 data-zammad-elasticsearch-master-0
 helm upgrade --install zammad zammad/zammad --namespace=zammad --version=2.0.3
