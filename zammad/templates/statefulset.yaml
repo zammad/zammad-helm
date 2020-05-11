@@ -35,7 +35,7 @@ spec:
         - name: {{ template "zammad.fullname" . }}-init
           mountPath: /docker-entrypoint.sh
           readOnly: true
-          subPath: zammad-init          
+          subPath: zammad-init
       - name: postgresql-init
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -72,7 +72,7 @@ spec:
         - name: {{ template "zammad.fullname" . }}-init
           mountPath: /docker-entrypoint.sh
           readOnly: true
-          subPath: elasticsearch-init          
+          subPath: elasticsearch-init
       containers:
       - name: {{ .Chart.Name }}-nginx
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
@@ -231,11 +231,9 @@ spec:
           name: {{ template "zammad.fullname" . }}-init
           defaultMode: 0755
 {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
-      - name: {{ template "zammad.fullname" . }} 
+      - name: {{ template "zammad.fullname" . }}
         persistentVolumeClaim:
-{{- with .Values.persistence.existingClaim }}
           claimName: {{ .Values.persistence.existingClaim | default (include "zammad.fullname" .) }}
-{{- end }}
 {{- else if not .Values.persistence.enabled }}
       - name: {{ template "zammad.fullname" . }}
         emptyDir: {}
