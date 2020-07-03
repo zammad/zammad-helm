@@ -1,7 +1,7 @@
 dependencies:
   - name: elasticsearch
     repository: https://helm.elastic.co
-    version: 7.6.1
+    version: 7.6.2
     condition: elasticsearch.enabled
   - name: memcached
     version: 4.2.6
