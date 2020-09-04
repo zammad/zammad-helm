@@ -30,7 +30,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | Parameter                                          | Description                                      | Default                         |
 | -------------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                        | Container image tag to deploy                    | `3.3.0-24`                      |
+| `image.tag`                                        | Container image tag to deploy                    | `3.4.0-4`                       |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
 | `service.type`                                     | Service type                                     | `ClusterIP`                     |
 | `service.port`                                     | Service port                                     | `8080`                          |
@@ -51,6 +51,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `envConfig.postgresql.pass`                        | PostgreSql pass                                  | `""`                            |
 | `envConfig.postgresql.user`                        | PostgreSql user                                  | `zammad`                        |
 | `envConfig.postgresql.db`                          | PostgreSql database                              | `zammad_production`             |
+| `envConfig.zammad.rails.trustedProxies`            | PostgreSql database                              | `"['127.0.0.1', '::1']"`        |
 | `autoWizard.enabled`                               | enable autowizard                                | `false`                         |
 | `autoWizard.config`                                | autowizard json config                           | `""`                            |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |
@@ -67,7 +68,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `affinity`                                         | Affinity                                         | `{}`                            |
 | `elasticsearch.enabled`                            | Use Elasticsearch dependency                     | `true`                          |
 | `elasticsearch.image`                              | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.3.0-24` |
+| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.4.0-4`  |
 | `elasticsearch.clusterName`                        | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                           | Elasticsearch replicas                           | `1`                             |
 | `elasticsearch.clusterHealthCheckParams`           | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
