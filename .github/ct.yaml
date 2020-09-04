@@ -1,5 +1,5 @@
 chart-dirs: .
-helm-extra-args: --timeout 1200s
+helm-extra-args: --timeout 1500s
 check-version-increment: true
 debug: true
 chart-repos:
