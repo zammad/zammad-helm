@@ -2,6 +2,8 @@ image:
   repository: zammad/zammad-docker-compose
   tag: 3.4.0-4
   pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  # - name: "image-pull-secret"
 
 service:
   type: ClusterIP

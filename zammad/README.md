@@ -32,6 +32,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
 | `image.tag`                                        | Container image tag to deploy                    | `3.4.0-4`                       |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
+| `image.imagePullSecrets`                           | An array of imagePullSecrets                     | '[]`                            |
 | `service.type`                                     | Service type                                     | `ClusterIP`                     |
 | `service.port`                                     | Service port                                     | `8080`                          |
 | `ingress.enabled`                                  | Enable Ingress                                   | `false`                         |
