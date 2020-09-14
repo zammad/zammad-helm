@@ -5,9 +5,9 @@ dependencies:
     condition: elasticsearch.enabled
   - name: memcached
     version: 4.2.6
-    repository: https://charts.bitnami.com
+    repository: https://charts.bitnami.com/bitnami
     condition: memcached.enabled
   - name: postgresql
     version: 8.3.4
-    repository: https://charts.bitnami.com
+    repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
