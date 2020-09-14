@@ -32,7 +32,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
 | `image.tag`                                        | Container image tag to deploy                    | `3.4.0-4`                       |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
-| `image.imagePullSecrets`                           | An array of imagePullSecrets                     | '[]`                            |
+| `image.imagePullSecrets`                           | An array of imagePullSecrets                     | `[]`                            |
 | `service.type`                                     | Service type                                     | `ClusterIP`                     |
 | `service.port`                                     | Service port                                     | `8080`                          |
 | `ingress.enabled`                                  | Enable Ingress                                   | `false`                         |
@@ -53,6 +53,12 @@ The following table lists the configurable parameters of the zammad chart and th
 | `envConfig.postgresql.user`                        | PostgreSql user                                  | `zammad`                        |
 | `envConfig.postgresql.db`                          | PostgreSql database                              | `zammad_production`             |
 | `envConfig.zammad.rails.trustedProxies`            | PostgreSql database                              | `"['127.0.0.1', '::1']"`        |
+| `envConfig.zammad.rails.readinessProbe`            | Readiness probe on rails                         | `true`                          |
+| `envConfig.zammad.rails.livenessProbe`             | Liveness probe on rails                          | `true`                          |
+| `envConfig.zammad.nginx.readinessProbe`            | Readiness probe on nginx                         | `true`                          |
+| `envConfig.zammad.nginx.livenessProbe`             | Liveness probe on nginx                          | `true`                          |
+| `envConfig.zammad.websocket.readinessProbe`        | Readiness probe on websocket                     | `true`                          |
+| `envConfig.zammad.websocket.livenessProbe`         | Liveness probe on websocket                      | `true`                          |
 | `autoWizard.enabled`                               | enable autowizard                                | `false`                         |
 | `autoWizard.config`                                | autowizard json config                           | `""`                            |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |

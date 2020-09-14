@@ -48,6 +48,14 @@ envConfig:
   zammad:
     rails:
       trustedProxies: "['127.0.0.1', '::1']"
+      livenessProbe: true
+      readinessProbe: true
+    nginx:
+      livenessProbe: true
+      readinessProbe: true
+    websocket:
+      livenessProbe: true
+      readinessProbe: true
 
 # additional environemnt vars
 extraEnv: {}
