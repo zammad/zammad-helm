@@ -4,10 +4,18 @@ dependencies:
     version: 7.9.1
     condition: elasticsearch.enabled
   - name: memcached
+<<<<<<< HEAD
     version: 4.2.22
     repository: https://charts.bitnami.com/bitnami
     condition: memcached.enabled
   - name: postgresql
     version: 8.9.0
+=======
+    version: 4.2.6
+    repository: https://charts.bitnami.com/bitnami
+    condition: memcached.enabled
+  - name: postgresql
+    version: 8.3.4
+>>>>>>> upstream/master
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
