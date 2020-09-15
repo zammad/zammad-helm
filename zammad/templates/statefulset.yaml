@@ -17,6 +17,9 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+      {{- if .Values.image.imagePullSecrets }}
+      imagePullSecrets: {{ toYaml .Values.image.imagePullSecrets | nindent 6 }}
+      {{- end }}
       initContainers:
       - name: zammad-init
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
@@ -94,18 +97,22 @@ spec:
           mountPath: /opt/zammad
         - name: {{ template "zammad.fullname" . }}-nginx
           mountPath: /etc/nginx/sites-enabled
+        {{- if .Values.envConfig.zammad.nginx.readinessProbe }}
         readinessProbe:
           httpGet:
             path: /
             port: 8080
           initialDelaySeconds: 10
           periodSeconds: 10
+        {{- end }}
+        {{- if .Values.envConfig.zammad.nginx.livenessProbe }}
         livenessProbe:
           httpGet:
             path: /
             port: 8080
           initialDelaySeconds: 10
           periodSeconds: 10
+        {{- end }}
         resources:
 {{ toYaml .Values.resources.nginx | indent 10 }}
       - name: {{ .Chart.Name }}-railsserver
@@ -137,18 +144,22 @@ spec:
         volumeMounts:
          - name: {{ template "zammad.fullname" . }}
            mountPath: /opt/zammad
+        {{- if .Values.envConfig.zammad.rails.readinessProbe }}
         readinessProbe:
           httpGet:
             path: /
             port: 3000
           initialDelaySeconds: 10
           periodSeconds: 10
+        {{- end }}
+        {{- if .Values.envConfig.zammad.rails.livenessProbe }}
         livenessProbe:
           httpGet:
             path: /
             port: 3000
           initialDelaySeconds: 10
           periodSeconds: 10
+        {{- end }}
         resources:
 {{ toYaml .Values.resources.railsserver | indent 10 }}
       - name: {{ .Chart.Name }}-scheduler
@@ -198,16 +209,20 @@ spec:
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
           mountPath: /opt/zammad
+        {{- if .Values.envConfig.zammad.websocket.readinessProbe }}
         readinessProbe:
           tcpSocket:
             port: 6042
           initialDelaySeconds: 10
           periodSeconds: 10
+        {{- end }}
+        {{- if .Values.envConfig.zammad.websocket.livenessProbe }}
         livenessProbe:
           tcpSocket:
             port: 6042
           initialDelaySeconds: 10
           periodSeconds: 10
+        {{- end }}
         resources:
 {{ toYaml .Values.resources.websocket | indent 10 }}
     {{- with .Values.nodeSelector }}

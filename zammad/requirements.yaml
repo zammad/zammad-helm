@@ -1,13 +1,13 @@
 dependencies:
   - name: elasticsearch
     repository: https://helm.elastic.co
-    version: 7.6.2
+    version: 7.9.1
     condition: elasticsearch.enabled
   - name: memcached
-    version: 4.2.6
-    repository: https://charts.bitnami.com
+    version: 4.2.22
+    repository: https://charts.bitnami.com/bitnami
     condition: memcached.enabled
   - name: postgresql
-    version: 8.3.4
-    repository: https://charts.bitnami.com
+    version: 8.9.0
+    repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
