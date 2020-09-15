@@ -58,7 +58,7 @@ if ! helm repo list | grep -q "^stable"; then
   helm repo add stable https://kubernetes-charts.storage.googleapis.com
 fi
 
-helm repo add bitnami https://charts.bitnami.com
+helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add elastic https://helm.elastic.co
 
 helm repo update
