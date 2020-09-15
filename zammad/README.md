@@ -4,7 +4,7 @@ This directory contains a Kubernetes chart to deploy [Zammad](https://zammad.org
 
 ## Prerequisites Details
 
-- Kubernetes 1.8+
+- Kubernetes 1.13+
 - Cluster with at least 4GB of free RAM
 
 ## Chart Details
@@ -30,9 +30,9 @@ The following table lists the configurable parameters of the zammad chart and th
 | Parameter                                          | Description                                      | Default                         |
 | -------------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                        | Container image tag to deploy                    | `3.4.0-4`                       |
+| `image.tag`                                        | Container image tag to deploy                    | `3.4.0-18`                      |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
-| `image.imagePullSecrets`                           | An array of imagePullSecrets                     | '[]`                            |
+| `image.imagePullSecrets`                           | An array of imagePullSecrets                     | `[]`                            |
 | `service.type`                                     | Service type                                     | `ClusterIP`                     |
 | `service.port`                                     | Service port                                     | `8080`                          |
 | `ingress.enabled`                                  | Enable Ingress                                   | `false`                         |
@@ -69,7 +69,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `affinity`                                         | Affinity                                         | `{}`                            |
 | `elasticsearch.enabled`                            | Use Elasticsearch dependency                     | `true`                          |
 | `elasticsearch.image`                              | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.4.0-4`  |
+| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.4.0-18` |
 | `elasticsearch.clusterName`                        | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                           | Elasticsearch replicas                           | `1`                             |
 | `elasticsearch.clusterHealthCheckParams`           | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |

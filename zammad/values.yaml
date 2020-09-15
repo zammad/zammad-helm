@@ -1,9 +1,10 @@
 image:
   repository: zammad/zammad-docker-compose
-  tag: 3.4.0-4
+  tag: 3.4.0-18
   pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: "image-pull-secret"
+
 
 service:
   type: ClusterIP
@@ -147,7 +148,7 @@ affinity: {}
 elasticsearch:
   enabled: true
   image: "zammad/zammad-docker-compose"
-  imageTag: "zammad-elasticsearch-3.4.0-4"
+  imageTag: "zammad-elasticsearch-3.4.0-18"
   clusterName: zammad
   replicas: 1
   # Workaround to get helm test to work in GitHub action CI
