@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas }}
   serviceName: {{ include "zammad.name" . }}
   selector:
     matchLabels:
