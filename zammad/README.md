@@ -29,6 +29,7 @@ The following table lists the configurable parameters of the zammad chart and th
 
 | Parameter                                          | Description                                      | Default                         |
 | -------------------------------------------------- | ------------------------------------------------ | ------------------------------- |
+| `replicas`                                         | Zammad replicas                                  | `1`                             |
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
 | `image.tag`                                        | Container image tag to deploy                    | `3.4.0-18`                      |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
