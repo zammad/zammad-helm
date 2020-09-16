@@ -151,7 +151,7 @@ nodeSelector: {}
 
 tolerations: []
 
-affinity: 
+affinity:
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
     - weight: 100
