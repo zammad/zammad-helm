@@ -152,16 +152,17 @@ nodeSelector: {}
 tolerations: []
 
 affinity: 
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
           matchExpressions:
           - key: app.kubernetes.io/name
             operator: In
             values:
             - zammad
         topologyKey: "kubernetes.io/hostname"
-
 
 elasticsearch:
   enabled: true
