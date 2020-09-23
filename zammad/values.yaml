@@ -1,6 +1,6 @@
 image:
   repository: zammad/zammad-docker-compose
-  tag: 3.4.0-18
+  tag: 3.5.0
   pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: "image-pull-secret"
@@ -99,6 +99,9 @@ autoWizard:
   #     ]
   #   }
 
+podAnnotations: {}
+# my-annotation: "value"
+
 persistence:
   enabled: true
   ## A manually managed Persistent Volume and Claim
@@ -156,7 +159,7 @@ affinity: {}
 elasticsearch:
   enabled: true
   image: "zammad/zammad-docker-compose"
-  imageTag: "zammad-elasticsearch-3.4.0-18"
+  imageTag: "zammad-elasticsearch-3.5.0"
   clusterName: zammad
   replicas: 1
   # Workaround to get helm test to work in GitHub action CI
