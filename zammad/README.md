@@ -61,6 +61,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `envConfig.zammad.websocket.livenessProbe`         | Liveness probe on websocket                      | `true`                          |
 | `autoWizard.enabled`                               | enable autowizard                                | `false`                         |
 | `autoWizard.config`                                | autowizard json config                           | `""`                            |
+| `podAnnotations`                                   | Annotations for Pods                             | `{}`                            |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |
 | `persistence.accessModes`                          | Access modes                                     | `["ReadWriteOnce"]`             |
 | `persistence.size`                                 | Volume size                                      | `15Gi`                          |
