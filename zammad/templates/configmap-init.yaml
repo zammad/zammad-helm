@@ -13,7 +13,9 @@ data:
     bundle exec rails r 'Setting.set("es_user", "{{ .Values.envConfig.elasticsearch.user }}")'
     bundle exec rails r 'Setting.set("es_password", "{{ .Values.envConfig.elasticsearch.pass }}")'
     {{ end }}
+    {{- if and .Values.envConfig.elasticsearch.reindex }}
     bundle exec rake searchindex:rebuild
+    {{ end }}
     echo "elasticsearch init complete :)"
   postgresql-init: |-
     #!/bin/bash

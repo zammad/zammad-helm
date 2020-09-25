@@ -30,7 +30,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | Parameter                                          | Description                                      | Default                         |
 | -------------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                        | Container image tag to deploy                    | `3.4.0-18`                      |
+| `image.tag`                                        | Container image tag to deploy                    | `3.5.0-2`                       |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
 | `image.imagePullSecrets`                           | An array of imagePullSecrets                     | `[]`                            |
 | `service.type`                                     | Service type                                     | `ClusterIP`                     |
@@ -45,6 +45,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `envConfig.elasticsearch.port`                     | Elasticsearch port                               | `9200`                          |
 | `envConfig.elasticsearch.user`                     | Elasticsearch user                               | `""`                            |
 | `envConfig.elasticsearch.pass`                     | Elasticsearch pass                               | `""`                            |
+| `envConfig.elasticsearch.reindex`                  | Elasticsearch reindex is run on start            | `true`                          |
 | `envConfig.memcached.host`                         | Memcached host                                   | `zammad-memcached`              |
 | `envConfig.memcached.port`                         | Memcached port                                   | `11211`                         |
 | `envConfig.postgresql.host`                        | PostgreSql host                                  | `zammad-postgresql`             |
@@ -76,7 +77,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `affinity`                                         | Affinity                                         | `{}`                            |
 | `elasticsearch.enabled`                            | Use Elasticsearch dependency                     | `true`                          |
 | `elasticsearch.image`                              | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.4.0-18` |
+| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.5.0-2`  |
 | `elasticsearch.clusterName`                        | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                           | Elasticsearch replicas                           | `1`                             |
 | `elasticsearch.clusterHealthCheckParams`           | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
