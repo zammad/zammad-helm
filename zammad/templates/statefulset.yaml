@@ -61,7 +61,7 @@ spec:
         - name: {{ template "zammad.fullname" . }}-init
           mountPath: /docker-entrypoint.sh
           readOnly: true
-          subPath: postgresql-init          
+          subPath: postgresql-init
       - name: elasticsearch-init
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
