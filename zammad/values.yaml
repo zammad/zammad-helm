@@ -48,6 +48,8 @@ envConfig:
     # needs to be the same as the postgresql.postgresqlDatabase
     db: zammad_production
   zammad:
+    replicas: 1
+    serviceAnnotations: {}
     rails:
       trustedProxies: "['127.0.0.1', '::1']"
       livenessProbe: true

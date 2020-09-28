@@ -53,6 +53,8 @@ The following table lists the configurable parameters of the zammad chart and th
 | `envConfig.postgresql.pass`                        | PostgreSql pass                                  | `""`                            |
 | `envConfig.postgresql.user`                        | PostgreSql user                                  | `zammad`                        |
 | `envConfig.postgresql.db`                          | PostgreSql database                              | `zammad_production`             |
+| `envConfig.zammad.replicas`                        | The replica count (if >1, make sure you enable persistence) | `1`                  |
+| `envConfig.zammad.serviceAnnotations`              | Annotations to attached to the Zammad service    | `{}`                            |
 | `envConfig.zammad.rails.trustedProxies`            | PostgreSql database                              | `"['127.0.0.1', '::1']"`        |
 | `envConfig.zammad.rails.readinessProbe`            | Readiness probe on rails                         | `true`                          |
 | `envConfig.zammad.rails.livenessProbe`             | Liveness probe on rails                          | `true`                          |
@@ -90,13 +92,19 @@ The following table lists the configurable parameters of the zammad chart and th
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
-### Important note for  NFS filesystems
+### Important note for NFS filesystems
 
 For persistent volumes, NFS filesystems should work correctly for **Elasticsearch** and **PostgreSQL**; however, errors will occur if Zammad itself uses an NFS-based persistent volume.  Websockets will break completely.  This is particularly bad news for receiving notifications from the application and using the Chat module.
 
 Don't use an NFS-based storage class for Zammad's persistent volume.
 
 This is relevant to **EFS** for AWS users, as well.
+
+### Important note for replica scaling
+
+If you set `envConfig.zammad.replicas` to a value greater than 1 then you need some sort of session persistence (sometimes called sticky sessions).
+
+Enabling session persistence is outside the scope of this documentation, but is typically enabled on your Ingress controller or load balancer. Because there are so many acceptable ways to implement sticky sessions there won't be a warning or error if you forget to do this.
 
 ## Using zammad
 

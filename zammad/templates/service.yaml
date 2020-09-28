@@ -4,6 +4,10 @@ metadata:
   name: {{ include "zammad.fullname" . }}
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
+  {{- with .Values.envConfig.zammad.serviceAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:
