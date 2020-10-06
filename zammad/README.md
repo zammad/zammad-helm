@@ -43,8 +43,8 @@ The following table lists the configurable parameters of the zammad chart and th
 | `envConfig.elasticsearch.schema`                   | Elasticsearch schema                             | `http`                          |
 | `envConfig.elasticsearch.host`                     | Elasticsearch host                               | `zammad-master`                 |
 | `envConfig.elasticsearch.port`                     | Elasticsearch port                               | `9200`                          |
-| `envConfig.elasticsearch.user`                     | Elasticsearch user                               | `""`                            |
-| `envConfig.elasticsearch.pass`                     | Elasticsearch pass                               | `""`                            |
+| `envConfig.elasticsearch.user`                     | Elasticsearch user                               | `"zammad"`                            |
+| `envConfig.elasticsearch.pass`                     | Elasticsearch pass                               | `"zammad"`                            |
 | `envConfig.elasticsearch.reindex`                  | Elasticsearch reindex is run on start            | `true`                          |
 | `envConfig.memcached.host`                         | Memcached host                                   | `zammad-memcached`              |
 | `envConfig.memcached.port`                         | Memcached port                                   | `11211`                         |
