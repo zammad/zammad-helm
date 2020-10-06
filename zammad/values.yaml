@@ -30,8 +30,8 @@ envConfig:
     schema: http
     host: zammad-master
     port: 9200
-    user: ""
-    pass: ""
+    user: "zammad"
+    pass: "zammad"
     reindex: true
   memcached:
     # host env var is only used when memcached.enabled is false
