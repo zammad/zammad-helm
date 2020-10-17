@@ -2,7 +2,8 @@ name: deploy
 
 on:
   push:
-    branches: [master]
+    branches: 
+      - master
 
 jobs:
   deploy-chart:
@@ -14,7 +15,7 @@ jobs:
       - name: Lint Bash scripts
         uses: docker://koalaman/shellcheck-alpine:v0.7.0
         with:
-          args: .github/lint-scripts.sh        
+          args: .github/lint-scripts.sh
       - name: Set user permissions
         run: chmod -R 777 /home/runner/work
       - name: Deploy Helm chart

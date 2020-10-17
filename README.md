@@ -2,14 +2,26 @@
 
 A [Helm](https://helm.sh) chart to install [Zammad](https://zammad.org) on [Kubernetes](https://kubernetes.io)
 
-## Installation
+## Add the Helm repo via
 
-* https://docs.zammad.org/en/latest/install-kubernetes.html
+```console
+helm repo add zammad https://zammad.github.io/zammad-helm/
+```
 
-## Adding changes
+## Sources
 
-* Use a fork of this repo
-* Do NOT touch default (master) branch in any forks
-* Always create new branches to work on
-* Create a Github pull request and fill out the PR template
-* Follow Helm best practices: [https://docs.helm.sh/chart_best_practices](https://docs.helm.sh/chart_best_practices)
+The charts sources can be found here:
+
+* [https://github.com/zammad/zammad-helm](https://github.com/zammad/zammad-helm)
+
+The repo source can be found here:
+
+* [https://github.com/zammad/zammad-helm/tree/gh-pages](https://github.com/zammad/zammad-helm/tree/gh-pages)
+
+Helm Releases can be found here:
+
+* [https://github.com/zammad/zammad-helm/releases](https://github.com/zammad/zammad-helm/releases)
+
+## Adding changes to this repo
+
+See our [contrubuting guidelines](https://github.com/zammad/zammad-helm/blob/master/CONTRIBUTING.md).
