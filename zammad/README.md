@@ -19,7 +19,7 @@ This chart will do the following:
 To install the chart use the following:
 
 ```console
-helm repo add zammad https://zammad.github.io
+helm repo add zammad https://zammad.github.io/zammad-helm
 helm upgrade --install zammad zammad/zammad --namespace zammad
 ```
 
