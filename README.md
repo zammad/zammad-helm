@@ -18,7 +18,7 @@ The repo source can be found here:
 
 * [https://github.com/zammad/zammad-helm/tree/gh-pages](https://github.com/zammad/zammad-helm/tree/gh-pages)
 
-Helm Releases can be found here:
+Helm releases can be found here:
 
 * [https://github.com/zammad/zammad-helm/releases](https://github.com/zammad/zammad-helm/releases)
 
