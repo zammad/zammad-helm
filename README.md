@@ -5,7 +5,7 @@ A [Helm](https://helm.sh) chart to install [Zammad](https://zammad.org) on [Kube
 ## Add the Helm repo via
 
 ```console
-helm repo add zammad https://zammad.github.io/zammad-helm/
+helm repo add zammad https://zammad.github.io/zammad-helm
 ```
 
 ## Sources
