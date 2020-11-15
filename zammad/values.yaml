@@ -55,14 +55,12 @@ envConfig:
     nginx:
       livenessProbe: true
       readinessProbe: true
-
-      # string with nginx config to set headers on the /ws location
-      # websocketExtraHeaders: |
-      #   proxy_set_header Header1 "Header Value";
-
-      # string with nginx config to set headers on the / location
-      # extraHeaders: |
-      #   proxy_set_header Header2 "Header2 Value";
+      websocketExtraHeaders: []
+      # websocketExtraHeaders:
+      #   - 'HeaderName "Header Value"'
+      extraHeaders: []
+      # extraHeaders:
+      #   - 'HeaderName "Header Value"';
 
     websocket:
       livenessProbe: true

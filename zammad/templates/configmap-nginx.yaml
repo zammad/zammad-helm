@@ -42,9 +42,9 @@ data:
             proxy_set_header Connection "Upgrade";
             proxy_set_header CLIENT_IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            {{ if .Values.envConfig.zammad.nginx.websocketExtraHeaders }}
-                {{ .Values.envConfig.zammad.nginx.websocketExtraHeaders | nindent 12 }}
-            {{ end }}
+            {{- range .Values.envConfig.zammad.nginx.websocketExtraHeaders }}
+            proxy_set_header {{ . }};
+            {{- end }}
             proxy_read_timeout 86400;
             proxy_pass http://zammad-websocket;
         }
@@ -53,9 +53,9 @@ data:
             proxy_set_header Host $http_host;
             proxy_set_header CLIENT_IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            {{ if .Values.envConfig.zammad.nginx.extraHeaders }}
-                {{ .Values.envConfig.zammad.nginx.extraHeaders | nindent 12 }}
-            {{ end }}            
+            {{- range .Values.envConfig.zammad.nginx.extraHeaders }}
+            proxy_set_header {{ . }};
+            {{- end }}
             proxy_read_timeout 180;
             proxy_pass http://zammad-railsserver;
 
