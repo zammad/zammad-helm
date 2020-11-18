@@ -8,12 +8,26 @@ on:
       - 'zammad/**'
 
 jobs:
-  super-linter:
-    runs-on: ubuntu-latest
+  codespell:
+    name: codespell
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+      - name: Codespell
+        uses: codespell-project/actions-codespell@master
+        with:
+          skip: .git
+          exclude_file: .github/kubeval.sh
+          ignore_words_list: iam,aks
+          check_filenames: true
+          check_hidden: true
 
+  super-linter:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
       - name: Lint Code Base
         uses: github/super-linter@v3
         env:
@@ -24,21 +38,28 @@ jobs:
           VALIDATE_YAML: false
 
   lint-chart:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Fetch history
-        run: git fetch --prune --unshallow
-      - name: Run chart-testing (lint)
-        uses: helm/chart-testing-action@master
         with:
-          command: lint
-          config: .github/ct.yaml
+          fetch-depth: 0
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.4.1
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.0.1
+      - name: Run chart-testing (lint)
+        run: ct lint --config .github/ct.yaml
 
   kubeval-chart:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs:
+      - codespell
       - lint-chart
       - super-linter
     strategy:
@@ -59,9 +80,8 @@ jobs:
 
   install-chart:
     name: install-chart
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: 
-      - lint-chart
       - kubeval-chart
     strategy:
       matrix:
@@ -69,19 +89,33 @@ jobs:
           - v1.16.15
           - v1.17.11
           - v1.18.8
-          - v1.19.1
+          - v1.19.4
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Fetch history
-        run: git fetch --prune --unshallow
-      - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@master
+        with:
+          fetch-depth: 0
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.4.1
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.0.1
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --config .github/ct.yaml)
+          if [[ -n "$changed" ]]; then
+            echo "::set-output name=changed::true"
+          fi
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.1.0
+        if: steps.list-changed.outputs.changed == 'true'
         with:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s }}
       - name: Run chart-testing (install)
-        uses: helm/chart-testing-action@master
-        with:
-          command: install
-          config: .github/ct.yaml
+        run: ct install --config .github/ct.yaml
