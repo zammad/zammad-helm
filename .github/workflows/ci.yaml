@@ -39,6 +39,8 @@ jobs:
 
   lint-chart:
     runs-on: ubuntu-latest
+    env: 
+      CT_CONFIG_DIR: .github/ct.yaml    
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -79,6 +81,8 @@ jobs:
 
   install-chart:
     name: install-chart
+    env: 
+      CT_CONFIG_DIR: .github/ct.yaml
     runs-on: ubuntu-latest
     needs: 
       - lint-chart
