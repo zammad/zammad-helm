@@ -117,7 +117,7 @@ Open your browser on <http://localhost:8080>
 This has changed:
 
 - requirement chart condition variable name was changed
-- the lables have changed
+- the labels have changed
 - the persistent volume claim was changed to persistent volume claim template
   - import your filebackup here
 - all requirement charts has been updated to the latest versions

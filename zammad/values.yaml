@@ -59,7 +59,7 @@ envConfig:
       livenessProbe: true
       readinessProbe: true
 
-# additional environemnt vars
+# additional environment vars
 extraEnv: {}
 
 # autowizard config
