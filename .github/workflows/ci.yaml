@@ -10,7 +10,7 @@ on:
 jobs:
   codespell:
     name: codespell
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
           check_hidden: true
 
   super-linter:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -38,7 +38,7 @@ jobs:
           VALIDATE_YAML: false
 
   lint-chart:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -57,7 +57,7 @@ jobs:
         run: ct lint --config .github/ct.yaml
 
   kubeval-chart:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs:
       - codespell
       - lint-chart
@@ -80,7 +80,7 @@ jobs:
 
   install-chart:
     name: install-chart
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: 
       - kubeval-chart
     strategy:
