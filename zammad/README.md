@@ -4,7 +4,8 @@ This directory contains a Kubernetes chart to deploy [Zammad](https://zammad.org
 
 ## Prerequisites Details
 
-- Kubernetes 1.13+
+- Kubernetes 1.16+
+- Helm 3.x
 - Cluster with at least 4GB of free RAM
 
 ## Chart Details
@@ -30,7 +31,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | Parameter                                          | Description                                      | Default                         |
 | -------------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                        | Container image tag to deploy                    | `3.5.0-11`                       |
+| `image.tag`                                        | Container image tag to deploy                    | `3.6.0-1`                       |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
 | `image.imagePullSecrets`                           | An array of imagePullSecrets                     | `[]`                            |
 | `service.type`                                     | Service type                                     | `ClusterIP`                     |
@@ -77,7 +78,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `affinity`                                         | Affinity                                         | `{}`                            |
 | `elasticsearch.enabled`                            | Use Elasticsearch dependency                     | `true`                          |
 | `elasticsearch.image`                              | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.5.0-11`  |
+| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.6.0-1`  |
 | `elasticsearch.clusterName`                        | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                           | Elasticsearch replicas                           | `1`                             |
 | `elasticsearch.clusterHealthCheckParams`           | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
@@ -116,7 +117,7 @@ Open your browser on <http://localhost:8080>
 This has changed:
 
 - requirement chart condition variable name was changed
-- the lables have changed
+- the labels have changed
 - the persistent volume claim was changed to persistent volume claim template
   - import your filebackup here
 - all requirement charts has been updated to the latest versions
@@ -151,3 +152,13 @@ helm upgrade --install zammad zammad/zammad --namespace=zammad --version=2.0.3
 ```
 
 - Import your file and SQL backups inside the Zammad & Postgresql containers
+
+## #From Zammad 2.6.x to 3.x
+
+As Helm 2.x was deprecated Helm 3.x is needed now to install Zammad Helm chart.
+Minimum Kubernetes version is 1.16.x now.
+
+As Porstgresql dependency Helm chart was updated to, have a look at the upgrading instructions to 9.0.0 and 10.0.0 of the Postgresql chart:
+
+- <https://artifacthub.io/packages/helm/bitnami/postgresql#to-9-0-0>
+- <https://artifacthub.io/packages/helm/bitnami/postgresql#to-10-0-0>
