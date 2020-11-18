@@ -59,6 +59,7 @@ jobs:
   kubeval-chart:
     runs-on: ubuntu-latest
     needs:
+      - codespell
       - lint-chart
       - super-linter
     strategy:
@@ -81,7 +82,6 @@ jobs:
     name: install-chart
     runs-on: ubuntu-latest
     needs: 
-      - lint-chart
       - kubeval-chart
     strategy:
       matrix:
@@ -114,5 +114,8 @@ jobs:
       - name: Create kind cluster
         uses: helm/kind-action@v1.1.0
         if: steps.list-changed.outputs.changed == 'true'
+        with:
+          config: .github/kind-config.yaml
+          node_image: kindest/node:${{ matrix.k8s }}
       - name: Run chart-testing (install)
         run: ct install --config .github/ct.yaml
