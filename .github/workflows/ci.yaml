@@ -17,8 +17,7 @@ jobs:
       - name: Codespell
         uses: codespell-project/actions-codespell@master
         with:
-          skip: .git
-          exclude_file: .github/kubeval.sh
+          skip: ".git,.github/kubeval.sh"
           ignore_words_list: iam,aks
           check_filenames: true
           check_hidden: true
