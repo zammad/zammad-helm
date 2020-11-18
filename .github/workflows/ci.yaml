@@ -8,12 +8,25 @@ on:
       - 'zammad/**'
 
 jobs:
+  codespell:
+    name: codespell
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Codespell
+        uses: codespell-project/actions-codespell@master
+        with:
+          skip: .git
+          ignore_words_list: iam,aks
+          check_filenames: true
+          check_hidden: true
+
   super-linter:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-
       - name: Lint Code Base
         uses: github/super-linter@v3
         env:
@@ -31,7 +44,7 @@ jobs:
       - name: Fetch history
         run: git fetch --prune --unshallow
       - name: Run chart-testing (lint)
-        uses: helm/chart-testing-action@master
+        uses: helm/chart-testing-action@v2.0.1
         with:
           command: lint
           config: .github/ct.yaml
@@ -76,12 +89,12 @@ jobs:
       - name: Fetch history
         run: git fetch --prune --unshallow
       - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@master
+        uses: helm/kind-action@v1.1.0
         with:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s }}
       - name: Run chart-testing (install)
-        uses: helm/chart-testing-action@master
+        uses: helm/chart-testing-action@v2.0.1
         with:
           command: install
           config: .github/ct.yaml
