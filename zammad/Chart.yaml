@@ -14,3 +14,16 @@ maintainers:
     email: monotek23@gmail.com
   - name: martini
     email: contact@zammad.com
+dependencies:
+  - name: elasticsearch
+    repository: https://helm.elastic.co
+    version: 7.9.3
+    condition: elasticsearch.enabled
+  - name: memcached
+    version: 5.2.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: memcached.enabled
+  - name: postgresql
+    version: 10.0.2
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
