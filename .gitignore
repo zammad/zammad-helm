@@ -1,9 +1,6 @@
 tmp
 zammad.github.io
 zammad/charts
+zammad/Chart.lock
 zammad/index.yaml
 zammad/requirements.lock
-charts/zammad.github.io
-charts/zammad/charts
-charts/zammad/index.yaml
-charts/zammad/requirements.lock
