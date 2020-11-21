@@ -2,6 +2,11 @@
 
 A [Helm](https://helm.sh) chart to install [Zammad](https://zammad.org) on [Kubernetes](https://kubernetes.io)
 
+## Repo Info
+
+[![Releases downloads](https://img.shields.io/github/downloads/zammad/zammad-helm/total.svg)](https://github.com/zammad/zammad-helm/releases)
+[![Release Charts](https://github.com/zammad/zammad-helm/workflows/Release%20Charts/badge.svg)](https://github.com/zammad/zammad-helm/commits/main)
+
 ## Add the Helm repo via
 
 ```console
@@ -26,7 +31,3 @@ Helm releases can be found here:
 
 See our [contributing guidelines](https://github.com/zammad/zammad-helm/blob/master/CONTRIBUTING.md).
 
-## Repo Info
-
-[![Releases downloads](https://img.shields.io/github/downloads/zammad/zammad-helm/total.svg)](https://github.com/zammad/zammad-helm/releases)
-[![Release Charts](https://github.com/zammad/zammad-helm/workflows/Release%20Charts/badge.svg)](https://github.com/zammad/zammad-helm/commits/main)
