@@ -55,6 +55,13 @@ envConfig:
     nginx:
       livenessProbe: true
       readinessProbe: true
+      websocketExtraHeaders: []
+      # websocketExtraHeaders:
+      #   - 'HeaderName "Header Value"'
+      extraHeaders: []
+      # extraHeaders:
+      #   - 'HeaderName "Header Value"';
+
     websocket:
       livenessProbe: true
       readinessProbe: true
