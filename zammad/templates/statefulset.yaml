@@ -33,8 +33,8 @@ spec:
         - name: "AUTOWIZARD_JSON"
           valueFrom:
             secretKeyRef:
-              name: "{{ template "zammad.fullname" . }}-autowizard"
-              key: "autowizard"
+              name: {{ template "zammad.autowizardSecretName" . }}
+              key: {{ .Values.secrets.autowizard.secretKey }}
         {{ end }}
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
@@ -53,8 +53,8 @@ spec:
         - name: "POSTGRESQL_PASS"
           valueFrom:
             secretKeyRef:
-              name: "{{ template "zammad.fullname" . }}-postgresql-pass"
-              key: "postgresql-pass"
+              name: {{ template "zammad.postgresqlSecretName" . }}
+              key: {{ .Values.secrets.postgresql.secretKey }}
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
           mountPath: /opt/zammad
@@ -74,6 +74,13 @@ spec:
         - name: "{{ $key }}"
           value: "{{ $value }}"
         {{- end }}
+        {{ if or .Values.envConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
+        - name: "ELASTICSEARCH_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "zammad.elasticsearchSecretName" . }}
+              key: {{ .Values.secrets.elasticsearch.secretKey }}
+        {{ end }}
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
           mountPath: /opt/zammad

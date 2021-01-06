@@ -61,3 +61,37 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+postgresql secret name
+*/}}
+{{- define "zammad.postgresqlSecretName" -}}
+{{- if .Values.secrets.postgresql.useExisting -}}
+    {{ .Values.secrets.postgresql.secretName }}
+{{- else -}}
+    {{ template "zammad.fullname" . }}-{{ .Values.secrets.postgresql.secretName }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+elasticsearch secret name
+*/}}
+{{- define "zammad.elasticsearchSecretName" -}}
+{{- if .Values.secrets.elasticsearch.useExisting -}}
+    {{ .Values.secrets.elasticsearch.secretName }}
+{{- else -}}
+    {{ template "zammad.fullname" . }}-{{ .Values.secrets.elasticsearch.secretName }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+autowizard secret name
+*/}}
+{{- define "zammad.autowizardSecretName" -}}
+{{- if .Values.secrets.autowizard.useExisting -}}
+    {{ .Values.secrets.autowizard.secretName }}
+{{- else -}}
+    {{ template "zammad.fullname" . }}-{{ .Values.secrets.autowizard.secretName }}
+{{- end -}}
+{{- end -}}
