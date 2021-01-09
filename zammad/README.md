@@ -78,7 +78,8 @@ The following table lists the configurable parameters of the zammad chart and th
 | `nodeSelector`                                     | Node Selector                                    | `{}`                            |
 | `tolerations`                                      | Tolerations                                      | `[]`                            |
 | `affinity`                                         | Affinity                                         | `{}`                            |
-| `elasticsearch.enabled`                            | Use Elasticsearch dependency                     | `true`                          |
+| `elasticsearch.enabled`                            | Use Elasticsearch chart dependency               | `true`                          |
+| `elasticsearch.enableInitialisation`               | Run zammad specific Elasticsearch initialisation | `true`                          |
 | `elasticsearch.image`                              | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
 | `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-3.6.0-1`  |
 | `elasticsearch.clusterName`                        | Elasticsearch cluster name                       | `zammad`                        |

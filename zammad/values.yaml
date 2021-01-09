@@ -165,7 +165,10 @@ affinity: {}
 
 
 elasticsearch:
+  # enable / disable elasticsearch chart dependency
   enabled: true
+  # enable / disable zammad specific elasticsearch initialisation - disable this to run zammad without elasticsearch
+  enableInitialisation: true
   image: "zammad/zammad-docker-compose"
   imageTag: "zammad-elasticsearch-3.6.0-1"
   clusterName: zammad

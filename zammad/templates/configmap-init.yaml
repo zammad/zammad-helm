@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
 data:
+{{ if .Values.elasticsearch.enableInitialisation }}
   elasticsearch-init: |-
     #!/bin/bash
     set -e
@@ -17,6 +18,7 @@ data:
     bundle exec rake searchindex:rebuild
     {{ end }}
     echo "elasticsearch init complete :)"
+{{ end }}
   postgresql-init: |-
     #!/bin/bash
     set -e
