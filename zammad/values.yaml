@@ -23,6 +23,23 @@ ingress:
   #    hosts:
   #      - example.local
 
+secrets:
+  autowizard:
+    useExisting: false
+    secretName: autowizard
+    secretKey: autowizard
+    # see autowizard.config for secret value
+  elasticsearch:
+    useExisting: false
+    secretName: elastic-credentials
+    secretKey: password
+    # see envConfig.elasticsearch.pass for secret value
+  postgresql:
+    useExisting: false
+    secretName: postgresql-pass
+    secretKey: postgresql-pass
+    # see envConfig.postgresql.pass for secret value
+
 # zammad container config
 envConfig:
   elasticsearch:
