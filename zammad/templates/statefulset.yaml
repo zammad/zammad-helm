@@ -21,6 +21,7 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+        runAsUser: 1000
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets: {{ toYaml .Values.image.imagePullSecrets | nindent 6 }}
       {{- end }}
