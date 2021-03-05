@@ -257,7 +257,6 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
       securityContext:
-        allowPrivilegeEscalation: false
         fsGroup: 1000
         runAsUser: 1000
         runAsGroup: 1000
