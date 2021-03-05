@@ -68,6 +68,7 @@ jobs:
           - v1.17.17
           - v1.18.15
           - v1.19.7
+          - v1.20.2
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -94,6 +95,7 @@ jobs:
           - v1.17.17
           - v1.18.15
           - v1.19.7
+          - v1.20.2
     steps:
       - name: Checkout
         uses: actions/checkout@v2
