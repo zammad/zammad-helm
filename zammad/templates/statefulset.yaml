@@ -256,6 +256,11 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+      securityContext:
+        allowPrivilegeEscalation: false
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
       volumes:
       - name: {{ template "zammad.fullname" . }}-nginx
         configMap:

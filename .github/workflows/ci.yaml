@@ -60,9 +60,7 @@ jobs:
   kubeval-chart:
     runs-on: ubuntu-20.04
     needs:
-      - codespell
       - lint-chart
-      - super-linter
     strategy:
       matrix:
         k8s:

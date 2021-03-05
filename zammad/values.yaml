@@ -26,59 +26,56 @@ ingress:
 secrets:
   autowizard:
     useExisting: false
-    secretName: autowizard
     secretKey: autowizard
+    secretName: autowizard
     # see autowizard.config for secret value
   elasticsearch:
     useExisting: false
-    secretName: elastic-credentials
     secretKey: password
+    secretName: elastic-credentials
     # see envConfig.elasticsearch.pass for secret value
   postgresql:
     useExisting: false
-    secretName: postgresql-pass
     secretKey: postgresql-pass
+    secretName: postgresql-pass
     # see envConfig.postgresql.pass for secret value
 
 # zammad container config
 envConfig:
   elasticsearch:
     # host env var is only used when elasticsearch.enabled is false
-    schema: http
     host: zammad-master
-    port: 9200
-    user: ""
     pass: ""
+    port: 9200
     reindex: true
+    schema: http
+    user: ""    
   memcached:
     # host env var is only used when memcached.enabled is false
     host: zammad-memcached
     port: 11211
   postgresql:
+    # needs to be the same as the postgresql.postgresqlPassword
+    db: zammad_production
     # host env var is only used when postgresql.enabled is false
     host: zammad-postgresql
+    pass: "zammad"
+    # needs to be the same as the postgresql.postgresqlDatabase
     port: 5432
     # needs to be the same as the postgresql.postgresqlUsername
     user: zammad
-    # needs to be the same as the postgresql.postgresqlPassword
-    pass: "zammad"
-    # needs to be the same as the postgresql.postgresqlDatabase
-    db: zammad_production
   zammad:
     rails:
-      trustedProxies: "['127.0.0.1', '::1']"
       livenessProbe: true
       readinessProbe: true
+      trustedProxies: "['127.0.0.1', '::1']"      
     nginx:
+      extraHeaders: []
+        # - 'HeaderName "Header Value"'
       livenessProbe: true
       readinessProbe: true
       websocketExtraHeaders: []
-      # websocketExtraHeaders:
-      #   - 'HeaderName "Header Value"'
-      extraHeaders: []
-      # extraHeaders:
-      #   - 'HeaderName "Header Value"';
-
+        # - 'HeaderName "Header Value"'
     websocket:
       livenessProbe: true
       readinessProbe: true
