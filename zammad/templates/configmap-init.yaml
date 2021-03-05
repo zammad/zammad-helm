@@ -41,5 +41,4 @@ data:
     if [ -n "${AUTOWIZARD_JSON}" ]; then
         echo "${AUTOWIZARD_JSON}" | base64 -d > auto_wizard.json
     fi
-    chown -R "${ZAMMAD_USER}":"${ZAMMAD_USER}" "${ZAMMAD_DIR}"
     echo "zammad init complete :)"

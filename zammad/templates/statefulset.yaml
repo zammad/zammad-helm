@@ -36,6 +36,9 @@ spec:
               name: {{ template "zammad.autowizardSecretName" . }}
               key: {{ .Values.secrets.autowizard.secretKey }}
         {{ end }}
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
           mountPath: /opt/zammad
@@ -105,6 +108,9 @@ spec:
         ports:
         - name: http
           containerPort: 8080
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
           mountPath: /opt/zammad
