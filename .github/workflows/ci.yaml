@@ -34,6 +34,7 @@ jobs:
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
+          VALIDATE_JSCPD: false
           VALIDATE_KUBERNETES_KUBEVAL: false
           VALIDATE_YAML: false
 
@@ -47,7 +48,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.5.0
+          version: v3.5.2
       - uses: actions/setup-python@v2
         with:
           python-version: 3.7
