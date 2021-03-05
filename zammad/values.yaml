@@ -49,7 +49,7 @@ envConfig:
     port: 9200
     reindex: true
     schema: http
-    user: ""    
+    user: ""
   memcached:
     # host env var is only used when memcached.enabled is false
     host: zammad-memcached
@@ -68,7 +68,7 @@ envConfig:
     rails:
       livenessProbe: true
       readinessProbe: true
-      trustedProxies: "['127.0.0.1', '::1']"      
+      trustedProxies: "['127.0.0.1', '::1']"
     nginx:
       extraHeaders: []
         # - 'HeaderName "Header Value"'
