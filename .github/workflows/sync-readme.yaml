@@ -9,18 +9,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - run: |
+      - name: copy README.md
+        run: |
           cp -f README.md ${{ runner.temp }}/README.md
 
-      - uses: actions/checkout@v2
+      - name: Checkout gh-pages
+        uses: actions/checkout@v2
         with:
           ref: gh-pages
 
-      - run: |
+      - name: commit
+        run: |
           cp -f ${{ runner.temp }}/README.md .
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
