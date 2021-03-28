@@ -31,7 +31,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Lint Code Base
-        uses: github/super-linter@v3.14.5
+        uses: github/super-linter@v3
         env:
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
