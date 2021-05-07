@@ -12,8 +12,8 @@ data:
     bundle exec rails r 'Setting.set("es_url", "{{ .Values.envConfig.elasticsearch.schema }}://{{ if .Values.elasticsearch.enabled }}zammad-master{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}:{{ .Values.envConfig.elasticsearch.port }}")'
     ELASTICSEARCH_USER=${ELASTICSEARCH_USER:-{{ .Values.envConfig.elasticsearch.user }}}
     if [ -n "${ELASTICSEARCH_USER}" ] && [ -n "${ELASTICSEARCH_PASSWORD}" ]; then
-        bundle exec rails r 'Setting.set("es_user", "${ELASTICSEARCH_USER}")'
-        bundle exec rails r 'Setting.set("es_password", "${ELASTICSEARCH_PASSWORD}")'
+        bundle exec rails r "Setting.set(\"es_user\", \"${ELASTICSEARCH_USER}\")"
+        bundle exec rails r "Setting.set(\"es_password\", \"${ELASTICSEARCH_PASSWORD}\")"
     fi
     {{- if and .Values.envConfig.elasticsearch.reindex }}
     bundle exec rake searchindex:rebuild
