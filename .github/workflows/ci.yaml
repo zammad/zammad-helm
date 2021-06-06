@@ -9,7 +9,7 @@ on:
 
 env:
   helm-version: "v3.6.0"
-  kubeval-version: "0.16.1"
+  kubeval-version: "v0.16.1"
 
 jobs:
   codespell:
