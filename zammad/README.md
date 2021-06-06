@@ -156,7 +156,7 @@ helm upgrade --install zammad zammad/zammad --namespace=zammad --version=2.0.3
 
 - Import your file and SQL backups inside the Zammad & Postgresql containers
 
-## #From Zammad 2.6.x to 3.x
+### From Zammad 2.6.x to 3.x
 
 As Helm 2.x was deprecated Helm 3.x is needed now to install Zammad Helm chart.
 Minimum Kubernetes version is 1.16.x now.
@@ -165,3 +165,7 @@ As Porstgresql dependency Helm chart was updated to, have a look at the upgradin
 
 - <https://artifacthub.io/packages/helm/bitnami/postgresql#to-9-0-0>
 - <https://artifacthub.io/packages/helm/bitnami/postgresql#to-10-0-0>
+
+### From Zammad 3.5.x to 4.x
+
+Ingress config has been updated to the default of charts created with Helm 3.6.0 so you might need to adapt your ingress config.
