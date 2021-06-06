@@ -7,6 +7,9 @@ on:
     paths:
       - 'zammad/**'
 
+env:
+  helm-version: "v3.6.0"
+
 jobs:
   codespell:
     name: codespell
@@ -50,7 +53,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.5.2
+          version: "${{ env.helm-version }}"
       - uses: actions/setup-python@v2
         with:
           python-version: 3.7
@@ -68,9 +71,10 @@ jobs:
         k8s:
           - v1.16.15
           - v1.17.17
-          - v1.18.15
-          - v1.19.7
-          - v1.20.2
+          - v1.18.19
+          - v1.19.11
+          - v1.20.7
+          - v1.21.1
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -79,7 +83,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.5.2
+          version: "${{ env.helm-version }}"
       - name: Run kubeval
         env:
           KUBERNETES_VERSION: ${{ matrix.k8s }}
@@ -95,9 +99,10 @@ jobs:
         k8s:
           - v1.16.15
           - v1.17.17
-          - v1.18.15
-          - v1.19.7
-          - v1.20.2
+          - v1.18.19
+          - v1.19.11
+          - v1.20.7
+          - v1.21.1
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -106,12 +111,12 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.5.2
+          version: "${{ env.helm-version }}"
       - uses: actions/setup-python@v2
         with:
           python-version: 3.7
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.0.1
+        uses: helm/chart-testing-action@v2.1.0
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
