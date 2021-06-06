@@ -36,11 +36,9 @@ spec:
                 name: {{ template "zammad.autowizardSecretName" . }}
                 key: {{ .Values.secrets.autowizard.secretKey }}
           {{ end }}
-          {{- if .Values.extraEnv }}
           {{- range $key, $value := .Values.extraEnv }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
-          {{- end }}
           {{- end }}
         securityContext:
           runAsUser: 1000
@@ -64,11 +62,9 @@ spec:
               secretKeyRef:
                 name: {{ template "zammad.postgresqlSecretName" . }}
                 key: {{ .Values.secrets.postgresql.secretKey }}
-          {{- if .Values.extraEnv }}
           {{- range $key, $value := .Values.extraEnv }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
-          {{- end }}
           {{- end }}
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
@@ -92,11 +88,9 @@ spec:
                 name: {{ template "zammad.elasticsearchSecretName" . }}
                 key: {{ .Values.secrets.elasticsearch.secretKey }}
           {{ end }}
-          {{- if .Values.extraEnv }}
           {{- range $key, $value := .Values.extraEnv }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
-          {{- end }}
           {{- end }}
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
@@ -115,11 +109,9 @@ spec:
           - -g 
           - 'daemon off;'
         env:
-          {{- if .Values.extraEnv }}
           {{- range $key, $value := .Values.extraEnv }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
-          {{- end }}
           {{- end }}
         ports:
         - name: http
@@ -169,11 +161,9 @@ spec:
           - "-e"
           - "production"
         env:
-          {{- if .Values.extraEnv }}
           {{- range $key, $value := .Values.extraEnv }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
-          {{- end }}
           {{- end }}
         ports:
         - name: railsserver
@@ -211,11 +201,9 @@ spec:
           - "script/scheduler.rb"
           - "run"
         env:
-          {{- if .Values.extraEnv }}
           {{- range $key, $value := .Values.extraEnv }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
-          {{- end }}
           {{- end }}
         volumeMounts:
          - name: {{ template "zammad.fullname" . }}
@@ -238,11 +226,9 @@ spec:
           - "6042"
           - "start"
         env:
-          {{- if .Values.extraEnv }}
           {{- range $key, $value := .Values.extraEnv }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
-          {{- end }}
           {{- end }}
         ports:
         - name: websocket
