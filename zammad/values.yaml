@@ -83,7 +83,7 @@ envConfig:
       readinessProbe: true
 
 # additional environment vars
-extraEnv: {}
+extraEnv: []
 
 # autowizard config
 # if a token is used the url hast to look like: http://zammad/#getting_started/auto_wizard/your_token_here
