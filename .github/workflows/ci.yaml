@@ -9,6 +9,7 @@ on:
 
 env:
   helm-version: "v3.6.0"
+  kubeval-version: "0.16.1"
 
 jobs:
   codespell:
@@ -87,6 +88,7 @@ jobs:
       - name: Run kubeval
         env:
           KUBERNETES_VERSION: ${{ matrix.k8s }}
+          KUEVAL_VERSION: "${{ env.kubeval-version }}"
         run: .github/kubeval.sh
 
   install-chart:

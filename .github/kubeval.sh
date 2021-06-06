@@ -7,7 +7,6 @@ set -o errexit
 set -o pipefail
 
 CHART_DIRS="$(git diff --find-renames --name-only "$(git rev-parse --abbrev-ref HEAD)" remotes/origin/master -- zammad | grep '[cC]hart.yaml' | sed -e 's#/[Cc]hart.yaml##g')"
-KUBEVAL_VERSION="0.16.1"
 SCHEMA_LOCATION="https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
 
 # install kubeval
