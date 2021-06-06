@@ -83,7 +83,8 @@ envConfig:
       readinessProbe: true
 
 # additional environment vars
-extraEnv: []
+extraEnv: {}
+  # MY_VAR: foobar
 
 # autowizard config
 # if a token is used the url hast to look like: http://zammad/#getting_started/auto_wizard/your_token_here
@@ -124,7 +125,7 @@ autoWizard:
   #   }
 
 podAnnotations: {}
-# my-annotation: "value"
+  # my-annotation: "value"
 
 persistence:
   enabled: true
