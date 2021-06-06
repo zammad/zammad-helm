@@ -38,7 +38,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `service.port`                                     | Service port                                     | `8080`                          |
 | `ingress.enabled`                                  | Enable Ingress                                   | `false`                         |
 | `ingress.annotations`                              | Additional ingress annotations                   | `""`                            |
-| `ingress.path`                                     | Ingress path                                     | `""`                            |
+| `ingress.className`                                | Use IngressClassName                             | `""`                            |
 | `ingress.hosts`                                    | Ingress hosts                                    | `""`                            |
 | `ingress.tls`                                      | Ingress TLS                                      | `[]`                            |
 | `envConfig.elasticsearch.schema`                   | Elasticsearch schema                             | `http`                          |
