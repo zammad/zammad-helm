@@ -29,17 +29,17 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-        {{ if .Values.autoWizard.enabled }}
-        - name: "AUTOWIZARD_JSON"
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "zammad.autowizardSecretName" . }}
-              key: {{ .Values.secrets.autowizard.secretKey }}
-        {{ end }}
-        {{- range $key, $value := .Values.extraEnv }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
+          {{ if .Values.autoWizard.enabled }}
+          - name: "AUTOWIZARD_JSON"
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "zammad.autowizardSecretName" . }}
+                key: {{ .Values.secrets.autowizard.secretKey }}
+          {{ end }}
+          {{- range $key, $value := .Values.extraEnv }}
+          - name: "{{ $key }}"
+            value: "{{ $value }}"
+          {{- end }}
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
@@ -57,15 +57,15 @@ spec:
           runAsUser: 1000
           runAsGroup: 1000
         env:
-        - name: "POSTGRESQL_PASS"
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "zammad.postgresqlSecretName" . }}
-              key: {{ .Values.secrets.postgresql.secretKey }}
-        {{- range $key, $value := .Values.extraEnv }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
+          - name: "POSTGRESQL_PASS"
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "zammad.postgresqlSecretName" . }}
+                key: {{ .Values.secrets.postgresql.secretKey }}
+          {{- range $key, $value := .Values.extraEnv }}
+          - name: "{{ $key }}"
+            value: "{{ $value }}"
+          {{- end }}
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
           mountPath: /opt/zammad
@@ -81,17 +81,17 @@ spec:
           runAsUser: 1000
           runAsGroup: 1000
         env:
-        {{ if or .Values.envConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
-        - name: "ELASTICSEARCH_PASSWORD"
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "zammad.elasticsearchSecretName" . }}
-              key: {{ .Values.secrets.elasticsearch.secretKey }}
-        {{ end }}
-        {{- range $key, $value := .Values.extraEnv }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
+          {{ if or .Values.envConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
+          - name: "ELASTICSEARCH_PASSWORD"
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "zammad.elasticsearchSecretName" . }}
+                key: {{ .Values.secrets.elasticsearch.secretKey }}
+          {{ end }}
+          {{- range $key, $value := .Values.extraEnv }}
+          - name: "{{ $key }}"
+            value: "{{ $value }}"
+          {{- end }}
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
           mountPath: /opt/zammad
@@ -109,10 +109,10 @@ spec:
           - -g 
           - 'daemon off;'
         env:
-        {{- range $key, $value := .Values.extraEnv }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
+          {{- range $key, $value := .Values.extraEnv }}
+          - name: "{{ $key }}"
+            value: "{{ $value }}"
+          {{- end }}
         ports:
         - name: http
           containerPort: 8080
@@ -161,10 +161,10 @@ spec:
           - "-e"
           - "production"
         env:
-        {{- range $key, $value := .Values.extraEnv }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
+          {{- range $key, $value := .Values.extraEnv }}
+          - name: "{{ $key }}"
+            value: "{{ $value }}"
+          {{- end }}
         ports:
         - name: railsserver
           containerPort: 3000
@@ -201,10 +201,10 @@ spec:
           - "script/scheduler.rb"
           - "run"
         env:
-        {{- range $key, $value := .Values.extraEnv }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
+          {{- range $key, $value := .Values.extraEnv }}
+          - name: "{{ $key }}"
+            value: "{{ $value }}"
+          {{- end }}
         volumeMounts:
          - name: {{ template "zammad.fullname" . }}
            mountPath: /opt/zammad
@@ -226,10 +226,10 @@ spec:
           - "6042"
           - "start"
         env:
-        {{- range $key, $value := .Values.extraEnv }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
+          {{- range $key, $value := .Values.extraEnv }}
+          - name: "{{ $key }}"
+            value: "{{ $value }}"
+          {{- end }}
         ports:
         - name: websocket
           containerPort: 6042

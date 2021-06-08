@@ -31,14 +31,14 @@ The following table lists the configurable parameters of the zammad chart and th
 | Parameter                                          | Description                                      | Default                         |
 | -------------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                        | Container image tag to deploy                    | `4.0.0-7`                       |
+| `image.tag`                                        | Container image tag to deploy                    | `4.1.0`                         |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
 | `image.imagePullSecrets`                           | An array of imagePullSecrets                     | `[]`                            |
 | `service.type`                                     | Service type                                     | `ClusterIP`                     |
 | `service.port`                                     | Service port                                     | `8080`                          |
 | `ingress.enabled`                                  | Enable Ingress                                   | `false`                         |
 | `ingress.annotations`                              | Additional ingress annotations                   | `""`                            |
-| `ingress.path`                                     | Ingress path                                     | `""`                            |
+| `ingress.className`                                | Use IngressClassName                             | `""`                            |
 | `ingress.hosts`                                    | Ingress hosts                                    | `""`                            |
 | `ingress.tls`                                      | Ingress TLS                                      | `[]`                            |
 | `envConfig.elasticsearch.schema`                   | Elasticsearch schema                             | `http`                          |
@@ -54,7 +54,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `envConfig.postgresql.pass`                        | PostgreSql pass                                  | `""`                            |
 | `envConfig.postgresql.user`                        | PostgreSql user                                  | `zammad`                        |
 | `envConfig.postgresql.db`                          | PostgreSql database                              | `zammad_production`             |
-| `envConfig.zammad.rails.trustedProxies`            | PostgreSql database                              | `"['127.0.0.1', '::1']"`        |
+| `envConfig.zammad.rails.trustedProxies`            | Configure Rails trusted proxies                  | `"['127.0.0.1', '::1']"`        |
 | `envConfig.zammad.rails.readinessProbe`            | Readiness probe on rails                         | `true`                          |
 | `envConfig.zammad.rails.livenessProbe`             | Liveness probe on rails                          | `true`                          |
 | `envConfig.zammad.nginx.readinessProbe`            | Readiness probe on nginx                         | `true`                          |
@@ -81,7 +81,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `elasticsearch.enabled`                            | Use Elasticsearch chart dependency               | `true`                          |
 | `elasticsearch.enableInitialisation`               | Run zammad specific Elasticsearch initialisation | `true`                          |
 | `elasticsearch.image`                              | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-4.0.0-7`  |
+| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-4.1.0`  |
 | `elasticsearch.clusterName`                        | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                           | Elasticsearch replicas                           | `1`                             |
 | `elasticsearch.clusterHealthCheckParams`           | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
@@ -156,7 +156,7 @@ helm upgrade --install zammad zammad/zammad --namespace=zammad --version=2.0.3
 
 - Import your file and SQL backups inside the Zammad & Postgresql containers
 
-## #From Zammad 2.6.x to 3.x
+### From Zammad 2.6.x to 3.x
 
 As Helm 2.x was deprecated Helm 3.x is needed now to install Zammad Helm chart.
 Minimum Kubernetes version is 1.16.x now.
@@ -165,3 +165,7 @@ As Porstgresql dependency Helm chart was updated to, have a look at the upgradin
 
 - <https://artifacthub.io/packages/helm/bitnami/postgresql#to-9-0-0>
 - <https://artifacthub.io/packages/helm/bitnami/postgresql#to-10-0-0>
+
+### From Zammad 3.5.x to 4.x
+
+Ingress config has been updated to the default of charts created with Helm 3.6.0 so you might need to adapt your ingress config.

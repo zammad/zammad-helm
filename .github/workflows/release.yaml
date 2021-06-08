@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+env:
+  helm-version: "v3.6.0"
+
 jobs:
   release:
     runs-on: ubuntu-20.04
@@ -22,10 +25,10 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.5.2
+          version: "${{ env.helm-version }}"
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.0.0
+        uses: helm/chart-releaser-action@v1.2.1
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
