@@ -2,8 +2,8 @@ name: Release Charts
 
 on:
   push:
-    branches:
-      - master
+    # branches:
+    #   - master
 
 env:
   helm-version: "v3.6.0"
@@ -32,4 +32,4 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
-          charts_dir: .
+          charts_dir: .zammad
