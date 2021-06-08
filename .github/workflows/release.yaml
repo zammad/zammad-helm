@@ -29,8 +29,8 @@ jobs:
           version: "${{ env.helm-version }}"
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.2.1
+        uses: helm/chart-releaser-action@v1.0.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
-          charts_dir: .zammad
+          charts_dir: zammad
