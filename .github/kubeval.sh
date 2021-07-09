@@ -6,8 +6,8 @@
 set -o errexit
 set -o pipefail
 
-CHART_DIRS="$(git diff --find-renames --name-only "$(git rev-parse --abbrev-ref HEAD)" remotes/origin/master -- zammad | grep '[cC]hart.yaml' | sed -e 's#/[Cc]hart.yaml##g')"
-SCHEMA_LOCATION="https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
+CHART_DIRS="$(git diff --find-renames --name-only "$(git rev-parse --abbrev-ref HEAD)" remotes/origin/main -- zammad | grep '[cC]hart.yaml' | sed -e 's#/[Cc]hart.yaml##g')"
+SCHEMA_LOCATION="https://raw.githubusercontent.com/yannh/kubernetes-json-schema/main/"
 
 # install kubeval
 curl --silent --show-error --fail --location --output /tmp/kubeval.tar.gz https://github.com/instrumenta/kubeval/releases/download/"${KUBEVAL_VERSION}"/kubeval-linux-amd64.tar.gz
