@@ -59,7 +59,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `envConfig.zammad.rails.livenessProbe`             | Liveness probe on rails                          | `true`                          |
 | `envConfig.zammad.nginx.readinessProbe`            | Readiness probe on nginx                         | `true`                          |
 | `envConfig.zammad.nginx.livenessProbe`             | Liveness probe on nginx                          | `true`                          |
-| `envConfig.zammad.nginx.websocketExtraHeaders`     | Additional nginx headers for ws location         | `[]`                            |4.1.0
+| `envConfig.zammad.nginx.websocketExtraHeaders`     | Additional nginx headers for ws location         | `[]`                            |
 | `envConfig.zammad.nginx.extraHeaders`              | Additional nginx headers for / location          | `[]`                            |
 | `envConfig.zammad.websocket.readinessProbe`        | Readiness probe on websocket                     | `true`                          |
 | `envConfig.zammad.websocket.livenessProbe`         | Liveness probe on websocket                      | `true`                          |
