@@ -3,7 +3,7 @@ name: sync-readme
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - 'README.md'
 

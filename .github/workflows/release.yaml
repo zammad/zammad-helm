@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   helm-version: "v3.6.2"
