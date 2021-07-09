@@ -3,12 +3,12 @@ name: ci
 on:
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - 'zammad/**'
 
 env:
-  helm-version: "v3.6.0"
+  helm-version: "v3.6.2"
   kubeval-version: "v0.16.1"
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
       - name: Lint Code Base
         uses: github/super-linter@v3
         env:
-          DEFAULT_BRANCH: master
+          DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_JSCPD: false
@@ -75,6 +75,7 @@ jobs:
           - v1.18.19
           - v1.19.11
           - v1.20.7
+          - v1.21.2
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -103,6 +104,7 @@ jobs:
           - v1.18.19
           - v1.19.11
           - v1.20.7
+          - v1.21.2
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -125,7 +127,7 @@ jobs:
             echo "::set-output name=changed::true"
           fi
       - name: Create kind cluster
-        uses: helm/kind-action@v1.1.0
+        uses: helm/kind-action@v1.2.0
         if: steps.list-changed.outputs.changed == 'true'
         with:
           config: .github/kind-config.yaml

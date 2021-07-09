@@ -1,7 +1,8 @@
 chart-dirs: .
-helm-extra-args: --timeout 900s
-check-version-increment: true
-debug: true
 chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
   - elastic=https://helm.elastic.co
+check-version-increment: true
+debug: true
+helm-extra-args: --timeout 900s
+target-branch: main
