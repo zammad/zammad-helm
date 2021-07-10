@@ -66,6 +66,10 @@ The following table lists the configurable parameters of the zammad chart and th
 | `autoWizard.enabled`                               | enable autowizard                                | `false`                         |
 | `autoWizard.config`                                | autowizard json config                           | `""`                            |
 | `podAnnotations`                                   | Annotations for Pods                             | `{}`                            |
+| `volumePermissions.enabled`                        | Enable data volume permissions correction        | `false`                         |
+| `volumePermissions.image.repository`               | initContainer image to use                       | `alpine`                        |
+| `volumePermissions.image.tag`                      | initContainer image tag to deploy                | `3.14`                          |
+| `volumePermissions.image.pullPolicy`               | initContainer pull policy                        | `IfNotPresent`                  |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |
 | `persistence.accessModes`                          | Access modes                                     | `["ReadWriteOnce"]`             |
 | `persistence.size`                                 | Volume size                                      | `15Gi`                          |

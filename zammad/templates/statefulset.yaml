@@ -23,6 +23,22 @@ spec:
       imagePullSecrets: {{ toYaml .Values.image.imagePullSecrets | nindent 6 }}
       {{- end }}
       initContainers:
+      {{- if .Values.volumePermissions.enabled }}
+      - name: data-chmod
+        image: "{{ .Values.volumePermissions.image.repository }}:{{ .Values.volumePermissions.image.tag }}"
+        imagePullPolicy: {{ .Values.volumePermissions.image.pullPolicy }}
+        command:
+        - /bin/sh
+        - -cx
+        - |
+          chown 1000:1000 -R /opt/zammad
+        securityContext:
+          runAsNonRoot: false
+          runAsUser: 0
+        volumeMounts:
+        - name: {{ template "zammad.fullname" . }}
+          mountPath: /opt/zammad
+      {{- end }}
       - name: zammad-init
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
