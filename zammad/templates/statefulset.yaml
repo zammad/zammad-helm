@@ -19,8 +19,6 @@ spec:
       labels:
         {{- include "zammad.labels" . | nindent 8 }}
     spec:
-      securityContext:
-        fsGroup: 1000
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets: {{ toYaml .Values.image.imagePullSecrets | nindent 6 }}
       {{- end }}
@@ -105,8 +103,8 @@ spec:
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:
-          - /usr/sbin/nginx 
-          - -g 
+          - /usr/sbin/nginx
+          - -g
           - 'daemon off;'
         env:
           {{- range $key, $value := .Values.extraEnv }}
@@ -148,7 +146,7 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-        command: 
+        command:
           - "bundle"
           - "exec"
           - "rails"
@@ -195,7 +193,7 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-        command: 
+        command:
           - "bundle"
           - "exec"
           - "script/scheduler.rb"
@@ -216,7 +214,7 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-        command: 
+        command:
           - "bundle"
           - "exec"
           - "script/websocket-server.rb"
@@ -288,7 +286,7 @@ spec:
   - metadata:
       name: {{ template "zammad.fullname" . }}
     spec:
-      accessModes: 
+      accessModes:
       {{- range .Values.persistence.accessModes }}
         - {{ . | quote }}
       {{- end }}
