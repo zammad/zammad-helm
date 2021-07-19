@@ -127,6 +127,12 @@ autoWizard:
 podAnnotations: {}
   # my-annotation: "value"
 
+volumePermissions:
+  enabled: false
+  image:
+    repository: alpine
+    tag: '3.14'
+    pullPolicy: IfNotPresent
 persistence:
   enabled: true
   ## A manually managed Persistent Volume and Claim
