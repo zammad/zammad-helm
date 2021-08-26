@@ -71,6 +71,7 @@ envConfig:
       livenessProbe: true
       readinessProbe: true
       trustedProxies: "['127.0.0.1', '::1']"
+      webConcurrency: 1
     nginx:
       extraHeaders: []
         # - 'HeaderName "Header Value"'
@@ -83,7 +84,8 @@ envConfig:
       readinessProbe: true
 
 # additional environment vars
-extraEnv: {}
+extraEnv:
+  ZAMMAD_SESSION_JOBS_CONCURRENT: 1
   # MY_VAR: "foobar"
 
 # autowizard config
