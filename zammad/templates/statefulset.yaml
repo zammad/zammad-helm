@@ -169,7 +169,7 @@ spec:
           - "-b"
           - "tcp://[::]:3000"
           - "-w"
-          - {{ .Values.envConfig.zammad.rails.webConcurrency | default 1 }}
+          - {{ .Values.envConfig.zammad.rails.webConcurrency | default 0 }}
           - "-e"
           - "production"
         env:
