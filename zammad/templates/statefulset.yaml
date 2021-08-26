@@ -165,13 +165,11 @@ spec:
         command:
           - "bundle"
           - "exec"
-          - "rails"
-          - "server"
           - "puma"
           - "-b"
-          - "[::]"
-          - "-p"
-          - "3000"
+          - "tcp://[::]:3000"
+          - "-w"
+          - {{ .Values.envConfig.zammad.rails.webConcurrency | default 1 }}
           - "-e"
           - "production"
         env:
