@@ -1,0 +1,21 @@
+{{- if .Values.rbac.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "zammad.fullname" . }}
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+{{- if .Values.podSecurityPolicy.enabled }}
+rules:
+  - apiGroups: ["policy"]
+    resources: ["podsecuritypolicies"]
+    verbs: ["use"]
+{{- if .Values.podSecurityPolicy.create }}
+    resourceNames: [{{ template "zammad.fullname" . }}]
+{{- else }}
+    resourceNames: [{{ .Values.podSecurityPolicy.name }}]
+{{- end }}
+{{- else }}
+rules: []
+{{- end }}
+{{- end }}
