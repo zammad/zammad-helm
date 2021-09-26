@@ -95,10 +95,10 @@ The following table lists the configurable parameters of the zammad chart and th
 | `postgresql.postgresqlUsername`                    | PostgreSQL user                                  | `zammad`                        |
 | `postgresql.postgresqlPassword`                    | PostgreSQL password                              | `zammad`                        |
 | `postgresql.postgresqlDatabase`                    | PostgreSQL DB                                    | `zammad_production`             |
-| `serviceAccount.create`                            | Create service accounnt                          | `true`                          |
+| `serviceAccount.create`                            | Create service accounnt                          | `false`                         |
 | `serviceAccount.annotations`                       | Service account annotations                      | `{}`                            |
 | `serviceAccount.name`                              | Service account name                             | `""`                            |
-| `rbac.create`                                      | Create RBAC                                      | `true`                          |
+| `rbac.create`                                      | Create RBAC                                      | `false`                         |
 | `podSecurityPolicy.enabled`                        | Enable podSecurityPolicy                         | `false`                         |
 | `podSecurityPolicy.create`                         | Create podSecurityPolicy                         | `false`                         |
 | `podSecurityPolicy.annotations`                    | PodSecurityPolicy annotations                    | `{}`                            |
