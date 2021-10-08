@@ -198,6 +198,11 @@ spec:
         {{- end }}
         resources:
         {{- toYaml .Values.resources.railsserver | indent 10 }}
+        lifecycle:
+          preStop:
+            exec:
+              command:
+                - test -f /opt/zammad/tmp/pids/server.pid && rm /opt/zammad/tmp/pids/server.pid
       - name: {{ .Chart.Name }}-scheduler
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
