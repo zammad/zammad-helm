@@ -175,11 +175,12 @@ spec:
         - name: railsserver
           containerPort: 3000
         volumeMounts:
-         - name: {{ template "zammad.fullname" . }}
-           mountPath: /opt/zammad
-         - name: {{ template "zammad.fullname" . }}-init
-           readOnly: true
-           subPath: zammad-railsserver
+        - name: {{ template "zammad.fullname" . }}
+          mountPath: /opt/zammad
+        - name: {{ template "zammad.fullname" . }}-init
+          mountPath: /docker-entrypoint.sh
+          readOnly: true
+          subPath: zammad-railsserver
         {{- if .Values.envConfig.zammad.rails.readinessProbe }}
         readinessProbe:
           httpGet:
