@@ -20,7 +20,8 @@ spec:
         {{- include "zammad.labels" . | nindent 8 }}
     spec:
       {{- if .Values.image.imagePullSecrets }}
-      imagePullSecrets: {{ toYaml .Values.image.imagePullSecrets | nindent 6 }}
+      imagePullSecrets: 
+        {{- toYaml .Values.image.imagePullSecrets | nindent 8 }}
       {{- end }}
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "zammad.serviceAccountName" . }}
@@ -158,7 +159,7 @@ spec:
           periodSeconds: 10
         {{- end }}
         resources:
-{{ toYaml .Values.resources.nginx | indent 10 }}
+          {{- toYaml .Values.resources.nginx | indent 10 }}
       - name: {{ .Chart.Name }}-railsserver
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -196,7 +197,7 @@ spec:
           periodSeconds: 10
         {{- end }}
         resources:
-{{ toYaml .Values.resources.railsserver | indent 10 }}
+        {{- toYaml .Values.resources.railsserver | indent 10 }}
       - name: {{ .Chart.Name }}-scheduler
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -217,7 +218,7 @@ spec:
          - name: {{ template "zammad.fullname" . }}
            mountPath: /opt/zammad
         resources:
-{{ toYaml .Values.resources.scheduler | indent 10 }}
+          {{- toYaml .Values.resources.scheduler | indent 10 }}
       - name: {{ .Chart.Name }}-websocket
         image: {{ .Values.image.repository }}:{{if eq .Values.image.repository "zammad/zammad-docker-compose"}}zammad-{{ end }}{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -259,19 +260,19 @@ spec:
           periodSeconds: 10
         {{- end }}
         resources:
-{{ toYaml .Values.resources.websocket | indent 10 }}
-    {{- with .Values.nodeSelector }}
+        {{- toYaml .Values.resources.websocket | indent 10 }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.affinity }}
+        {{- toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
       affinity:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
+        {{- toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
       tolerations:
-{{ toYaml . | indent 8 }}
-    {{- end }}
+        {{- toYaml . | indent 8 }}
+      {{- end }}
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
@@ -284,14 +285,14 @@ spec:
         configMap:
           name: {{ template "zammad.fullname" . }}-init
           defaultMode: 0755
-{{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
+      {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
       - name: {{ template "zammad.fullname" . }}
         persistentVolumeClaim:
           claimName: {{ .Values.persistence.existingClaim | default (include "zammad.fullname" .) }}
-{{- else if not .Values.persistence.enabled }}
+      {{- else if not .Values.persistence.enabled }}
       - name: {{ template "zammad.fullname" . }}
         emptyDir: {}
-{{- else if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
+      {{- else if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
   volumeClaimTemplates:
   - metadata:
       name: {{ template "zammad.fullname" . }}
