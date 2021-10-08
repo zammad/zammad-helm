@@ -148,18 +148,6 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-        command: 
-          - "bundle"
-          - "exec"
-          - "rails"
-          - "server"
-          - "puma"
-          - "-b"
-          - "[::]"
-          - "-p"
-          - "3000"
-          - "-e"
-          - "production"
         env:
           {{- range $key, $value := .Values.extraEnv }}
           - name: "{{ $key }}"
@@ -171,6 +159,9 @@ spec:
         volumeMounts:
          - name: {{ template "zammad.fullname" . }}
            mountPath: /opt/zammad
+         - name: {{ template "zammad.fullname" . }}-init
+           readOnly: true
+           subPath: zammad-railsserver
         {{- if .Values.envConfig.zammad.rails.readinessProbe }}
         readinessProbe:
           httpGet:
