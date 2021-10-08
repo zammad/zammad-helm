@@ -1,6 +1,6 @@
 image:
   repository: zammad/zammad-docker-compose
-  tag: 4.1.0
+  tag: 4.1.0-31
   pullPolicy: IfNotPresent
   imagePullSecrets: []
     # - name: "image-pull-secret"
@@ -127,6 +127,12 @@ autoWizard:
 podAnnotations: {}
   # my-annotation: "value"
 
+volumePermissions:
+  enabled: false
+  image:
+    repository: alpine
+    tag: '3.14'
+    pullPolicy: IfNotPresent
 persistence:
   enabled: true
   ## A manually managed Persistent Volume and Claim
@@ -187,7 +193,7 @@ elasticsearch:
   # enable / disable zammad specific elasticsearch initialisation - disable this to run zammad without elasticsearch
   enableInitialisation: true
   image: "zammad/zammad-docker-compose"
-  imageTag: "zammad-elasticsearch-4.1.0"
+  imageTag: "zammad-elasticsearch-4.1.0-31"
   clusterName: zammad
   replicas: 1
   # Workaround to get helm test to work in GitHub action CI
@@ -239,3 +245,26 @@ postgresql:
   #   limits:
   #     cpu: 500m
   #     memory: 512Mi
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+rbac:
+  # Control whether RBAC resources are created
+  create: false
+
+# Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/
+podSecurityPolicy:
+  enabled: false
+  # Create PSP
+  create: false
+  # Annotations to add to PSP. Only applicable if create is true
+  annotations: {}
+  # The name of the PSP to use. Only applicable if create is false
+  name: ""
