@@ -31,7 +31,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | Parameter                                          | Description                                      | Default                         |
 | -------------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                                 | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                        | Container image tag to deploy                    | `4.1.0`                         |
+| `image.tag`                                        | Container image tag to deploy                    | `4.1.0-31`                      |
 | `image.pullPolicy`                                 | Container pull policy                            | `IfNotPresent`                  |
 | `image.imagePullSecrets`                           | An array of imagePullSecrets                     | `[]`                            |
 | `service.type`                                     | Service type                                     | `ClusterIP`                     |
@@ -66,6 +66,10 @@ The following table lists the configurable parameters of the zammad chart and th
 | `autoWizard.enabled`                               | enable autowizard                                | `false`                         |
 | `autoWizard.config`                                | autowizard json config                           | `""`                            |
 | `podAnnotations`                                   | Annotations for Pods                             | `{}`                            |
+| `volumePermissions.enabled`                        | Enable data volume permissions correction        | `false`                         |
+| `volumePermissions.image.repository`               | initContainer image to use                       | `alpine`                        |
+| `volumePermissions.image.tag`                      | initContainer image tag to deploy                | `3.14`                          |
+| `volumePermissions.image.pullPolicy`               | initContainer pull policy                        | `IfNotPresent`                  |
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |
 | `persistence.accessModes`                          | Access modes                                     | `["ReadWriteOnce"]`             |
 | `persistence.size`                                 | Volume size                                      | `15Gi`                          |
@@ -81,7 +85,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `elasticsearch.enabled`                            | Use Elasticsearch chart dependency               | `true`                          |
 | `elasticsearch.enableInitialisation`               | Run zammad specific Elasticsearch initialisation | `true`                          |
 | `elasticsearch.image`                              | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-4.1.0`  |
+| `elasticsearch.imageTag`                           | Elasticsearch docker image tag                   | `zammad-elasticsearch-4.1.0-31` |
 | `elasticsearch.clusterName`                        | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                           | Elasticsearch replicas                           | `1`                             |
 | `elasticsearch.clusterHealthCheckParams`           | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
@@ -91,6 +95,14 @@ The following table lists the configurable parameters of the zammad chart and th
 | `postgresql.postgresqlUsername`                    | PostgreSQL user                                  | `zammad`                        |
 | `postgresql.postgresqlPassword`                    | PostgreSQL password                              | `zammad`                        |
 | `postgresql.postgresqlDatabase`                    | PostgreSQL DB                                    | `zammad_production`             |
+| `serviceAccount.create`                            | Create service accounnt                          | `false`                         |
+| `serviceAccount.annotations`                       | Service account annotations                      | `{}`                            |
+| `serviceAccount.name`                              | Service account name                             | `""`                            |
+| `rbac.create`                                      | Create RBAC                                      | `false`                         |
+| `podSecurityPolicy.enabled`                        | Enable podSecurityPolicy                         | `false`                         |
+| `podSecurityPolicy.create`                         | Create podSecurityPolicy                         | `false`                         |
+| `podSecurityPolicy.annotations`                    | PodSecurityPolicy annotations                    | `{}`                            |
+| `podSecurityPolicy.name`                           | PodSecurityPolicy name                           | `""`                            |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
