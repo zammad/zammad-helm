@@ -46,10 +46,6 @@ data:
     #!/bin/bash
     set -e
     test -f /opt/zammad/tmp/pids/server.pid && rm /opt/zammad/tmp/pids/server.pid
-
     cd "${ZAMMAD_DIR}"
-
-    echo "starting railsserver...
-
-    #shellcheck disable=SC2101
+    echo "starting railsserver..."
     bundle exec rails server puma -b [::] -p 3000 -e production
