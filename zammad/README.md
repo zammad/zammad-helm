@@ -69,7 +69,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `persistence.enabled`                              | Enable persistence                               | `true`                          |
 | `persistence.accessModes`                          | Access modes                                     | `["ReadWriteOnce"]`             |
 | `persistence.size`                                 | Volume size                                      | `15Gi`                          |
-| `persistence.storageClass`                         | storage class                                    | `""`                            |
+| `persistence.storageClassName`                     | storage class name                               | `"-"`                           |
 | `persistence.annotations`                          | annotations                                      | `{}`                            |
 | `resources.nginx`                                  | Resource usage of Zammad's nginx container       | `{}`                            |
 | `resources.railsserver`                            | Resource usage of Zammad's railsserver container | `{}`                            |
@@ -94,9 +94,9 @@ The following table lists the configurable parameters of the zammad chart and th
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
-### Important note for  NFS filesystems
+### Important note for NFS filesystems
 
-For persistent volumes, NFS filesystems should work correctly for **Elasticsearch** and **PostgreSQL**; however, errors will occur if Zammad itself uses an NFS-based persistent volume.  Websockets will break completely.  This is particularly bad news for receiving notifications from the application and using the Chat module.
+For persistent volumes, NFS filesystems should work correctly for **Elasticsearch** and **PostgreSQL**; however, errors will occur if Zammad itself uses an NFS-based persistent volume.  Websockets will break completely. This is particularly bad news for receiving notifications from the application and using the Chat module.
 
 Don't use an NFS-based storage class for Zammad's persistent volume.
 
