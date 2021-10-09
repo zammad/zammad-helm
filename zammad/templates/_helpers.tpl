@@ -95,3 +95,12 @@ autowizard secret name
     {{ template "zammad.fullname" . }}-{{ .Values.secrets.autowizard.secretName }}
 {{- end -}}
 {{- end -}}
+
+
+{{- define "zammad.storageClassName" -}}
+{{- if (eq "-" .persistence.storageClassName) -}}
+storageClassName: ""
+{{- else -}}
+storageClass: {{ .Values.persistence.storageClass }}
+{{- end -}}
+{{- end -}}

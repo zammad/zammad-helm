@@ -295,7 +295,5 @@ spec:
       resources:
         requests:
           storage: {{ .Values.persistence.size | quote }}
-      {{- with .Values.persistence.storageClass }}
-      storageClassName: "{{ . }}"
-      {{- end }}
+      {{ include "zammad.storageClassName" . }}
 {{- end }}
