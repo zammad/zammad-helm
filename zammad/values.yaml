@@ -136,7 +136,7 @@ persistence:
   # existingClaim:
   accessModes:
     - ReadWriteOnce
-  storageClass: ""
+  storageClassName: "-"
   size: 15Gi
   annotations: {}
 
