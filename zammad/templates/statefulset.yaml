@@ -188,7 +188,7 @@ spec:
           {{- range $key, $value := .Values.extraEnv }}
             - name: {{ $key | quote }}
               value: {{ $value | quote }}
-          {{- end -}}
+          {{- end }}
           ports:
             - name: railsserver
               containerPort: 3000
