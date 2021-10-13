@@ -71,7 +71,7 @@ envConfig:
       livenessProbe: true
       readinessProbe: true
       trustedProxies: "['127.0.0.1', '::1']"
-      webConcurrency: 1
+      webConcurrency: 0
     nginx:
       extraHeaders: []
         # - 'HeaderName "Header Value"'
@@ -79,6 +79,8 @@ envConfig:
       readinessProbe: true
       websocketExtraHeaders: []
         # - 'HeaderName "Header Value"'
+    scheduler:
+      sessionJobsConcurrent: 1
     websocket:
       livenessProbe: true
       readinessProbe: true

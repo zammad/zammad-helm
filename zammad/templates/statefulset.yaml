@@ -172,7 +172,7 @@ spec:
           - "-b"
           - "tcp://[::]:3000"
           - "-w"
-          - {{ .Values.envConfig.zammad.rails.webConcurrency | default 0 }}
+          - {{ .Values.envConfig.zammad.rails.webConcurrency }}
           - "-e"
           - "production"
         env:
@@ -216,6 +216,8 @@ spec:
           - "script/scheduler.rb"
           - "run"
         env:
+          - name: ZAMMAD_SESSION_JOBS_CONCURRENT
+            value: {{ .Values.envConfig.zammad.scheduler.sessionJobsConcurrent }}
           {{- range $key, $value := .Values.extraEnv }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
