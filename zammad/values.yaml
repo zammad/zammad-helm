@@ -3,7 +3,7 @@ image:
   tag: 4.1.0-31
   pullPolicy: IfNotPresent
   imagePullSecrets: []
-    # - name: "image-pull-secret"
+  # - name: "image-pull-secret"
 
 service:
   type: ClusterIP
@@ -13,17 +13,17 @@ ingress:
   enabled: false
   ingressClassName: ""
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
   hosts:
     - host: chart-example.local
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls: []
-    # - secretName: chart-example-tls
-    #   hosts:
-    #     - chart-example.local
+  # - secretName: chart-example-tls
+  #   hosts:
+  #     - chart-example.local
 
 secrets:
   autowizard:
@@ -71,19 +71,19 @@ envConfig:
       trustedProxies: "['127.0.0.1', '::1']"
     nginx:
       extraHeaders: []
-        # - 'HeaderName "Header Value"'
+      # - 'HeaderName "Header Value"'
       websocketExtraHeaders: []
-        # - 'HeaderName "Header Value"'
+      # - 'HeaderName "Header Value"'
 
 # Configuration for the nginx server
 nginx:
   resources: {}
-    # requests:
-    #   cpu: 50m
-    #   memory: 32Mi
-    # limits:
-    #   cpu: 100m
-    #   memory: 64Mi
+  # requests:
+  #   cpu: 50m
+  #   memory: 32Mi
+  # limits:
+  #   cpu: 100m
+  #   memory: 64Mi
   # nginx liveness probe for controlling container restarts.
   # disable liveness probes by setting livenessProbe: {}
   livenessProbe:
@@ -110,12 +110,12 @@ nginx:
 # Configuration for the railsserver
 railsserver:
   resources: {}
-    # requests:
-    #   cpu: 100m
-    #   memory: 512Mi
-    # limits:
-    #   cpu: 200m
-    #   memory: 1024Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 512Mi
+  # limits:
+  #   cpu: 200m
+  #   memory: 1024Mi
   # railsserver liveness probe for controlling container restarts.
   # disable liveness probes by setting livenessProbe: {}
   livenessProbe:
@@ -142,12 +142,12 @@ railsserver:
 # Configuration for the websocket server
 websocket:
   resources: {}
-    # requests:
-    #   cpu: 100m
-    #   memory: 256Mi
-    # limits:
-    #   cpu: 200m
-    #   memory: 512Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 256Mi
+  # limits:
+  #   cpu: 200m
+  #   memory: 512Mi
   livenessProbe:
     tcpSocket:
       port: 6042
@@ -167,16 +167,16 @@ websocket:
 
 scheduler:
   resources: {}
-    # requests:
-    #   cpu: 100m
-    #   memory: 256Mi
-    # limits:
-    #   cpu: 200m
-    #   memory: 512Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 256Mi
+  # limits:
+  #   cpu: 200m
+  #   memory: 512Mi
 
 # additional environment vars
 extraEnv: {}
-  # MY_VAR: "foobar"
+# MY_VAR: "foobar"
 
 # autowizard config
 # if a token is used the url hast to look like: http://zammad/#getting_started/auto_wizard/your_token_here
@@ -217,13 +217,13 @@ autoWizard:
   #   }
 
 podAnnotations: {}
-  # my-annotation: "value"
+# my-annotation: "value"
 
 volumePermissions:
   enabled: false
   image:
     repository: alpine
-    tag: '3.14'
+    tag: "3.14"
     pullPolicy: IfNotPresent
 
 # Configuration for persistence
@@ -256,43 +256,43 @@ elasticsearch:
   clusterName: zammad
   replicas: 1
   # Workaround to get helm test to work in GitHub action CI
-  # the [ES chart](https://github.com/elastic/helm-charts/tree/master/elasticsearch) 
+  # the [ES chart](https://github.com/elastic/helm-charts/tree/master/elasticsearch)
   # default would be: "wait_for_status=green&timeout=1s"
   # see: <https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html#request-params>
   clusterHealthCheckParams: "timeout=1s"
   resources: {}
-    # requests:
-    #   cpu: "100m"
-    #   memory: "2Gi"
-    # limits:
-    #   cpu: "1000m"
-    #   memory: "2Gi"
+  # requests:
+  #   cpu: "100m"
+  #   memory: "2Gi"
+  # limits:
+  #   cpu: "1000m"
+  #   memory: "2Gi"
   initResources: {}
-    # limits:
-    #   cpu: "25m"
-    #   # memory: "128Mi"
-    # requests:
-    #   cpu: "25m"
-    #   memory: "128Mi"
+  # limits:
+  #   cpu: "25m"
+  #   # memory: "128Mi"
+  # requests:
+  #   cpu: "25m"
+  #   memory: "128Mi"
   sidecarResources: {}
-    # limits:
-    #   cpu: "25m"
-    #   # memory: "128Mi"
-    # requests:
-    #   cpu: "25m"
-    #   memory: "128Mi"
+  # limits:
+  #   cpu: "25m"
+  #   # memory: "128Mi"
+  # requests:
+  #   cpu: "25m"
+  #   memory: "128Mi"
 
 # settings for the memcached subchart
 memcached:
   enabled: true
   replicaCount: 1
-  # resources:
-  #   requests:
-  #     cpu: 50m
-  #     memory: 64Mi
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources: {}
+  # requests:
+  #   cpu: 50m
+  #   memory: 64Mi
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
 
 # settings for the postgres subchart
 postgresql:
@@ -300,13 +300,13 @@ postgresql:
   postgresqlUsername: zammad
   postgresqlPassword: zammad
   postgresqlDatabase: zammad_production
-  # resources:
-  #   requests:
-  #     cpu: 250m
-  #     memory: 256Mi
-  #   limits:
-  #     cpu: 500m
-  #     memory: 512Mi
+  resources: {}
+  # requests:
+  #   cpu: 250m
+  #   memory: 256Mi
+  # limits:
+  #   cpu: 500m
+  #   memory: 512Mi
 
 # service account configurations
 serviceAccount:
