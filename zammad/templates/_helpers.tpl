@@ -56,9 +56,9 @@ Create the name of the service account to use
 */}}
 {{- define "zammad.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
-    {{ default (include "zammad.fullname" .) .Values.serviceAccount.name }}
+{{ default (include "zammad.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
+{{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
 
@@ -68,9 +68,9 @@ postgresql secret name
 */}}
 {{- define "zammad.postgresqlSecretName" -}}
 {{- if .Values.secrets.postgresql.useExisting -}}
-    {{ .Values.secrets.postgresql.secretName }}
+{{ .Values.secrets.postgresql.secretName }}
 {{- else -}}
-    {{ template "zammad.fullname" . }}-{{ .Values.secrets.postgresql.secretName }}
+{{ template "zammad.fullname" . }}-{{ .Values.secrets.postgresql.secretName }}
 {{- end -}}
 {{- end -}}
 
@@ -79,9 +79,9 @@ elasticsearch secret name
 */}}
 {{- define "zammad.elasticsearchSecretName" -}}
 {{- if .Values.secrets.elasticsearch.useExisting -}}
-    {{ .Values.secrets.elasticsearch.secretName }}
+{{ .Values.secrets.elasticsearch.secretName }}
 {{- else -}}
-    {{ template "zammad.fullname" . }}-{{ .Values.secrets.elasticsearch.secretName }}
+{{ template "zammad.fullname" . }}-{{ .Values.secrets.elasticsearch.secretName }}
 {{- end -}}
 {{- end -}}
 
@@ -90,8 +90,19 @@ autowizard secret name
 */}}
 {{- define "zammad.autowizardSecretName" -}}
 {{- if .Values.secrets.autowizard.useExisting -}}
-    {{ .Values.secrets.autowizard.secretName }}
+{{ .Values.secrets.autowizard.secretName }}
 {{- else -}}
-    {{ template "zammad.fullname" . }}-{{ .Values.secrets.autowizard.secretName }}
+{{ template "zammad.fullname" . }}-{{ .Values.secrets.autowizard.secretName }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+image registry prefix for stock zammad images
+*/}}
+{{- define "zammad.image.repositoryPrefix" -}}
+{{- if eq .Values.image.repository "zammad/zammad-docker-compose" -}}
+{{ print "zammad-" }}
+{{- else -}}
+{{ print "" }}
 {{- end -}}
 {{- end -}}
