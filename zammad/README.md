@@ -131,8 +131,8 @@ Open your browser on <http://localhost:8080>
 
 - health checks have been extended from boolean flags that simply toggle readinessProbes and livenessProbes on the containers to templated
   ones: .zammad.{nginx,rails,websocket}.readinessProbe and .zammad.{nginx,rails,websocket}.livenessProbe have been removed in favor of livenessProbe/readinessProbe
-  templates at .{nginx,railsserver,websocket}. You can customize those directly in your overiding values.yaml.
-- resource constraints have been grouped under .{nginx,railsserver,websocket} from above. They are disabled by default (same as prior versions), but in your overides, make sure
+  templates at .{nginx,railsserver,websocket}. You can customize those directly in your overriding values.yaml.
+- resource constraints have been grouped under .{nginx,railsserver,websocket} from above. They are disabled by default (same as prior versions), but in your overrides, make sure
   to reflect those changes.
 
 ### From chart version 1.x
