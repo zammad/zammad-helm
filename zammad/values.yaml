@@ -11,7 +11,7 @@ service:
 
 ingress:
   enabled: false
-  className: ""
+  ingressClassName: ""
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
@@ -68,19 +68,111 @@ envConfig:
     user: zammad
   zammad:
     rails:
-      livenessProbe: true
-      readinessProbe: true
       trustedProxies: "['127.0.0.1', '::1']"
     nginx:
       extraHeaders: []
         # - 'HeaderName "Header Value"'
-      livenessProbe: true
-      readinessProbe: true
       websocketExtraHeaders: []
         # - 'HeaderName "Header Value"'
-    websocket:
-      livenessProbe: true
-      readinessProbe: true
+
+# Configuration for the nginx server
+nginx:
+  resources: {}
+    # requests:
+    #   cpu: 50m
+    #   memory: 32Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 64Mi
+  # nginx liveness probe for controlling container restarts.
+  # disable liveness probes by setting livenessProbe: {}
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 8080
+    initialDelaySeconds: 30
+    successThreshold: 1
+    failureThreshold: 5
+    timeoutSeconds: 5
+    periodSeconds: 10
+  # nginx readiness probe for controlling service endpoint attachment.
+  # disable readiness probes by setting readinessProbe: {}
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 8080
+    initialDelaySeconds: 30
+    successThreshold: 1
+    failureThreshold: 5
+    timeoutSeconds: 5
+    periodSeconds: 10
+
+# Configuration for the railsserver
+railsserver:
+  resources: {}
+    # requests:
+    #   cpu: 100m
+    #   memory: 512Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 1024Mi
+  # railsserver liveness probe for controlling container restarts.
+  # disable liveness probes by setting livenessProbe: {}
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 3000
+    initialDelaySeconds: 30
+    successThreshold: 1
+    failureThreshold: 5
+    timeoutSeconds: 5
+    periodSeconds: 10
+  # railsserver readiness probe for controlling service endpoint attachment.
+  # disable readiness probes by setting readinessProbe: {}
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 3000
+    initialDelaySeconds: 30
+    successThreshold: 1
+    failureThreshold: 5
+    timeoutSeconds: 5
+    periodSeconds: 10
+
+# Configuration for the websocket server
+websocket:
+  resources: {}
+    # requests:
+    #   cpu: 100m
+    #   memory: 256Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 512Mi
+  livenessProbe:
+    tcpSocket:
+      port: 6042
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 5
+    timeoutSeconds: 5
+  readinessProbe:
+    tcpSocket:
+      port: 6042
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 5
+    timeoutSeconds: 5
+
+scheduler:
+  resources: {}
+    # requests:
+    #   cpu: 100m
+    #   memory: 256Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 512Mi
 
 # additional environment vars
 extraEnv: {}
@@ -133,6 +225,8 @@ volumePermissions:
     repository: alpine
     tag: '3.14'
     pullPolicy: IfNotPresent
+
+# Configuration for persistence
 persistence:
   enabled: true
   ## A manually managed Persistent Volume and Claim
@@ -146,58 +240,24 @@ persistence:
   size: 15Gi
   annotations: {}
 
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-resources:
-  nginx: {}
-    # requests:
-    #   cpu: 50m
-    #   memory: 32Mi
-    # limits:
-    #   cpu: 100m
-    #   memory: 64Mi
-  railsserver: {}
-    # requests:
-    #   cpu: 100m
-    #   memory: 512Mi
-    # limits:
-    #   cpu: 200m
-    #   memory: 1024Mi
-  scheduler: {}
-    # requests:
-    #   cpu: 100m
-    #   memory: 256Mi
-    # limits:
-    #   cpu: 200m
-    #   memory: 512Mi
-  websocket: {}
-    # requests:
-    #   cpu: 100m
-    #   memory: 256Mi
-    # limits:
-    #   cpu: 200m
-    #   memory: 512Mi
-
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}
 
-
+# Settings for the elasticsearch subchart
 elasticsearch:
-  # enable / disable elasticsearch chart dependency
+  # enable/disable elasticsearch chart dependency
   enabled: true
-  # enable / disable zammad specific elasticsearch initialisation - disable this to run zammad without elasticsearch
+  # enable/disable zammad specific elasticsearch initialisation
+  # disable this to run zammad without elasticsearch
   enableInitialisation: true
   image: "zammad/zammad-docker-compose"
   imageTag: "zammad-elasticsearch-4.1.0-31"
   clusterName: zammad
   replicas: 1
   # Workaround to get helm test to work in GitHub action CI
-  # the [ES chart](https://github.com/elastic/helm-charts/tree/master/elasticsearch) default would be: "wait_for_status=green&timeout=1s"
+  # the [ES chart](https://github.com/elastic/helm-charts/tree/master/elasticsearch) 
+  # default would be: "wait_for_status=green&timeout=1s"
   # see: <https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html#request-params>
   clusterHealthCheckParams: "timeout=1s"
   resources: {}
@@ -222,6 +282,7 @@ elasticsearch:
     #   cpu: "25m"
     #   memory: "128Mi"
 
+# settings for the memcached subchart
 memcached:
   enabled: true
   replicaCount: 1
@@ -233,6 +294,7 @@ memcached:
   #     cpu: 100m
   #     memory: 128Mi
 
+# settings for the postgres subchart
 postgresql:
   enabled: true
   postgresqlUsername: zammad
@@ -246,6 +308,7 @@ postgresql:
   #     cpu: 500m
   #     memory: 512Mi
 
+# service account configurations
 serviceAccount:
   # Specifies whether a service account should be created
   create: false
@@ -255,6 +318,9 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# RBAC configuration for scoping resources
+# Role binding is used for accessing the pod security policy configured
+# below
 rbac:
   # Control whether RBAC resources are created
   create: false
