@@ -68,19 +68,76 @@ envConfig:
     user: zammad
   zammad:
     rails:
-      livenessProbe: true
-      readinessProbe: true
       trustedProxies: "['127.0.0.1', '::1']"
     nginx:
       extraHeaders: []
         # - 'HeaderName "Header Value"'
-      livenessProbe: true
-      readinessProbe: true
       websocketExtraHeaders: []
         # - 'HeaderName "Header Value"'
-    websocket:
-      livenessProbe: true
-      readinessProbe: true
+
+healthchecks:
+  nginx:
+    livenessProbe:
+      enabled: true
+      httpGet:
+        path: /
+        port: 8080
+      initialDelaySeconds: 30
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+      periodSeconds: 10
+    readinessProbe:
+      enabled: true
+      httpGet:
+        path: /
+        port: 8080
+      initialDelaySeconds: 30
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+      periodSeconds: 10
+  railsserver:
+    livenessProbe:
+      enabled: true
+      httpGet:
+        path: /
+        port: 3000
+      initialDelaySeconds: 30
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+      periodSeconds: 10
+    readinessProbe:
+      enabled: true
+      httpGet:
+        path: /
+        port: 3000
+      initialDelaySeconds: 30
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+      periodSeconds: 10
+  websocket:
+    livenessProbe:
+      enabled: true
+      tcpSocket:
+        port: 6042
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+    readinessProbe:
+      enabled: true
+      tcpSocket:
+        port: 6042
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+
 
 # additional environment vars
 extraEnv: {}

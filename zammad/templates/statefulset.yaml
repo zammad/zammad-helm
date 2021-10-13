@@ -141,21 +141,15 @@ spec:
           mountPath: /opt/zammad
         - name: {{ template "zammad.fullname" . }}-nginx
           mountPath: /etc/nginx/sites-enabled
-        {{- if .Values.envConfig.zammad.nginx.readinessProbe }}
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        {{- end }}
-        {{- if .Values.envConfig.zammad.nginx.livenessProbe }}
+        {{- if .Values.healthchecks.nginx.livenessProbe.enabled }}
+        {{- with .Values.healthchecks.nginx.livenessProbe -}}
         livenessProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 10
+          {{- . | indent 10 -}}
+        {{- end }}
+        {{- if .Values.healthchecks.nginx.readinessProbe.enabled }}
+        {{- with .Values.healthchecks.nginx.readinessProbe -}}
+        readinessProbe:
+          {{- . | indent 10 -}}
         {{- end }}
         resources:
 {{ toYaml .Values.resources.nginx | indent 10 }}
@@ -188,21 +182,15 @@ spec:
         volumeMounts:
          - name: {{ template "zammad.fullname" . }}
            mountPath: /opt/zammad
-        {{- if .Values.envConfig.zammad.rails.readinessProbe }}
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 3000
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        {{- end }}
-        {{- if .Values.envConfig.zammad.rails.livenessProbe }}
+        {{- if .Values.healthchecks.railsserver.livenessProbe.enabled }}
+        {{- with .Values.healthchecks.railsserver.livenessProbe -}}
         livenessProbe:
-          httpGet:
-            path: /
-            port: 3000
-          initialDelaySeconds: 10
-          periodSeconds: 10
+          {{- . | indent 10 -}}
+        {{- end }}
+        {{- if .Values.healthchecks.railsserver.readinessProbe.enabled }}
+        {{- with .Values.healthchecks.railsserver.readinessProbe -}}
+        readinessProbe:
+          {{- . | indent 10 -}}
         {{- end }}
         resources:
 {{ toYaml .Values.resources.railsserver | indent 10 }}
@@ -253,19 +241,15 @@ spec:
         volumeMounts:
         - name: {{ template "zammad.fullname" . }}
           mountPath: /opt/zammad
-        {{- if .Values.envConfig.zammad.websocket.readinessProbe }}
-        readinessProbe:
-          tcpSocket:
-            port: 6042
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        {{- end }}
-        {{- if .Values.envConfig.zammad.websocket.livenessProbe }}
+        {{- if .Values.healthchecks.websocket.livenessProbe.enabled }}
+        {{- with .Values.healthchecks.websocket.livenessProbe -}}
         livenessProbe:
-          tcpSocket:
-            port: 6042
-          initialDelaySeconds: 10
-          periodSeconds: 10
+          {{- . | indent 10 -}}
+        {{- end }}
+        {{- if .Values.healthchecks.websocket.readinessProbe.enabled }}
+        {{- with .Values.healthchecks.websocket.readinessProbe -}}
+        readinessProbe:
+          {{- . | indent 10 -}}
         {{- end }}
         resources:
 {{ toYaml .Values.resources.websocket | indent 10 }}
