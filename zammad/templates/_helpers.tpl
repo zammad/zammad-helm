@@ -98,9 +98,9 @@ autowizard secret name
 
 
 {{- define "zammad.storageClassName" -}}
-{{- if (eq "-" .persistence.storageClassName) -}}
+{{- if (eq "-" .Values.persistence.storageClassName) -}}
 storageClassName: ""
 {{- else -}}
-storageClass: {{ .Values.persistence.storageClass }}
+storageClass: {{ .Values.persistence.storageClassName }}
 {{- end -}}
 {{- end -}}
