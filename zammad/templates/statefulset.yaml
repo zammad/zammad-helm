@@ -59,16 +59,26 @@ spec:
           image: {{ .Values.image.repository }}:{{ template "zammad.image.repositoryPrefix" . }}{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+          {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.secretKey }}
+          {{- end }}
+            - name: MEMCACHE_SERVERS
+              value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
           {{- if .Values.autoWizard.enabled }}
-            - name: "AUTOWIZARD_JSON"
+            - name: AUTOWIZARD_JSON
               valueFrom:
                 secretKeyRef:
                   name: {{ template "zammad.autowizardSecretName" . }}
                   key: {{ .Values.secrets.autowizard.secretKey }}
           {{- end }}
-          {{- range $key, $value := .Values.extraEnv }}
-            - name: {{ $key | quote }}
-              value: {{ $value | quote }}
+          {{- if .Values.extraEnv }}
+          {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
           securityContext:
             runAsUser: 1000
@@ -87,14 +97,24 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
           env:
-            - name: "POSTGRESQL_PASS"
+          {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.secretKey }}
+          {{- end }}
+            - name: MEMCACHE_SERVERS
+              value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+            - name: POSTGRESQL_PASS
               valueFrom:
                 secretKeyRef:
                   name: {{ template "zammad.postgresqlSecretName" . }}
                   key: {{ .Values.secrets.postgresql.secretKey }}
-          {{- range $key, $value := .Values.extraEnv }}
-            - name: {{ $key | quote }}
-              value: {{ $value | quote }}
+          {{- if .Values.extraEnv }}
+          {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
           volumeMounts:
           - name: {{ template "zammad.fullname" . }}
@@ -103,7 +123,7 @@ spec:
             mountPath: /docker-entrypoint.sh
             readOnly: true
             subPath: postgresql-init
-        {{- if .Values.elasticsearch.enableInitialisation }}
+        {{- if .Values.zammadConfig.elasticsearch.initialisation }}
         - name: elasticsearch-init
           image: {{ .Values.image.repository }}:{{ template "zammad.image.repositoryPrefix" . }}{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -111,16 +131,26 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
           env:
-          {{- if or .Values.envConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
-            - name: "ELASTICSEARCH_PASSWORD"
+          {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.secretKey }}
+          {{- end }}
+            - name: MEMCACHE_SERVERS
+              value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+          {{- if or .Values.zammadConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
+            - name: ELASTICSEARCH_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ template "zammad.elasticsearchSecretName" . }}
                   key: {{ .Values.secrets.elasticsearch.secretKey }}
           {{- end }}
-          {{- range $key, $value := .Values.extraEnv }}
-            - name: {{ $key | quote }}
-              value: {{ $value | quote }}
+          {{- if .Values.extraEnv }}
+          {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
           volumeMounts:
           - name: {{ template "zammad.fullname" . }}
@@ -139,9 +169,8 @@ spec:
             - -g
             - 'daemon off;'
           env:
-          {{- range $key, $value := .Values.extraEnv }}
-            - name: {{ $key | quote }}
-              value: {{ $value | quote }}
+          {{- if .Values.extraEnv }}
+          {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
           ports:
             - name: http
@@ -154,15 +183,15 @@ spec:
               mountPath: /opt/zammad
             - name: {{ include "zammad.fullname" . }}-nginx
               mountPath: /etc/nginx/sites-enabled
-          {{- with .Values.nginx.livenessProbe }}
+          {{- with .Values.zammadConfig.nginx.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.nginx.readinessProbe }}
+          {{- with .Values.zammadConfig.nginx.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.nginx.resources }}
+          {{- with .Values.zammadConfig.nginx.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -175,19 +204,27 @@ spec:
           command:
             - "bundle"
             - "exec"
-            - "rails"
-            - "server"
             - "puma"
             - "-b"
-            - "[::]"
-            - "-p"
-            - "3000"
+            - "tcp://[::]:3000"
+            - "-w"
+            - "{{ .Values.zammadConfig.railsserver.webConcurrency }}"
             - "-e"
             - "production"
           env:
-          {{- range $key, $value := .Values.extraEnv }}
-            - name: {{ $key | quote }}
-              value: {{ $value | quote }}
+          {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.secretKey }}
+          {{- end }}
+            - name: MEMCACHE_SERVERS
+              value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+          {{- if .Values.extraEnv }}
+          {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
           ports:
             - name: railsserver
@@ -195,15 +232,15 @@ spec:
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}
               mountPath: /opt/zammad
-          {{- with .Values.railsserver.livenessProbe }}
+          {{- with .Values.zammadConfig.railsserver.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.railsserver.readinessProbe }}
+          {{- with .Values.zammadConfig.railsserver.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.railsserver.resources }}
+          {{- with .Values.zammadConfig.railsserver.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -219,14 +256,24 @@ spec:
             - "script/scheduler.rb"
             - "run"
           env:
-          {{- range $key, $value := .Values.extraEnv }}
-            - name: {{ $key | quote }}
-              value: {{ $value | quote }}
+          {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.secretKey }}
+          {{- end }}
+            - name: MEMCACHE_SERVERS
+              value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+          {{- if .Values.extraEnv }}
+          {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}
               mountPath: /opt/zammad
-          {{- with .Values.scheduler.resources }}
+          {{- with .Values.zammadConfig.scheduler.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -246,9 +293,19 @@ spec:
             - "6042"
             - "start"
           env:
-          {{- range $key, $value := .Values.extraEnv }}
-            - name: {{ $key | quote }}
-              value: {{ $value | quote }}
+          {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.secretKey }}
+          {{- end }}
+            - name: MEMCACHE_SERVERS
+              value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"          
+          {{- if .Values.extraEnv }}
+          {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
           ports:
             - name: websocket
@@ -256,15 +313,15 @@ spec:
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}
               mountPath: /opt/zammad
-          {{- with .Values.websocket.livenessProbe }}
+          {{- with .Values.zammadConfig.websocket.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.websocket.readinessProbe }}
+          {{- with .Values.zammadConfig.websocket.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.websocket.resources }}
+          {{- with .Values.zammadConfig.websocket.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -299,7 +356,11 @@ spec:
         resources:
           requests:
             storage: {{ .Values.persistence.size | quote }}
-        {{- with .Values.persistence.storageClass }}
-        storageClassName: {{ . | quote }}
+        {{- if .Values.persistence.storageClass }}
+        {{- if (eq "-" .Values.persistence.storageClass) }}
+        storageClassName: ""
+        {{- else }}
+        storageClassName: "{{ .Values.persistence.storageClass }}"
+        {{- end }}
         {{- end }}
   {{- end }}

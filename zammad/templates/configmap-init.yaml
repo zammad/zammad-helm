@@ -5,17 +5,17 @@ metadata:
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
 data:
-{{ if .Values.elasticsearch.enableInitialisation }}
+{{ if .Values.zammadConfig.elasticsearch.initialisation }}
   elasticsearch-init: |-
     #!/bin/bash
     set -e
-    bundle exec rails r 'Setting.set("es_url", "{{ .Values.envConfig.elasticsearch.schema }}://{{ if .Values.elasticsearch.enabled }}zammad-master{{ else }}{{ .Values.envConfig.elasticsearch.host }}{{ end }}:{{ .Values.envConfig.elasticsearch.port }}")'
-    ELASTICSEARCH_USER=${ELASTICSEARCH_USER:-{{ .Values.envConfig.elasticsearch.user }}}
+    bundle exec rails r 'Setting.set("es_url", "{{ .Values.zammadConfig.elasticsearch.schema }}://{{ if .Values.zammadConfig.elasticsearch.enabled }}zammad-master{{ else }}{{ .Values.zammadConfig.elasticsearch.host }}{{ end }}:{{ .Values.zammadConfig.elasticsearch.port }}")'
+    ELASTICSEARCH_USER=${ELASTICSEARCH_USER:-{{ .Values.zammadConfig.elasticsearch.user }}}
     if [ -n "${ELASTICSEARCH_USER}" ] && [ -n "${ELASTICSEARCH_PASSWORD}" ]; then
         bundle exec rails r "Setting.set(\"es_user\", \"${ELASTICSEARCH_USER}\")"
         bundle exec rails r "Setting.set(\"es_password\", \"${ELASTICSEARCH_PASSWORD}\")"
     fi
-    {{- if and .Values.envConfig.elasticsearch.reindex }}
+    {{- if and .Values.zammadConfig.elasticsearch.reindex }}
     bundle exec rake searchindex:rebuild
     {{ end }}
     echo "elasticsearch init complete :)"
@@ -23,7 +23,7 @@ data:
   postgresql-init: |-
     #!/bin/bash
     set -e
-    sed -e "s#.*adapter:.*#  adapter: postgresql#g" -e "s#.*database:.*#  database: {{ .Values.envConfig.postgresql.db }}#g" -e "s#.*username:.*#  username: {{ .Values.envConfig.postgresql.user }}#g" -e "s#.*password:.*#  password: ${POSTGRESQL_PASS}\\n  host: {{ if .Values.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.envConfig.postgresql.host }}{{ end }}\\n  port: {{ .Values.envConfig.postgresql.port }}#g" < contrib/packager.io/database.yml.pkgr > config/database.yml
+    sed -e "s#.*adapter:.*#  adapter: postgresql#g" -e "s#.*database:.*#  database: {{ .Values.zammadConfig.postgresql.db }}#g" -e "s#.*username:.*#  username: {{ .Values.zammadConfig.postgresql.user }}#g" -e "s#.*password:.*#  password: ${POSTGRESQL_PASS}\\n  host: {{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}\\n  port: {{ .Values.zammadConfig.postgresql.port }}#g" < contrib/packager.io/database.yml.pkgr > config/database.yml
     if ! (bundle exec rails r 'puts User.any?' 2> /dev/null | grep -q true); then
         bundle exec rake db:migrate
         bundle exec rake db:seed
@@ -36,9 +36,9 @@ data:
     set -e
     rsync -a --no-perms --no-owner --omit-dir-times --delete --exclude 'config/database.yml' --exclude 'public/assets/images/*' --exclude 'storage/fs/*' "${ZAMMAD_TMP_DIR}/" "${ZAMMAD_DIR}"
     rsync -a --no-perms --no-owner --omit-dir-times "${ZAMMAD_TMP_DIR}"/public/assets/images/ "${ZAMMAD_DIR}"/public/assets/images
-    sed -i -e "s/.*config.cache_store.*file_store.*cache_file_store.*/    config.cache_store = :dalli_store, '{{ if .Values.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}:{{ .Values.envConfig.memcached.port }}'\\n    config.session_store = :dalli_store, '{{ if .Values.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.envConfig.memcached.host }}{{ end }}:{{ .Values.envConfig.memcached.port }}'/" config/application.rb
-    sed -i -e "s#config.action_dispatch.trusted_proxies =.*#config.action_dispatch.trusted_proxies = {{ .Values.envConfig.zammad.rails.trustedProxies }}#" config/environments/production.rb
+    sed -i -e "s#config.action_dispatch.trusted_proxies =.*#config.action_dispatch.trusted_proxies = {{ .Values.zammadConfig.railsserver.trustedProxies }}#" config/environments/production.rb
     if [ -n "${AUTOWIZARD_JSON}" ]; then
         echo "${AUTOWIZARD_JSON}" | base64 -d > auto_wizard.json
     fi
+    rm -f /opt/zammad/tmp/pids/server.pid
     echo "zammad init complete :)"

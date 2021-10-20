@@ -62,15 +62,14 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
-
 {{/*
-postgresql secret name
+autowizard secret name
 */}}
-{{- define "zammad.postgresqlSecretName" -}}
-{{- if .Values.secrets.postgresql.useExisting -}}
-{{ .Values.secrets.postgresql.secretName }}
+{{- define "zammad.autowizardSecretName" -}}
+{{- if .Values.secrets.autowizard.useExisting -}}
+{{ .Values.secrets.autowizard.secretName }}
 {{- else -}}
-{{ template "zammad.fullname" . }}-{{ .Values.secrets.postgresql.secretName }}
+{{ template "zammad.fullname" . }}-{{ .Values.secrets.autowizard.secretName }}
 {{- end -}}
 {{- end -}}
 
@@ -86,13 +85,24 @@ elasticsearch secret name
 {{- end -}}
 
 {{/*
-autowizard secret name
+postgresql secret name
 */}}
-{{- define "zammad.autowizardSecretName" -}}
-{{- if .Values.secrets.autowizard.useExisting -}}
-{{ .Values.secrets.autowizard.secretName }}
+{{- define "zammad.postgresqlSecretName" -}}
+{{- if .Values.secrets.postgresql.useExisting -}}
+{{ .Values.secrets.postgresql.secretName }}
 {{- else -}}
-{{ template "zammad.fullname" . }}-{{ .Values.secrets.autowizard.secretName }}
+{{ template "zammad.fullname" . }}-{{ .Values.secrets.postgresql.secretName }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+redis secret name
+*/}}
+{{- define "zammad.redisSecretName" -}}
+{{- if .Values.secrets.redis.useExisting -}}
+{{ .Values.secrets.redis.secretName }}
+{{- else -}}
+{{ template "zammad.fullname" . }}-{{ .Values.secrets.redis.secretName }}
 {{- end -}}
 {{- end -}}
 
