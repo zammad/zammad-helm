@@ -41,11 +41,5 @@ data:
     if [ -n "${AUTOWIZARD_JSON}" ]; then
         echo "${AUTOWIZARD_JSON}" | base64 -d > auto_wizard.json
     fi
-    echo "zammad init complete :)"
-  zammad-railsserver: |-
-    #!/bin/bash
-    set -e
     test -f /opt/zammad/tmp/pids/server.pid && rm /opt/zammad/tmp/pids/server.pid
-    cd "${ZAMMAD_DIR}"
-    echo "starting railsserver..."
-    bundle exec rails server puma -b [::] -p 3000 -e production
+    echo "zammad init complete :)"
