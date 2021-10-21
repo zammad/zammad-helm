@@ -42,7 +42,7 @@ data:
             proxy_set_header Connection "Upgrade";
             proxy_set_header CLIENT_IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            {{- range .Values.envConfig.zammad.nginx.websocketExtraHeaders }}
+            {{- range .Values.zammadConfig.nginx.websocketExtraHeaders }}
             proxy_set_header {{ . }};
             {{- end }}
             proxy_read_timeout 86400;
@@ -53,7 +53,7 @@ data:
             proxy_set_header Host $http_host;
             proxy_set_header CLIENT_IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            {{- range .Values.envConfig.zammad.nginx.extraHeaders }}
+            {{- range .Values.zammadConfig.nginx.extraHeaders }}
             proxy_set_header {{ . }};
             {{- end }}
             proxy_read_timeout 180;

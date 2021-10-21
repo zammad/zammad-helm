@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  helm-version: "v3.6.3"
+  helm-version: "v3.7.1"
 
 jobs:
   release:
@@ -23,7 +23,7 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Install Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v1.1
         with:
           version: "${{ env.helm-version }}"
 

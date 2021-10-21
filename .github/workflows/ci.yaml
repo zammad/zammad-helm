@@ -8,8 +8,8 @@ on:
       - 'zammad/**'
 
 env:
-  helm-version: "v3.6.3"
-  kubeval-version: "v0.16.1"
+  helm-version: "v3.7.1"
+  kubeconform-version: "v0.4.12"
 
 jobs:
   codespell:
@@ -22,7 +22,7 @@ jobs:
         uses: codespell-project/actions-codespell@master
         with:
           skip: .git
-          exclude_file: .github/kubeval.sh
+          exclude_file: .github/kubeconform.sh
           ignore_words_list: iam,aks
           check_filenames: true
           check_hidden: true
@@ -35,7 +35,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Lint Code Base
-        uses: github/super-linter@v3
+        uses: github/super-linter@v4.8.1
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,19 +63,17 @@ jobs:
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct.yaml
 
-  kubeval-chart:
+  kubeconform-chart:
     runs-on: ubuntu-20.04
     needs:
       - lint-chart
     strategy:
       matrix:
         k8s:
-          - v1.16.15
-          - v1.17.17
-          - v1.18.19
           - v1.19.11
           - v1.20.7
           - v1.21.2
+          - v1.22.2
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -85,26 +83,24 @@ jobs:
         uses: azure/setup-helm@v1.1
         with:
           version: "${{ env.helm-version }}"
-      - name: Run kubeval
+      - name: Run kubeconform
         env:
           KUBERNETES_VERSION: ${{ matrix.k8s }}
-          KUBEVAL_VERSION: "${{ env.kubeval-version }}"
-        run: .github/kubeval.sh
+          KUBECONFORM_VERSION: "${{ env.kubeconform-version }}"
+        run: .github/kubeconform.sh
 
   install-chart:
     name: install-chart
     runs-on: ubuntu-20.04
     needs: 
-      - kubeval-chart
+      - kubeconform-chart
     strategy:
       matrix:
         k8s:
-          - v1.16.15
-          - v1.17.17
-          - v1.18.19
           - v1.19.11
           - v1.20.7
           - v1.21.2
+          # - v1.22.2
     steps:
       - name: Checkout
         uses: actions/checkout@v2

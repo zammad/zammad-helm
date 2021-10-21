@@ -1,6 +1,6 @@
 image:
   repository: zammad/zammad-docker-compose
-  tag: 4.1.0-31
+  tag: 5.0.1-12
   pullPolicy: IfNotPresent
   imagePullSecrets: []
     # - name: "image-pull-secret"
@@ -30,33 +30,70 @@ secrets:
     useExisting: false
     secretKey: autowizard
     secretName: autowizard
-    # see autowizard.config for secret value
   elasticsearch:
     useExisting: false
     secretKey: password
     secretName: elastic-credentials
-    # see envConfig.elasticsearch.pass for secret value
   postgresql:
     useExisting: false
     secretKey: postgresql-pass
     secretName: postgresql-pass
-    # see envConfig.postgresql.pass for secret value
+  redis:
+    useExisting: false
+    secretKey: redis-password
+    secretName: redis-pass
 
-# zammad container config
-envConfig:
+zammadConfig:
   elasticsearch:
-    # host env var is only used when elasticsearch.enabled is false
+    # enable/disable elasticsearch chart dependency
+    enabled: true
+    # host env var is only used when zammadConfig.elasticsearch.enabled is false
     host: zammad-master
+    initialisation: true
     pass: ""
     port: 9200
     reindex: true
     schema: http
     user: ""
   memcached:
-    # host env var is only used when memcached.enabled is false
+    # enable/disable memcached chart dependency
+    enabled: true
+    # host env var is only used when zammadConfig.memcached.enabled is false
     host: zammad-memcached
     port: 11211
+  nginx:
+    extraHeaders: []
+      # - 'HeaderName "Header Value"'
+    websocketExtraHeaders: []
+      # - 'HeaderName "Header Value"'
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 8080
+      initialDelaySeconds: 30
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 8080
+      initialDelaySeconds: 30
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+      periodSeconds: 10
+    resources: {}
+      # requests:
+      #   cpu: 50m
+      #   memory: 32Mi
+      # limits:
+      #   cpu: 100m
+      #   memory: 64Mi
   postgresql:
+    # enable/disable postgresql chart dependency
+    enabled: true
     # needs to be the same as the postgresql.postgresqlPassword
     db: zammad_production
     # host env var is only used when postgresql.enabled is false
@@ -66,117 +103,78 @@ envConfig:
     port: 5432
     # needs to be the same as the postgresql.postgresqlUsername
     user: zammad
-  zammad:
-    rails:
-      trustedProxies: "['127.0.0.1', '::1']"
-    nginx:
-      extraHeaders: []
-        # - 'HeaderName "Header Value"'
-      websocketExtraHeaders: []
-        # - 'HeaderName "Header Value"'
+  railsserver:
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 3000
+      initialDelaySeconds: 30
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 3000
+      initialDelaySeconds: 30
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+      periodSeconds: 10
+    resources: {}
+      # requests:
+      #   cpu: 100m
+      #   memory: 512Mi
+      # limits:
+      #   cpu: 200m
+      #   memory: 1024Mi
+    trustedProxies: "['127.0.0.1', '::1']"
+    webConcurrency: 0
+  redis:
+    # enable/disable redis chart dependency
+    enabled: true
+    host: "zammad-redis-master"
+    # needs to be the same as the redis.auth.password
+    pass: zammad
+    port: 6379
+  scheduler:
+    resources: {}
+      # requests:
+      #   cpu: 100m
+      #   memory: 256Mi
+      # limits:
+      #   cpu: 200m
+      #   memory: 512Mi
+  websocket:
+    livenessProbe:
+      tcpSocket:
+        port: 6042
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+    readinessProbe:
+      tcpSocket:
+        port: 6042
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 5
+      timeoutSeconds: 5
+    resources: {}
+      # requests:
+      #   cpu: 100m
+      #   memory: 256Mi
+      # limits:
+      #   cpu: 200m
+      #   memory: 512Mi
 
-# Configuration for the nginx server
-nginx:
-  resources: {}
-    # requests:
-    #   cpu: 50m
-    #   memory: 32Mi
-    # limits:
-    #   cpu: 100m
-    #   memory: 64Mi
-  # nginx liveness probe for controlling container restarts.
-  # disable liveness probes by setting livenessProbe: {}
-  livenessProbe:
-    httpGet:
-      path: /
-      port: 8080
-    initialDelaySeconds: 30
-    successThreshold: 1
-    failureThreshold: 5
-    timeoutSeconds: 5
-    periodSeconds: 10
-  # nginx readiness probe for controlling service endpoint attachment.
-  # disable readiness probes by setting readinessProbe: {}
-  readinessProbe:
-    httpGet:
-      path: /
-      port: 8080
-    initialDelaySeconds: 30
-    successThreshold: 1
-    failureThreshold: 5
-    timeoutSeconds: 5
-    periodSeconds: 10
-
-# Configuration for the railsserver
-railsserver:
-  resources: {}
-    # requests:
-    #   cpu: 100m
-    #   memory: 512Mi
-    # limits:
-    #   cpu: 200m
-    #   memory: 1024Mi
-  # railsserver liveness probe for controlling container restarts.
-  # disable liveness probes by setting livenessProbe: {}
-  livenessProbe:
-    httpGet:
-      path: /
-      port: 3000
-    initialDelaySeconds: 30
-    successThreshold: 1
-    failureThreshold: 5
-    timeoutSeconds: 5
-    periodSeconds: 10
-  # railsserver readiness probe for controlling service endpoint attachment.
-  # disable readiness probes by setting readinessProbe: {}
-  readinessProbe:
-    httpGet:
-      path: /
-      port: 3000
-    initialDelaySeconds: 30
-    successThreshold: 1
-    failureThreshold: 5
-    timeoutSeconds: 5
-    periodSeconds: 10
-
-# Configuration for the websocket server
-websocket:
-  resources: {}
-    # requests:
-    #   cpu: 100m
-    #   memory: 256Mi
-    # limits:
-    #   cpu: 200m
-    #   memory: 512Mi
-  livenessProbe:
-    tcpSocket:
-      port: 6042
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    successThreshold: 1
-    failureThreshold: 5
-    timeoutSeconds: 5
-  readinessProbe:
-    tcpSocket:
-      port: 6042
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    successThreshold: 1
-    failureThreshold: 5
-    timeoutSeconds: 5
-
-scheduler:
-  resources: {}
-    # requests:
-    #   cpu: 100m
-    #   memory: 256Mi
-    # limits:
-    #   cpu: 200m
-    #   memory: 512Mi
-
-# additional environment vars
-extraEnv: {}
-  # MY_VAR: "foobar"
+# additional environment vars added to all zammad services
+extraEnv: []
+  # - name: FOO_BAR
+  #   value: "foobar"
 
 # autowizard config
 # if a token is used the url hast to look like: http://zammad/#getting_started/auto_wizard/your_token_here
@@ -244,70 +242,6 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
-# Settings for the elasticsearch subchart
-elasticsearch:
-  # enable/disable elasticsearch chart dependency
-  enabled: true
-  # enable/disable zammad specific elasticsearch initialisation
-  # disable this to run zammad without elasticsearch
-  enableInitialisation: true
-  image: "zammad/zammad-docker-compose"
-  imageTag: "zammad-elasticsearch-4.1.0-31"
-  clusterName: zammad
-  replicas: 1
-  # Workaround to get helm test to work in GitHub action CI
-  # the [ES chart](https://github.com/elastic/helm-charts/tree/master/elasticsearch)
-  # default would be: "wait_for_status=green&timeout=1s"
-  # see: <https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html#request-params>
-  clusterHealthCheckParams: "timeout=1s"
-  resources: {}
-    # requests:
-    #   cpu: "100m"
-    #   memory: "2Gi"
-    # limits:
-    #   cpu: "1000m"
-    #   memory: "2Gi"
-  initResources: {}
-    # limits:
-    #   cpu: "25m"
-    #   # memory: "128Mi"
-    # requests:
-    #   cpu: "25m"
-    #   memory: "128Mi"
-  sidecarResources: {}
-    # limits:
-    #   cpu: "25m"
-    #   # memory: "128Mi"
-    # requests:
-    #   cpu: "25m"
-    #   memory: "128Mi"
-
-# settings for the memcached subchart
-memcached:
-  enabled: true
-  replicaCount: 1
-  resources: {}
-    # requests:
-    #   cpu: 50m
-    #   memory: 64Mi
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-
-# settings for the postgres subchart
-postgresql:
-  enabled: true
-  postgresqlUsername: zammad
-  postgresqlPassword: zammad
-  postgresqlDatabase: zammad_production
-  resources: {}
-    # requests:
-    #   cpu: 250m
-    #   memory: 256Mi
-    # limits:
-    #   cpu: 500m
-    #   memory: 512Mi
-
 # service account configurations
 serviceAccount:
   # Specifies whether a service account should be created
@@ -334,3 +268,76 @@ podSecurityPolicy:
   annotations: {}
   # The name of the PSP to use. Only applicable if create is false
   name: ""
+
+# dependency charts config
+
+# Settings for the elasticsearch subchart
+elasticsearch:
+  image: "zammad/zammad-docker-compose"
+  imageTag: "zammad-elasticsearch-5.0.1-12"
+  clusterName: zammad
+  replicas: 1
+  # Workaround to get helm test to work in GitHub action CI
+  # the [ES chart](https://github.com/elastic/helm-charts/tree/master/elasticsearch)
+  # default would be: "wait_for_status=green&timeout=1s"
+  # see: <https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html#request-params>
+  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
+  resources: {}
+    # requests:
+    #   cpu: "100m"
+    #   memory: "2Gi"
+    # limits:
+    #   cpu: "1000m"
+    #   memory: "2Gi"
+  initResources: {}
+    # limits:
+    #   cpu: "25m"
+    #   # memory: "128Mi"
+    # requests:
+    #   cpu: "25m"
+    #   memory: "128Mi"
+  sidecarResources: {}
+    # limits:
+    #   cpu: "25m"
+    #   # memory: "128Mi"
+    # requests:
+    #   cpu: "25m"
+    #   memory: "128Mi"
+
+# settings for the memcached subchart
+memcached:
+  replicaCount: 1
+  resources: {}
+    # requests:
+    #   cpu: 50m
+    #   memory: 64Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+# settings for the postgres subchart
+postgresql:
+  postgresqlUsername: zammad
+  postgresqlPassword: zammad
+  postgresqlDatabase: zammad_production
+  resources: {}
+    # requests:
+    #   cpu: 250m
+    #   memory: 256Mi
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
+
+# settings for the redis subchart
+redis:
+  architecture: standalone
+  auth:
+    password: zammad
+  master:
+    resources: {}
+    # limits:https://charts.bitnami.com/bitnami
+    #   cpu: 250m
+    #   memory: 256Mi
+    # requests:
+    #   cpu: 250m
+    #   memory: 256Mi
