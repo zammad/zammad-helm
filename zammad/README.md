@@ -58,6 +58,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `zammadConfig.nginx.livenessProbe`             | Liveness probe for the nginx container           | see values.yaml                 |
 | `zammadConfig.nginx.readinessProbe`            | Readiness probe for the nginx container          | see values.yaml                 |
 | `zammadConfig.postgresql.enabled`              | Use PostgreSQL dependency                        | `true`                          |
+| `zammadConfig.postgresql.initialisation`       | Run zammad specific postgresql initialisation    | `true`                          |   
 | `zammadConfig.postgresql.host`                 | PostgreSql host                                  | `zammad-postgresql`             |
 | `zammadConfig.postgresql.port`                 | PostgreSql port                                  | `5432`                          |
 | `zammadConfig.postgresql.pass`                 | PostgreSql pass                                  | `""`                            |
