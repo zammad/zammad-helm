@@ -90,6 +90,7 @@ spec:
               mountPath: /docker-entrypoint.sh
               readOnly: true
               subPath: zammad-init
+        {{- if .Values.zammadConfig.postgresql.initialisation }}
         - name: postgresql-init
           image: {{ .Values.image.repository }}:{{ template "zammad.image.repositoryPrefix" . }}{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -123,6 +124,7 @@ spec:
             mountPath: /docker-entrypoint.sh
             readOnly: true
             subPath: postgresql-init
+        {{- end }}
         {{- if .Values.zammadConfig.elasticsearch.initialisation }}
         - name: elasticsearch-init
           image: {{ .Values.image.repository }}:{{ template "zammad.image.repositoryPrefix" . }}{{ .Values.image.tag }}
