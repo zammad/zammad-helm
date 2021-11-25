@@ -98,6 +98,7 @@ zammadConfig:
     db: zammad_production
     # host env var is only used when postgresql.enabled is false
     host: zammad-postgresql
+    initialisation: true
     pass: "zammad"
     # needs to be the same as the postgresql.postgresqlDatabase
     port: 5432
