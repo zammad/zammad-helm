@@ -2,6 +2,45 @@ apiVersion: v1
 entries:
   zammad:
   - apiVersion: v2
+    appVersion: 5.0.3
+    created: "2021-12-15T10:36:19.363461927Z"
+    dependencies:
+    - condition: zammadConfig.elasticsearch.enabled
+      name: elasticsearch
+      repository: https://helm.elastic.co
+      version: 7.16.1
+    - condition: zammadConfig.memcached.enabled
+      name: memcached
+      repository: https://charts.bitnami.com/bitnami
+      version: 5.15.5
+    - condition: zammadConfig.postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 10.12.4
+    - condition: zammadConfig.redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 15.4.1
+    description: Zammad is a web based open source helpdesk/customer support system
+      with many features to manage customer communication via several channels like
+      telephone, facebook, twitter, chat and e-mails.
+    digest: d136f090078374674079cd5c02344ea27aa82de78ca3005b41e785b2afc728fa
+    home: https://zammad.org
+    icon: https://raw.githubusercontent.com/zammad/zammad-documentation/master/images/zammad_logo_600x520.png
+    maintainers:
+    - email: monotek23@gmail.com
+      name: monotek
+    - email: contact@zammad.com
+      name: martini
+    name: zammad
+    sources:
+    - https://github.com/zammad/zammad
+    - https://github.com/zammad/zammad-docker-compose
+    - https://github.com/zammad/zammad-helm
+    urls:
+    - https://github.com/zammad/zammad-helm/releases/download/zammad-6.0.2/zammad-6.0.2.tgz
+    version: 6.0.2
+  - apiVersion: v2
     appVersion: 5.0.2
     created: "2021-10-31T22:17:16.777501594Z"
     dependencies:
@@ -1431,4 +1470,4 @@ entries:
     urls:
     - https://github.com/zammad/zammad-helm/releases/download/zammad-0.1.0/zammad-0.1.0.tgz
     version: 0.1.0
-generated: "2021-10-31T22:17:16.777914198Z"
+generated: "2021-12-15T10:36:19.363825636Z"
