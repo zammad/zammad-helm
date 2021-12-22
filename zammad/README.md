@@ -31,7 +31,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | Parameter                                      | Description                                      | Default                         |
 | ---------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                             | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                    | Container image tag to deploy                    | `5.0.3-7`                       |
+| `image.tag`                                    | Container image tag to deploy                    | `5.0.3-14`                       |
 | `image.pullPolicy`                             | Container pull policy                            | `IfNotPresent`                  |
 | `image.imagePullSecrets`                       | An array of imagePullSecrets                     | `[]`                            |
 | `service.type`                                 | Service type                                     | `ClusterIP`                     |
