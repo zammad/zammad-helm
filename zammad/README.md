@@ -98,7 +98,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `podSecurityPolicy.annotations`                | PodSecurityPolicy annotations                    | `{}`                            |
 | `podSecurityPolicy.name`                       | PodSecurityPolicy name                           | `""`                            |
 | `elasticsearch.image`                          | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                       | Elasticsearch docker image tag                   | `zammad-elasticsearch-5.0.2-1`  |
+| `elasticsearch.imageTag`                       | Elasticsearch docker image tag                   | `zammad-elasticsearch-5.0.3-14` |
 | `elasticsearch.clusterName`                    | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                       | Elasticsearch replicas                           | `1`                             |
 | `elasticsearch.clusterHealthCheckParams`       | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
