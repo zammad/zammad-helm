@@ -13,6 +13,13 @@ A [Helm](https://helm.sh) chart to install [Zammad](https://zammad.org) on [Kube
 helm repo add zammad https://zammad.github.io/zammad-helm
 ```
 
+## Version note
+
+Due to this charts dependencies the following minimum version requirements apply:
+
+* Kubernetes 1.19+
+* Helm 3.2.0+
+
 ## Sources
 
 The charts sources can be found here:
