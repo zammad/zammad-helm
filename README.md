@@ -17,8 +17,8 @@ helm repo add zammad https://zammad.github.io/zammad-helm
 
 Due to this charts dependencies the following minimum version requirements apply:
 
-   * Kubernetes 1.19+
-   * Helm 3.2.0+
+* Kubernetes 1.19+
+* Helm 3.2.0+
 
 ## Sources
 
