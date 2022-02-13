@@ -54,6 +54,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `zammadConfig.memcached.port`                  | Memcached port                                   | `11211`                         |
 | `zammadConfig.nginx.websocketExtraHeaders`     | Additional nginx headers for ws location         | `[]`                            |
 | `zammadConfig.nginx.extraHeaders`              | Additional nginx headers for / location          | `[]`                            |
+| `zammadConfig.nginx.knowledgeBaseUrl`          | Value of custom url for knowledge base           | `""`                            |
 | `zammadConfig.nginx.resources`                 | Resource usage of Zammad's nginx container       | `{}`                            |
 | `zammadConfig.nginx.livenessProbe`             | Liveness probe for the nginx container           | see values.yaml                 |
 | `zammadConfig.nginx.readinessProbe`            | Readiness probe for the nginx container          | see values.yaml                 |

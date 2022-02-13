@@ -32,6 +32,13 @@ data:
 
         client_max_body_size 50M;
 
+        {{- if .Values.zammadConfig.nginx.knowledgeBaseUrl }}
+        if ($host = {{ .Values.zammadConfig.nginx.knowledgeBaseUrl }} ) {
+            rewrite ^/(api|assets)/(.*)$ /$1/$2 last;
+            rewrite ^(.*)$ /help$1 last;
+        }
+        {{- end }}
+
         location ~ ^/(assets/|robots.txt|humans.txt|favicon.ico) {
             expires max;
         }
@@ -50,6 +57,9 @@ data:
         }
 
         location / {
+            {{- if .Values.zammadConfig.nginx.knowledgeBaseUrl }}
+            proxy_set_header X-ORIGINAL-URL $request_uri;
+            {{- end }}
             proxy_set_header Host $http_host;
             proxy_set_header CLIENT_IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
