@@ -33,10 +33,15 @@ data:
         client_max_body_size 50M;
 
         {{- if .Values.zammadConfig.nginx.knowledgeBaseUrl }}
-        if ($host = {{ .Values.zammadConfig.nginx.knowledgeBaseUrl }} ) {
+        {{ if hasPrefix "/" .Values.zammadConfig.nginx.knowledgeBaseUrl }}
+        rewrite ^{{ .Values.zammadConfig.nginx.knowledgeBaseUrl }}(.*)$ /help$1 last;
+        {{- else }}
+        {{- $url := urlParse ( list "//" .Values.zammadConfig.nginx.knowledgeBaseUrl | join "" ) }}
+        if ($host = {{ $url.host }} ) {
             rewrite ^/(api|assets)/(.*)$ /$1/$2 last;
-            rewrite ^(.*)$ /help$1 last;
+            rewrite ^{{ $url.path }}(.*)$ /help$1 last;
         }
+        {{- end }}
         {{- end }}
 
         location ~ ^/(assets/|robots.txt|humans.txt|favicon.ico) {
