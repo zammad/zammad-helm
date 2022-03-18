@@ -31,7 +31,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | Parameter                                      | Description                                      | Default                         |
 | ---------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                             | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                    | Container image tag to deploy                    | `5.0.3-31`                       |
+| `image.tag`                                    | Container image tag to deploy                    | `5.1.0-4`                       |
 | `image.pullPolicy`                             | Container pull policy                            | `IfNotPresent`                  |
 | `image.imagePullSecrets`                       | An array of imagePullSecrets                     | `[]`                            |
 | `service.type`                                 | Service type                                     | `ClusterIP`                     |
@@ -98,7 +98,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `podSecurityPolicy.annotations`                | PodSecurityPolicy annotations                    | `{}`                            |
 | `podSecurityPolicy.name`                       | PodSecurityPolicy name                           | `""`                            |
 | `elasticsearch.image`                          | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                       | Elasticsearch docker image tag                   | `zammad-elasticsearch-5.0.3-31` |
+| `elasticsearch.imageTag`                       | Elasticsearch docker image tag                   | `zammad-elasticsearch-5.1.0-4` |
 | `elasticsearch.clusterName`                    | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                       | Elasticsearch replicas                           | `1`                             |
 | `elasticsearch.clusterHealthCheckParams`       | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
@@ -133,7 +133,7 @@ Open your browser on <http://localhost:8080>
 
 ## Upgrading
 
-### From chart version 6.0.3 to 6.0.x
+### From chart version 6.0.4 to 6.0.x
 
 - minimum helm version now is 3.2.0+
 - minimum Kubernetes version now is 1.19+

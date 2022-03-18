@@ -1,6 +1,6 @@
 image:
   repository: zammad/zammad-docker-compose
-  tag: 5.0.3-31
+  tag: 5.1.0-4
   pullPolicy: IfNotPresent
   imagePullSecrets: []
     # - name: "image-pull-secret"
@@ -274,7 +274,7 @@ podSecurityPolicy:
 # Settings for the elasticsearch subchart
 elasticsearch:
   image: "zammad/zammad-docker-compose"
-  imageTag: "zammad-elasticsearch-5.0.3-31"
+  imageTag: "zammad-elasticsearch-5.1.0-4"
   clusterName: zammad
   replicas: 1
   # Workaround to get helm test to work in GitHub action CI
