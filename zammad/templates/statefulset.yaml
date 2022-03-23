@@ -51,6 +51,10 @@ spec:
           securityContext:
             runAsNonRoot: false
             runAsUser: 0
+          {{- with .Values.zammadConfig.initContainers.volumePermissions.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}
               mountPath: /opt/zammad
@@ -83,6 +87,10 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
+          {{- with .Values.zammadConfig.initContainers.zammad.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}
               mountPath: /opt/zammad
@@ -115,6 +123,10 @@ spec:
                   key: {{ .Values.secrets.postgresql.secretKey }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
+          {{- end }}
+          {{- with .Values.zammadConfig.initContainers.postgresql.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
           - name: {{ template "zammad.fullname" . }}
@@ -151,6 +163,10 @@ spec:
           {{- end }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
+          {{- end }}
+          {{- with .Values.zammadConfig.initContainers.elasticsearch.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
           - name: {{ template "zammad.fullname" . }}
