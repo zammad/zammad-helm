@@ -74,6 +74,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `zammadConfig.websocket.resources`             | Resource usage of Zammad's websocket container   | `{}`                            |
 | `zammadConfig.websocket.livenessProbe`         | Liveness probe for the websocket container       | see values.yaml                 |
 | `zammadConfig.websocket.readinessProbe`        | Readiness probe for the websocket container      | see values.yaml                 |
+| `zammadConfig.initContainers`                  | Resources for the different init containers      | see values.yaml                 |
 | `autoWizard.enabled`                           | enable autowizard                                | `false`                         |
 | `autoWizard.config`                            | autowizard json config                           | `""`                            |
 | `podAnnotations`                               | Annotations for Pods                             | `{}`                            |
