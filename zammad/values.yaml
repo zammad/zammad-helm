@@ -170,6 +170,39 @@ zammadConfig:
       # limits:
       #   cpu: 200m
       #   memory: 512Mi
+  initContainers:
+    volumePermissions:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+    zammad:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+    postgresql:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+    elasticsearch:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
 
 # additional environment vars added to all zammad services
 extraEnv: []
