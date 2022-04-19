@@ -66,6 +66,7 @@ zammadConfig:
       # - 'HeaderName "Header Value"'
     websocketExtraHeaders: []
       # - 'HeaderName "Header Value"'
+    knowledgeBaseUrl: ""
     livenessProbe:
       httpGet:
         path: /
