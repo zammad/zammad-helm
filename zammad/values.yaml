@@ -1,6 +1,6 @@
 image:
   repository: zammad/zammad-docker-compose
-  tag: 5.0.3-31
+  tag: 5.1.0-4
   pullPolicy: IfNotPresent
   imagePullSecrets: []
     # - name: "image-pull-secret"
@@ -66,6 +66,7 @@ zammadConfig:
       # - 'HeaderName "Header Value"'
     websocketExtraHeaders: []
       # - 'HeaderName "Header Value"'
+    knowledgeBaseUrl: ""
     livenessProbe:
       httpGet:
         path: /
@@ -170,6 +171,39 @@ zammadConfig:
       # limits:
       #   cpu: 200m
       #   memory: 512Mi
+  initContainers:
+    volumePermissions:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+    zammad:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+    postgresql:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+    elasticsearch:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
 
 # additional environment vars added to all zammad services
 extraEnv: []
@@ -274,7 +308,7 @@ podSecurityPolicy:
 # Settings for the elasticsearch subchart
 elasticsearch:
   image: "zammad/zammad-docker-compose"
-  imageTag: "zammad-elasticsearch-5.0.3-31"
+  imageTag: "zammad-elasticsearch-5.1.0-4"
   clusterName: zammad
   replicas: 1
   # Workaround to get helm test to work in GitHub action CI
