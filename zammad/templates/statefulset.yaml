@@ -21,7 +21,7 @@ spec:
     spec:
       {{- with .Values.image.imagePullSecrets }}
       imagePullSecrets: 
-        {{- toYaml .Values.image.imagePullSecrets | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "zammad.serviceAccountName" . }}
