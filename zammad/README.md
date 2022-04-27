@@ -88,7 +88,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `persistence.size`                          | Volume size                                      | `15Gi`                          |
 | `persistence.storageClass`                  | storage class                                    | `""`                            |
 | `persistence.annotations`                   | annotations                                      | `{}`                            |
-| `nodeSelector`                              | Node Selector                                    | `{}`                            |
+| `nodeSelector`                              | NodeSelector                                     | `{}`                            |
 | `tolerations`                               | Tolerations                                      | `[]`                            |
 | `affinity`                                  | Affinity                                         | `{}`                            |
 | `serviceAccount.create`                     | Create service accounnt                          | `false`                         |
