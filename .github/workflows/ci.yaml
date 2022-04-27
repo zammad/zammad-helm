@@ -28,6 +28,8 @@ jobs:
           LINTER_RULES_PATH: .github/linters
           #VALIDATE_ALL_CODEBASE: false
           VALIDATE_JSCPD: false
+          VALIDATE_KUBERNETES_KUBEVAL: false
+          VALIDATE_YAML: false
 
   lint-chart:
     runs-on: ubuntu-20.04
