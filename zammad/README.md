@@ -31,7 +31,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | Parameter                                   | Description                                      | Default                         |
 | ------------------------------------------- | ------------------------------------------------ | ------------------------------- |
 | `image.repository`                          | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                 | Container image tag to deploy                    | `5.1.1-10`                      |
+| `image.tag`                                 | Container image tag to deploy                    | `5.1.1-11`                      |
 | `image.pullPolicy`                          | Container pull policy                            | `IfNotPresent`                  |
 | `image.imagePullSecrets`                    | An array of imagePullSecrets                     | `[]`                            |
 | `service.type`                              | Service type                                     | `ClusterIP`                     |
@@ -100,7 +100,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `podSecurityPolicy.annotations`             | PodSecurityPolicy annotations                    | `{}`                            |
 | `podSecurityPolicy.name`                    | PodSecurityPolicy name                           | `""`                            |
 | `elasticsearch.image`                       | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                    | Elasticsearch docker image tag                   | `zammad-elasticsearch-5.1.1-10` |
+| `elasticsearch.imageTag`                    | Elasticsearch docker image tag                   | `zammad-elasticsearch-5.1.1-11` |
 | `elasticsearch.clusterName`                 | Elasticsearch cluster name                       | `zammad`                        |
 | `elasticsearch.replicas`                    | Elasticsearch replicas                           | `1`                             |
 | `elasticsearch.clusterHealthCheckParams`    | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
