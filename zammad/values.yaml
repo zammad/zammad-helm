@@ -375,3 +375,7 @@ redis:
     # requests:
     #   cpu: 250m
     #   memory: 256Mi
+
+# Array of extra Kubernetes manifests, if you want to deploy
+extraObjects: []
+
