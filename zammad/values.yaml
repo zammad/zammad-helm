@@ -303,6 +303,26 @@ podSecurityPolicy:
   # The name of the PSP to use. Only applicable if create is false
   name: ""
 
+# sidecars:
+#   - name: s3-backup
+#     image: some-aws-s3-backup:latest
+#     env:
+#       - name: AWS_DEFAULT_REGION
+#         value: "eu-central-1"
+#       - name: AWS_ACCESS_KEY_ID
+#         value: "xxxxxxxxxxxx"
+#       - name: AWS_SECRET_ACCESS_KEY
+#         value: "xxxxxxxxxxxx"
+#       - name: SYNC_DIR
+#         value: "/opt/zammad"
+#       - name: AWS_SYNC_BUCKET
+#         value: "some-backup-bucket"
+#       - name: AWS_SYNC_SCHEDULE
+#         value: "0 * * * *"
+#     volumeMounts:
+#       - name: help-zammad
+#         mountPath: /opt/zammad
+
 # dependency charts config
 
 # Settings for the elasticsearch subchart
