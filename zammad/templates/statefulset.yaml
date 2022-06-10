@@ -39,6 +39,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       initContainers:
+{{- with .Values.initContainers }}
+{{- toYaml . | nindent 8}}
+{{- end }}
         {{- if .Values.volumePermissions.enabled }}
         - name: data-chmod
           image: "{{ .Values.volumePermissions.image.repository }}:{{ .Values.volumePermissions.image.tag }}"
@@ -341,13 +344,13 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+{{- with .Values.sidecars }}
+{{- toYaml . | nindent 8}}
+{{- end }}
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
         runAsGroup: 1000
-{{- with .Values.sidecars }}
-{{- toYaml . | nindent 8}}
-{{- end }}
       volumes:
         - name: {{ template "zammad.fullname" . }}-nginx
           configMap:
