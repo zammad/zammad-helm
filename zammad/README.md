@@ -91,6 +91,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `nodeSelector`                              | NodeSelector                                     | `{}`                            |
 | `tolerations`                               | Tolerations                                      | `[]`                            |
 | `affinity`                                  | Affinity                                         | `{}`                            |
+| `initContainers`                            | Additional init containers                       | `[]`                            |
 | `sidecars`                                  | Sidecar containers                               | `[]`                            |
 | `serviceAccount.create`                     | Create service accounnt                          | `false`                         |
 | `serviceAccount.annotations`                | Service account annotations                      | `{}`                            |

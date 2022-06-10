@@ -303,6 +303,24 @@ podSecurityPolicy:
   # The name of the PSP to use. Only applicable if create is false
   name: ""
 
+# initContainers:
+#   - name: s3-restore
+#     image: some-aws-s3-restore:latest
+#     env:
+#       - name: AWS_DEFAULT_REGION
+#         value: "eu-central-1"
+#       - name: AWS_ACCESS_KEY_ID
+#         value: "xxxxxxxxxxxx"
+#       - name: AWS_SECRET_ACCESS_KEY
+#         value: "xxxxxxxxxxxx"
+#       - name: SYNC_DIR
+#         value: "/opt/zammad"
+#       - name: AWS_SYNC_BUCKET
+#         value: "some-backup-bucket"
+#     volumeMounts:
+#       - name: help-zammad
+#         mountPath: /opt/zammad
+
 # sidecars:
 #   - name: s3-backup
 #     image: some-aws-s3-backup:latest
