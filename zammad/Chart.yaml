@@ -13,7 +13,7 @@ maintainers:
   - name: monotek
     email: monotek23@gmail.com
   - name: martini
-    email: contact@zammad.com
+    email: enjoy@zammad.com
 dependencies:
   - name: elasticsearch
     repository: https://helm.elastic.co
