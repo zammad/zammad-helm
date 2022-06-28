@@ -1,6 +1,6 @@
 image:
   repository: zammad/zammad-docker-compose
-  tag: 5.1.1-11
+  tag: 5.2.0-8
   pullPolicy: IfNotPresent
   imagePullSecrets: []
     # - name: "image-pull-secret"
