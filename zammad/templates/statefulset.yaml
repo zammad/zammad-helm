@@ -272,8 +272,8 @@ spec:
           command:
             - "bundle"
             - "exec"
-            - "script/scheduler.rb"
-            - "run"
+            - "script/background-worker.rb"
+            - "start"
           env:
           {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
             - name: REDIS_PASSWORD
