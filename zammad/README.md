@@ -52,6 +52,7 @@ The following table lists the configurable parameters of the zammad chart and th
 | `zammadConfig.memcached.enabled`            | Use Memcached dependency                         | `true`                          |
 | `zammadConfig.memcached.host`               | Memcached host                                   | `zammad-memcached`              |
 | `zammadConfig.memcached.port`               | Memcached port                                   | `11211`                         |
+| `zammadConfig.nginx.trustedProxies`         | Configure `set_real_ip_from` to trust proxies    | `[]`                            |
 | `zammadConfig.nginx.websocketExtraHeaders`  | Additional nginx headers for ws location         | `[]`                            |
 | `zammadConfig.nginx.extraHeaders`           | Additional nginx headers for / location          | `[]`                            |
 | `zammadConfig.nginx.knowledgeBaseUrl`       | Value of custom URL for knowledge base           | `""`                            |
