@@ -9,7 +9,7 @@ data:
   elasticsearch-init: |-
     #!/bin/bash
     set -e
-    bundle exec rails r 'Setting.set("es_url", "{{ .Values.zammadConfig.elasticsearch.schema }}://{{ if .Values.zammadConfig.elasticsearch.enabled }}zammad-master{{ else }}{{ .Values.zammadConfig.elasticsearch.host }}{{ end }}:{{ .Values.zammadConfig.elasticsearch.port }}")'
+    bundle exec rails r 'Setting.set("es_url", "{{ .Values.zammadConfig.elasticsearch.schema }}://{{ if .Values.zammadConfig.elasticsearch.enabled }}{{ .Release.Name }}-elasticsearch{{ else }}{{ .Values.zammadConfig.elasticsearch.host }}{{ end }}:{{ .Values.zammadConfig.elasticsearch.port }}")'
     ELASTICSEARCH_USER=${ELASTICSEARCH_USER:-{{ .Values.zammadConfig.elasticsearch.user }}}
     if [ -n "${ELASTICSEARCH_USER}" ] && [ -n "${ELASTICSEARCH_PASSWORD}" ]; then
         bundle exec rails r "Setting.set(\"es_user\", \"${ELASTICSEARCH_USER}\")"

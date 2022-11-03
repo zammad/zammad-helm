@@ -5,15 +5,15 @@ on:
     branches:
       - main
     paths:
-      - 'zammad/**'
+      - "zammad/**"
 
 env:
-  helm-version: "v3.8.2"
-  kubeconform-version: "v0.4.13"
+  helm-version: "v3.10.1"
+  kubeconform-version: "v0.5.0"
 
 jobs:
   super-linter:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -32,43 +32,49 @@ jobs:
           VALIDATE_YAML: false
 
   lint-chart:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - name: Set up Helm
         uses: azure/setup-helm@v3.4
         with:
           version: "${{ env.helm-version }}"
+
       - uses: actions/setup-python@v4
         with:
           python-version: 3.7
+
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.3.1
+
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct.yaml
 
   kubeconform-chart:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - lint-chart
     strategy:
       matrix:
         k8s:
-          - v1.21.10
-          - v1.22.7
-          - v1.23.5
+          - v1.23.13
+          - v1.24.7
+          - v1.25.3
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - name: Set up Helm
         uses: azure/setup-helm@v3.4
         with:
           version: "${{ env.helm-version }}"
+
       - name: Run kubeconform
         env:
           KUBERNETES_VERSION: ${{ matrix.k8s }}
@@ -77,41 +83,43 @@ jobs:
 
   install-chart:
     name: install-chart
-    runs-on: ubuntu-20.04
-    needs: 
+    runs-on: ubuntu-22.04
+    needs:
       - kubeconform-chart
     strategy:
       matrix:
         k8s:
-          - v1.21.10
-          - v1.22.7
-          - v1.23.5
+          - v1.23.13
+          - v1.24.7
+          - v1.25.3
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - name: Set up Helm
         uses: azure/setup-helm@v3.4
         with:
           version: "${{ env.helm-version }}"
+
       - uses: actions/setup-python@v4
         with:
           python-version: 3.7
+
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.3.1
+
       - name: Run chart-testing (list-changed)
         id: list-changed
-        run: |
-          changed=$(ct list-changed --config .github/ct.yaml)
-          if [[ -n "$changed" ]]; then
-            echo "::set-output name=changed::true"
-          fi
+        run: if [[ -n "$(ct list-changed --config .github/ct.yaml)" ]]; then echo 'changed=true' >> "$GITHUB_OUTPUT"; fi
+
       - name: Create kind cluster
         uses: helm/kind-action@v1.4.0
         if: steps.list-changed.outputs.changed == 'true'
         with:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s }}
+
       - name: Run chart-testing (install)
         run: ct install --config .github/ct.yaml

@@ -26,96 +26,11 @@ helm upgrade --install zammad zammad/zammad --namespace zammad
 
 ## Configuration
 
-The following table lists the configurable parameters of the zammad chart and their default values.
+See [Customizing the Chart Before Installing](https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing). To see all configurable options with detailed comments, visit the chart's [values.yaml](./values.yaml), or run these configuration commands:
 
-| Parameter                                   | Description                                      | Default                         |
-| ------------------------------------------- | ------------------------------------------------ | ------------------------------- |
-| `image.repository`                          | Container image to use                           | `zammad/zammad-docker-compose`  |
-| `image.tag`                                 | Container image tag to deploy                    | `5.2.1-6`                       |
-| `image.pullPolicy`                          | Container pull policy                            | `IfNotPresent`                  |
-| `image.imagePullSecrets`                    | An array of imagePullSecrets                     | `[]`                            |
-| `service.type`                              | Service type                                     | `ClusterIP`                     |
-| `service.port`                              | Service port                                     | `8080`                          |
-| `ingress.enabled`                           | Enable Ingress                                   | `false`                         |
-| `ingress.annotations`                       | Additional ingress annotations                   | `""`                            |
-| `ingress.className`                         | Use IngressClassName                             | `""`                            |
-| `ingress.hosts`                             | Ingress hosts                                    | `""`                            |
-| `ingress.tls`                               | Ingress TLS                                      | `[]`                            |
-| `zammadConfig.elasticsearch.enabled`        | Use Elasticsearch chart dependency               | `true`                          |
-| `zammadConfig.elasticsearch.schema`         | Elasticsearch schema                             | `http`                          |
-| `zammadConfig.elasticsearch.host`           | Elasticsearch host                               | `zammad-master`                 |
-| `zammadConfig.elasticsearch.initialisation` | Run zammad specific Elasticsearch initialisation | `true`                          |
-| `zammadConfig.elasticsearch.port`           | Elasticsearch port                               | `9200`                          |
-| `zammadConfig.elasticsearch.user`           | Elasticsearch user                               | `""`                            |
-| `zammadConfig.elasticsearch.pass`           | Elasticsearch pass                               | `""`                            |
-| `zammadConfig.elasticsearch.reindex`        | Elasticsearch reindex is run on start            | `true`                          |
-| `zammadConfig.memcached.enabled`            | Use Memcached dependency                         | `true`                          |
-| `zammadConfig.memcached.host`               | Memcached host                                   | `zammad-memcached`              |
-| `zammadConfig.memcached.port`               | Memcached port                                   | `11211`                         |
-| `zammadConfig.nginx.trustedProxies`         | Configure `set_real_ip_from` to trust proxies    | `[]`                            |
-| `zammadConfig.nginx.websocketExtraHeaders`  | Additional nginx headers for ws location         | `[]`                            |
-| `zammadConfig.nginx.extraHeaders`           | Additional nginx headers for / location          | `[]`                            |
-| `zammadConfig.nginx.knowledgeBaseUrl`       | Value of custom URL for knowledge base           | `""`                            |
-| `zammadConfig.nginx.resources`              | Resource usage of Zammad's nginx container       | `{}`                            |
-| `zammadConfig.nginx.livenessProbe`          | Liveness probe for the nginx container           | see values.yaml                 |
-| `zammadConfig.nginx.readinessProbe`         | Readiness probe for the nginx container          | see values.yaml                 |
-| `zammadConfig.postgresql.enabled`           | Use PostgreSQL dependency                        | `true`                          |
-| `zammadConfig.postgresql.host`              | PostgreSql host                                  | `zammad-postgresql`             |
-| `zammadConfig.postgresql.port`              | PostgreSql port                                  | `5432`                          |
-| `zammadConfig.postgresql.pass`              | PostgreSql pass                                  | `""`                            |
-| `zammadConfig.postgresql.user`              | PostgreSql user                                  | `zammad`                        |
-| `zammadConfig.postgresql.db`                | PostgreSql database                              | `zammad_production`             |
-| `zammadConfig.railsserver.resources`        | Resource usage of Zammad's railsserver container | `{}`                            |
-| `zammadConfig.railsserver.livenessProbe`    | Liveness probe for the railsserver container     | see values.yaml                 |
-| `zammadConfig.railsserver.readinessProbe`   | Readiness probe for the railsserver container    | see values.yaml                 |
-| `zammadConfig.railsserver.trustedProxies`   | Configure Rails trusted proxies                  | `"['127.0.0.1', '::1']"`        |
-| `zammadConfig.redis.enabled`                | Use REdis chart dependency                       | `true`                          |
-| `zammadConfig.redis.host`                   | Redis host                                       | `zammad-redis`                  |
-| `zammadConfig.redis.port`                   | Redis      port                                  | `6379`                          |
-| `zammadConfig.scheduler.resources`          | Resource usage of Zammad's scheduler container   | `{}`                            |
-| `zammadConfig.websocket.resources`          | Resource usage of Zammad's websocket container   | `{}`                            |
-| `zammadConfig.websocket.livenessProbe`      | Liveness probe for the websocket container       | see values.yaml                 |
-| `zammadConfig.websocket.readinessProbe`     | Readiness probe for the websocket container      | see values.yaml                 |
-| `zammadConfig.initContainers`               | Resources for the different init containers      | see values.yaml                 |
-| `autoWizard.enabled`                        | enable autowizard                                | `false`                         |
-| `autoWizard.config`                         | autowizard json config                           | `""`                            |
-| `podAnnotations`                            | Annotations for Pods                             | `{}`                            |
-| `volumePermissions.enabled`                 | Enable data volume permissions correction        | `false`                         |
-| `volumePermissions.image.repository`        | initContainer image to use                       | `alpine`                        |
-| `volumePermissions.image.tag`               | initContainer image tag to deploy                | `3.14`                          |
-| `volumePermissions.image.pullPolicy`        | initContainer pull policy                        | `IfNotPresent`                  |
-| `persistence.enabled`                       | Enable persistence                               | `true`                          |
-| `persistence.accessModes`                   | Access modes                                     | `["ReadWriteOnce"]`             |
-| `persistence.size`                          | Volume size                                      | `15Gi`                          |
-| `persistence.storageClass`                  | storage class                                    | `""`                            |
-| `persistence.annotations`                   | annotations                                      | `{}`                            |
-| `nodeSelector`                              | NodeSelector                                     | `{}`                            |
-| `tolerations`                               | Tolerations                                      | `[]`                            |
-| `affinity`                                  | Affinity                                         | `{}`                            |
-| `initContainers`                            | Additional init containers                       | `[]`                            |
-| `sidecars`                                  | Sidecar containers                               | `[]`                            |
-| `serviceAccount.create`                     | Create service accounnt                          | `false`                         |
-| `serviceAccount.annotations`                | Service account annotations                      | `{}`                            |
-| `serviceAccount.name`                       | Service account name                             | `""`                            |
-| `rbac.create`                               | Create RBAC                                      | `false`                         |
-| `podSecurityPolicy.enabled`                 | Enable podSecurityPolicy                         | `false`                         |
-| `podSecurityPolicy.create`                  | Create podSecurityPolicy                         | `false`                         |
-| `podSecurityPolicy.annotations`             | PodSecurityPolicy annotations                    | `{}`                            |
-| `podSecurityPolicy.name`                    | PodSecurityPolicy name                           | `""`                            |
-| `elasticsearch.image`                       | Elasticsearch docker image                       | `zammad/zammad-docker-compose`  |
-| `elasticsearch.imageTag`                    | Elasticsearch docker image tag                   | `zammad-elasticsearch-5.2.1-6`  |
-| `elasticsearch.clusterName`                 | Elasticsearch cluster name                       | `zammad`                        |
-| `elasticsearch.replicas`                    | Elasticsearch replicas                           | `1`                             |
-| `elasticsearch.clusterHealthCheckParams`    | Workaround to get ES test work in GitHubCI       | `"timeout=1s"`                  |
-| `memcached.replicaCount`                    | Memcached replicas                               | `1`                             |
-| `postgresql.postgresqlUsername`             | PostgreSQL user                                  | `zammad`                        |
-| `postgresql.postgresqlPassword`             | PostgreSQL password                              | `zammad`                        |
-| `postgresql.postgresqlDatabase`             | PostgreSQL DB                                    | `zammad_production`             |
-| `redis.architecture`                        | Redis architecture                               | `standalone`                    |
-| `redis.auth.password`                       | Redis auth password                              | `zammad`                        |
-| `redis.master.resources`                    | Set Redis resources                              | `{}`                            |
-
-Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
+```console
+helm show values zammad/zammad
+```
 
 ### Important note for NFS filesystems
 
@@ -137,6 +52,25 @@ kubectl -n zammad port-forward service/zammad 8080
 Open your browser on <http://localhost:8080>
 
 ## Upgrading
+
+### From chart version 6.x to 7.x
+
+- Bitnami Elasticsearch chart is used now as Elastic does not support the old chart anymore in favour of ECK operator
+  - reindexing of all data is needed so get sure "zammadConfig.elasticsearch.reindex" is set to "true"
+- Memchached was updated from 6.0.16 to 6.3.0
+- PostgreSql chart was updated from 10.16.2 to 12.1.0
+  - this includes major version change of Postgres DB version too
+  - backup / restore is needed to update
+  - postgres password settings were changed
+  - see also upgrading [PostgreSql upgrading notes](https://github.com/bitnami/charts/tree/main/bitnami/postgresql#upgrading)
+- Redis chart is updated from 16.8.7 to 17.3.7
+  - see [Redis upgrading notes](https://github.com/bitnami/charts/tree/main/bitnami/redis#to-1700)
+- Zammad
+  - Pod Security Policy settings were removed as these are [deprecated in Kubernetes 1.25](https://kubernetes.io/docs/concepts/security/pod-security-policy/)
+  - Docker image tag is used from Chart.yaml "appVersion" field by default
+  - Replicas can be configured (needs ReadWriteMany volume if replica > 1!)
+  - livenessProbes and readinessProbe have been adjusted to not be the same
+  - config values has been removed from chart readme as it's easier to maintain them at a single place
 
 ### From chart version 6.0.4 to 6.0.x
 
