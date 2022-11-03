@@ -6,11 +6,11 @@ on:
       - main
 
 env:
-  helm-version: "v3.7.1"
+  helm-version: "v3.10.1"
 
 jobs:
   release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3

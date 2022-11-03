@@ -1,6 +1,7 @@
 image:
   repository: zammad/zammad-docker-compose
-  tag: 5.2.1-6
+  # if not set appVersion field from Chart.yaml is used as default
+  tag: ""
   pullPolicy: IfNotPresent
   imagePullSecrets: []
     # - name: "image-pull-secret"
@@ -48,19 +49,21 @@ zammadConfig:
     # enable/disable elasticsearch chart dependency
     enabled: true
     # host env var is only used when zammadConfig.elasticsearch.enabled is false
-    host: zammad-master
+    host: zammad-elasticsearch-master
     initialisation: true
     pass: ""
     port: 9200
     reindex: true
     schema: http
     user: ""
+
   memcached:
     # enable/disable memcached chart dependency
     enabled: true
     # host env var is only used when zammadConfig.memcached.enabled is false
     host: zammad-memcached
     port: 11211
+
   nginx:
     trustedProxies: []
     extraHeaders: []
@@ -69,8 +72,7 @@ zammadConfig:
       # - 'HeaderName "Header Value"'
     knowledgeBaseUrl: ""
     livenessProbe:
-      httpGet:
-        path: /
+      tcpSocket:
         port: 8080
       initialDelaySeconds: 30
       successThreshold: 1
@@ -93,22 +95,23 @@ zammadConfig:
       # limits:
       #   cpu: 100m
       #   memory: 64Mi
+
   postgresql:
     # enable/disable postgresql chart dependency
     enabled: true
-    # needs to be the same as the postgresql.postgresqlPassword
+    # needs to be the same as the postgresql.auth.database
     db: zammad_production
     # host env var is only used when postgresql.enabled is false
     host: zammad-postgresql
+    # needs to be the same as the postgresql.auth.password
     pass: "zammad"
-    # needs to be the same as the postgresql.postgresqlDatabase
     port: 5432
-    # needs to be the same as the postgresql.postgresqlUsername
+    # needs to be the same as the postgresql.auth.username
     user: zammad
+
   railsserver:
     livenessProbe:
-      httpGet:
-        path: /
+      tcpSocket:
         port: 3000
       initialDelaySeconds: 30
       successThreshold: 1
@@ -133,6 +136,7 @@ zammadConfig:
       #   memory: 1024Mi
     trustedProxies: "['127.0.0.1', '::1']"
     webConcurrency: 0
+
   redis:
     # enable/disable redis chart dependency
     enabled: true
@@ -140,6 +144,7 @@ zammadConfig:
     # needs to be the same as the redis.auth.password
     pass: zammad
     port: 6379
+
   scheduler:
     resources: {}
       # requests:
@@ -148,6 +153,7 @@ zammadConfig:
       # limits:
       #   cpu: 200m
       #   memory: 512Mi
+
   websocket:
     livenessProbe:
       tcpSocket:
@@ -155,7 +161,7 @@ zammadConfig:
       initialDelaySeconds: 10
       periodSeconds: 10
       successThreshold: 1
-      failureThreshold: 5
+      failureThreshold: 10
       timeoutSeconds: 5
     readinessProbe:
       tcpSocket:
@@ -172,6 +178,7 @@ zammadConfig:
       # limits:
       #   cpu: 200m
       #   memory: 512Mi
+
   initContainers:
     volumePermissions:
       resources: {}
@@ -273,6 +280,9 @@ persistence:
   size: 15Gi
   annotations: {}
 
+# running zammad with more than 1 replica will need a [ReadWriteMany storage volume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)
+replicas: 1
+
 nodeSelector: {}
 tolerations: []
 affinity: {}
@@ -293,16 +303,6 @@ serviceAccount:
 rbac:
   # Control whether RBAC resources are created
   create: false
-
-# Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/
-podSecurityPolicy:
-  enabled: false
-  # Create PSP
-  create: false
-  # Annotations to add to PSP. Only applicable if create is true
-  annotations: {}
-  # The name of the PSP to use. Only applicable if create is false
-  name: ""
 
 # initContainers:
 #   - name: s3-restore
@@ -346,36 +346,16 @@ podSecurityPolicy:
 
 # Settings for the elasticsearch subchart
 elasticsearch:
-  image: "zammad/zammad-docker-compose"
-  imageTag: "zammad-elasticsearch-5.2.1-6"
   clusterName: zammad
-  replicas: 1
-  # Workaround to get helm test to work in GitHub action CI
-  # the [ES chart](https://github.com/elastic/helm-charts/tree/master/elasticsearch)
-  # default would be: "wait_for_status=green&timeout=1s"
-  # see: <https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html#request-params>
-  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
-  resources: {}
-    # requests:
-    #   cpu: "100m"
-    #   memory: "2Gi"
-    # limits:
-    #   cpu: "1000m"
-    #   memory: "2Gi"
-  initResources: {}
-    # limits:
-    #   cpu: "25m"
-    #   # memory: "128Mi"
-    # requests:
-    #   cpu: "25m"
-    #   memory: "128Mi"
-  sidecarResources: {}
-    # limits:
-    #   cpu: "25m"
-    #   # memory: "128Mi"
-    # requests:
-    #   cpu: "25m"
-    #   memory: "128Mi"
+  coordinating:
+    replicaCount: 0
+  data:
+    replicaCount: 0
+  ingest:
+    replicaCount: 0
+  master:
+    masterOnly: false
+    replicaCount: 1
 
 # settings for the memcached subchart
 memcached:
@@ -390,9 +370,13 @@ memcached:
 
 # settings for the postgres subchart
 postgresql:
-  postgresqlUsername: zammad
-  postgresqlPassword: zammad
-  postgresqlDatabase: zammad_production
+  auth:
+    postgresPassword: "zammad"
+    username: "zammad"
+    password: "zammad"
+    database: "zammad_production"
+    replicationUsername: repl_user
+    replicationPassword: "zammad"
   resources: {}
     # requests:
     #   cpu: 250m

@@ -18,5 +18,5 @@ for CHART_DIR in ${CHART_DIRS};do
   helm dependency build "${CHART_DIR}"
 
   echo "kubeconform(ing) ${CHART_DIR##charts/} chart..."
-  helm template "${CHART_DIR}" | kubeconform --strict --kubernetes-version "${KUBERNETES_VERSION#v}"
+  helm template "${CHART_DIR}" | kubeconform --strict --verbose --kubernetes-version "${KUBERNETES_VERSION#v}"
 done
