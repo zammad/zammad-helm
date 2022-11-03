@@ -62,6 +62,7 @@ zammadConfig:
     host: zammad-memcached
     port: 11211
   nginx:
+    trustedProxies: []
     extraHeaders: []
       # - 'HeaderName "Header Value"'
     websocketExtraHeaders: []
