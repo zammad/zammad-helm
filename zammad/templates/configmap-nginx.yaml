@@ -32,6 +32,11 @@ data:
 
         client_max_body_size 50M;
 
+        {{- /* Trusted proxies */}}
+        {{ range .Values.zammadConfig.nginx.trustedProxies }}
+        set_real_ip_from {{ . }};
+        {{- end }}
+
         {{- if .Values.zammadConfig.nginx.knowledgeBaseUrl }}
         {{ if hasPrefix "/" .Values.zammadConfig.nginx.knowledgeBaseUrl }}
         rewrite ^{{ .Values.zammadConfig.nginx.knowledgeBaseUrl }}(.*)$ /help$1 last;
