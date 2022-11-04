@@ -263,7 +263,7 @@ volumePermissions:
   enabled: false
   image:
     repository: alpine
-    tag: "3.14"
+    tag: "3.16.2"
     pullPolicy: IfNotPresent
 
 # Configuration for persistence
@@ -280,7 +280,8 @@ persistence:
   size: 15Gi
   annotations: {}
 
-# running zammad with more than 1 replica will need a [ReadWriteMany storage volume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)
+# running zammad with more than 1 replica will need a ReadWriteMany storage volume!
+# https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
 replicas: 1
 
 nodeSelector: {}
