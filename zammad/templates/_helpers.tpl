@@ -105,14 +105,3 @@ redis secret name
 {{ template "zammad.fullname" . }}-{{ .Values.secrets.redis.secretName }}
 {{- end -}}
 {{- end -}}
-
-{{/*
-image registry prefix for stock zammad images
-*/}}
-{{- define "zammad.image.repositoryPrefix" -}}
-{{- if eq .Values.image.repository "zammad/zammad-docker-compose" -}}
-{{ print "zammad-" }}
-{{- else -}}
-{{ print "" }}
-{{- end -}}
-{{- end -}}
