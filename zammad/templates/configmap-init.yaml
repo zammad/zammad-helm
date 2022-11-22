@@ -16,7 +16,7 @@ data:
         bundle exec rails r "Setting.set(\"es_password\", \"${ELASTICSEARCH_PASSWORD}\")"
     fi
     {{- if and .Values.zammadConfig.elasticsearch.reindex }}
-    bundle exec rake searchindex:rebuild
+    bundle exec rake zammad:searchindex:rebuild
     {{ end }}
     echo "elasticsearch init complete :)"
 {{ end }}
