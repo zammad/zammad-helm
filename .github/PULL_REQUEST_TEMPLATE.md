@@ -41,4 +41,4 @@ even continue reviewing your changes.
 
 [Place an '[x]' (no spaces) in all applicable fields. Please remove unrelated fields.]
 - [ ] Chart Version bumped
-- [ ] Variables are documented in the README.md
+- [ ] Upgrading instructions are documented in the README.md
