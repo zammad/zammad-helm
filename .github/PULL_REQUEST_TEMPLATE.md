@@ -25,20 +25,21 @@ very quickly. Please check the results. We would like these checks to pass befor
 even continue reviewing your changes.
 -->
 
-#### What this PR does / why we need it:
+#### What this PR does / why we need it
 
+- ...
 
 #### Which issue this PR fixes
 
 *(optional, in `fixes #<issue number>(, fixes #<issue_number>, ...)` format, will close that issue when PR gets merged)*
-  - fixes #
 
+- fixes #
 
-#### Special notes for your reviewer:
-
+#### Special notes for your reviewer
 
 #### Checklist
 
 [Place an '[x]' (no spaces) in all applicable fields. Please remove unrelated fields.]
+
 - [ ] Chart Version bumped
 - [ ] Upgrading instructions are documented in the README.md
