@@ -34,8 +34,8 @@ data:
   zammad-init: |-
     #!/bin/bash
     set -e
-    rsync -a --no-perms --no-owner --omit-dir-times --delete --exclude 'config/database.yml' --exclude 'public/assets/images/*' --exclude 'storage/fs/*' "${ZAMMAD_TMP_DIR}/" "${ZAMMAD_DIR}"
-    rsync -a --no-perms --no-owner --omit-dir-times "${ZAMMAD_TMP_DIR}"/public/assets/images/ "${ZAMMAD_DIR}"/public/assets/images
+    rsync -a --no-perms --no-owner --no-group --omit-dir-times --delete --exclude 'config/database.yml' --exclude 'public/assets/images/*' --exclude 'storage/fs/*' "${ZAMMAD_TMP_DIR}/" "${ZAMMAD_DIR}"
+    rsync -a --no-perms --no-owner --no-group --omit-dir-times "${ZAMMAD_TMP_DIR}"/public/assets/images/ "${ZAMMAD_DIR}"/public/assets/images
     sed -i -e "s#config.action_dispatch.trusted_proxies =.*#config.action_dispatch.trusted_proxies = {{ .Values.zammadConfig.railsserver.trustedProxies }}#" config/environments/production.rb
     if [ -n "${AUTOWIZARD_JSON}" ]; then
         echo "${AUTOWIZARD_JSON}" | base64 -d > auto_wizard.json
