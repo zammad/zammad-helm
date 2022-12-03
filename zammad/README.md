@@ -4,7 +4,7 @@ This directory contains a Kubernetes chart to deploy [Zammad](https://zammad.org
 
 ## Prerequisites Details
 
-- Kubernetes 1.16+
+- Kubernetes 1.19+
 - Helm 3.x
 - Cluster with at least 4GB of free RAM
 

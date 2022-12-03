@@ -298,13 +298,6 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-# RBAC configuration for scoping resources
-# Role binding is used for accessing the pod security policy configured
-# below
-rbac:
-  # Control whether RBAC resources are created
-  create: false
-
 # initContainers:
 #   - name: s3-restore
 #     image: some-aws-s3-restore:latest
