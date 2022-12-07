@@ -44,6 +44,12 @@ secrets:
     secretKey: redis-password
     secretName: redis-pass
 
+securityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+  runAsNonRoot: true
+  runAsGroup: 1000
+
 zammadConfig:
   elasticsearch:
     # enable/disable elasticsearch chart dependency
@@ -95,6 +101,13 @@ zammadConfig:
       # limits:
       #   cpu: 100m
       #   memory: 64Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      privileged: false
 
   postgresql:
     # enable/disable postgresql chart dependency
@@ -134,6 +147,13 @@ zammadConfig:
       # limits:
       #   cpu: 200m
       #   memory: 1024Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      privileged: false
     trustedProxies: "['127.0.0.1', '::1']"
     webConcurrency: 0
 
@@ -153,6 +173,17 @@ zammadConfig:
       # limits:
       #   cpu: 200m
       #   memory: 512Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      privileged: false
+
+  tmpDirVolume:
+    emptyDir:
+      sizeLimit: 100Mi
 
   websocket:
     livenessProbe:
@@ -178,32 +209,15 @@ zammadConfig:
       # limits:
       #   cpu: 200m
       #   memory: 512Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      privileged: false
 
   initContainers:
-    volumePermissions:
-      resources: {}
-        # requests:
-        #   cpu: 100m
-        #   memory: 256Mi
-        # limits:
-        #   cpu: 200m
-        #   memory: 512Mi
-    zammad:
-      resources: {}
-        # requests:
-        #   cpu: 100m
-        #   memory: 256Mi
-        # limits:
-        #   cpu: 200m
-        #   memory: 512Mi
-    postgresql:
-      resources: {}
-        # requests:
-        #   cpu: 100m
-        #   memory: 256Mi
-        # limits:
-        #   cpu: 200m
-        #   memory: 512Mi
     elasticsearch:
       resources: {}
         # requests:
@@ -212,6 +226,59 @@ zammadConfig:
         # limits:
         #   cpu: 200m
         #   memory: 512Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        privileged: false
+    postgresql:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        privileged: false
+    volumePermissions:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+      securityContext:
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+        runAsNonRoot: false
+        runAsUser: 0
+    zammad:
+      # set extra params to rsync command
+      extraRsyncParams: ""
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        privileged: false
+        runAsNonRoot: false
+        runAsUser: 0
 
 # additional environment vars added to all zammad services
 extraEnv: []
@@ -263,7 +330,7 @@ volumePermissions:
   enabled: false
   image:
     repository: alpine
-    tag: "3.16.2"
+    tag: "3.17.0"
     pullPolicy: IfNotPresent
 
 # Configuration for persistence
@@ -298,43 +365,45 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-# initContainers:
-#   - name: s3-restore
-#     image: some-aws-s3-restore:latest
-#     env:
-#       - name: AWS_DEFAULT_REGION
-#         value: "eu-central-1"
-#       - name: AWS_ACCESS_KEY_ID
-#         value: "xxxxxxxxxxxx"
-#       - name: AWS_SECRET_ACCESS_KEY
-#         value: "xxxxxxxxxxxx"
-#       - name: SYNC_DIR
-#         value: "/opt/zammad"
-#       - name: AWS_SYNC_BUCKET
-#         value: "some-backup-bucket"
-#     volumeMounts:
-#       - name: help-zammad
-#         mountPath: /opt/zammad
+# can be used to add additional init containers
+initContainers: []
+  # - name: s3-restore
+  #   image: some-aws-s3-restore:latest
+  #   env:
+  #     - name: AWS_DEFAULT_REGION
+  #       value: "eu-central-1"
+  #     - name: AWS_ACCESS_KEY_ID
+  #       value: "xxxxxxxxxxxx"
+  #     - name: AWS_SECRET_ACCESS_KEY
+  #       value: "xxxxxxxxxxxx"
+  #     - name: SYNC_DIR
+  #       value: "/opt/zammad"
+  #     - name: AWS_SYNC_BUCKET
+  #       value: "some-backup-bucket"
+  #   volumeMounts:
+  #     - name: help-zammad
+  #       mountPath: /opt/zammad
 
-# sidecars:
-#   - name: s3-backup
-#     image: some-aws-s3-backup:latest
-#     env:
-#       - name: AWS_DEFAULT_REGION
-#         value: "eu-central-1"
-#       - name: AWS_ACCESS_KEY_ID
-#         value: "xxxxxxxxxxxx"
-#       - name: AWS_SECRET_ACCESS_KEY
-#         value: "xxxxxxxxxxxx"
-#       - name: SYNC_DIR
-#         value: "/opt/zammad"
-#       - name: AWS_SYNC_BUCKET
-#         value: "some-backup-bucket"
-#       - name: AWS_SYNC_SCHEDULE
-#         value: "0 * * * *"
-#     volumeMounts:
-#       - name: help-zammad
-#         mountPath: /opt/zammad
+# can be used to add additional containers / sidecars
+sidecars: []
+  # - name: s3-backup
+  #   image: some-aws-s3-backup:latest
+  #   env:
+  #     - name: AWS_DEFAULT_REGION
+  #       value: "eu-central-1"
+  #     - name: AWS_ACCESS_KEY_ID
+  #       value: "xxxxxxxxxxxx"
+  #     - name: AWS_SECRET_ACCESS_KEY
+  #       value: "xxxxxxxxxxxx"
+  #     - name: SYNC_DIR
+  #       value: "/opt/zammad"
+  #     - name: AWS_SYNC_BUCKET
+  #       value: "some-backup-bucket"
+  #     - name: AWS_SYNC_SCHEDULE
+  #       value: "0 * * * *"
+  #   volumeMounts:
+  #     - name: help-zammad
+  #       mountPath: /opt/zammad
 
 # dependency charts config
 
@@ -348,6 +417,7 @@ elasticsearch:
   ingest:
     replicaCount: 0
   master:
+    heapSize: 512m
     masterOnly: false
     replicaCount: 1
 

@@ -53,7 +53,45 @@ Open your browser on <http://localhost:8080>
 
 ## Upgrading
 
-### From chart version 6.x to 7.x
+### From chart version 7.x to 8.0.0
+
+SecurityContexts of pod and containers are configurable now.
+We also changed the default securitycontexts, to be a bit more restrictive, therefore the major version upgrade of the chart.
+
+On the pod level the following defaults are used:
+
+```yaml
+securityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+  runAsNonRoot: true
+  runAsGroup: 1000
+```
+
+On the containerlevel the following settings are used fo all zammad containers now (some init containers may run as root though):
+
+```yaml
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      privileged: false
+```
+
+As `readOnlyRootFilesystem: true` is set for all Zammad containers, the Nginx container writes its PID and tmp files to `/tmp`.
+The `/tmp` volume can be configured via `zammadConfig.tmpDirVolume`. Currently a 100Mi emptyDir is used for that.
+The nginx config in `/etc/nginx/nginx.conf` is now populated from the Nginx configmap too.
+
+If the volumpermissions initContainer is used, the username and group are taken from the `securityContext.runAsUser` & `securityContext.runAsGroup` variables.
+
+The rsync command in the zammad-init container has been changed to not use "--no-perms --no-owner --no-group --omit-dir-times".
+If you wan't the old behaviout use the new `.Values.zammadConfig.initContainers.zammad.extraRsyncParams` variable, to add these options again.
+
+We've also set the Elasticsearch master heapsize to "512m" by default.
+
+### From chart version 6.x to 7.0.0
 
 - Bitnami Elasticsearch chart is used now as Elastic does not support the old chart anymore in favour of ECK operator
   - reindexing of all data is needed so get sure "zammadConfig.elasticsearch.reindex" is set to "true"
