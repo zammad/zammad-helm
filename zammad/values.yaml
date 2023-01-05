@@ -3,7 +3,8 @@ image:
   # if not set appVersion field from Chart.yaml is used as default
   tag: ""
   pullPolicy: IfNotPresent
-  imagePullSecrets: []
+  imagePullSecrets:
+    []
     # - name: "image-pull-secret"
 
 service:
@@ -13,7 +14,8 @@ service:
 ingress:
   enabled: false
   className: ""
-  annotations: {}
+  annotations:
+    {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
@@ -21,7 +23,8 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls: []
+  tls:
+    []
     # - secretName: chart-example-tls
     #   hosts:
     #     - chart-example.local
@@ -41,6 +44,7 @@ secrets:
     secretName: postgresql-pass
   redis:
     useExisting: false
+    userKey: redis-user
     secretKey: redis-password
     secretName: redis-pass
 
@@ -72,9 +76,11 @@ zammadConfig:
 
   nginx:
     trustedProxies: []
-    extraHeaders: []
+    extraHeaders:
+      []
       # - 'HeaderName "Header Value"'
-    websocketExtraHeaders: []
+    websocketExtraHeaders:
+      []
       # - 'HeaderName "Header Value"'
     knowledgeBaseUrl: ""
     livenessProbe:
@@ -94,7 +100,8 @@ zammadConfig:
       failureThreshold: 5
       timeoutSeconds: 5
       periodSeconds: 10
-    resources: {}
+    resources:
+      {}
       # requests:
       #   cpu: 50m
       #   memory: 32Mi
@@ -140,7 +147,8 @@ zammadConfig:
       failureThreshold: 5
       timeoutSeconds: 5
       periodSeconds: 10
-    resources: {}
+    resources:
+      {}
       # requests:
       #   cpu: 100m
       #   memory: 512Mi
@@ -164,9 +172,11 @@ zammadConfig:
     # needs to be the same as the redis.auth.password
     pass: zammad
     port: 6379
+    user: default
 
   scheduler:
-    resources: {}
+    resources:
+      {}
       # requests:
       #   cpu: 100m
       #   memory: 256Mi
@@ -202,7 +212,8 @@ zammadConfig:
       successThreshold: 1
       failureThreshold: 5
       timeoutSeconds: 5
-    resources: {}
+    resources:
+      {}
       # requests:
       #   cpu: 100m
       #   memory: 256Mi
@@ -219,7 +230,8 @@ zammadConfig:
 
   initContainers:
     elasticsearch:
-      resources: {}
+      resources:
+        {}
         # requests:
         #   cpu: 100m
         #   memory: 256Mi
@@ -234,7 +246,8 @@ zammadConfig:
         readOnlyRootFilesystem: true
         privileged: false
     postgresql:
-      resources: {}
+      resources:
+        {}
         # requests:
         #   cpu: 100m
         #   memory: 256Mi
@@ -249,7 +262,8 @@ zammadConfig:
         readOnlyRootFilesystem: true
         privileged: false
     volumePermissions:
-      resources: {}
+      resources:
+        {}
         # requests:
         #   cpu: 100m
         #   memory: 256Mi
@@ -266,7 +280,8 @@ zammadConfig:
     zammad:
       # set extra params to rsync command
       extraRsyncParams: ""
-      resources: {}
+      resources:
+        {}
         # requests:
         #   cpu: 100m
         #   memory: 256Mi
@@ -281,7 +296,8 @@ zammadConfig:
         runAsUser: 0
 
 # additional environment vars added to all zammad services
-extraEnv: []
+extraEnv:
+  []
   # - name: FOO_BAR
   #   value: "foobar"
 
@@ -323,7 +339,8 @@ autoWizard:
   #     ]
   #   }
 
-podAnnotations: {}
+podAnnotations:
+  {}
   # my-annotation: "value"
 
 volumePermissions:
@@ -366,7 +383,8 @@ serviceAccount:
   name: ""
 
 # can be used to add additional init containers
-initContainers: []
+initContainers:
+  []
   # - name: s3-restore
   #   image: some-aws-s3-restore:latest
   #   env:
@@ -385,7 +403,8 @@ initContainers: []
   #       mountPath: /opt/zammad
 
 # can be used to add additional containers / sidecars
-sidecars: []
+sidecars:
+  []
   # - name: s3-backup
   #   image: some-aws-s3-backup:latest
   #   env:
@@ -424,7 +443,8 @@ elasticsearch:
 # settings for the memcached subchart
 memcached:
   replicaCount: 1
-  resources: {}
+  resources:
+    {}
     # requests:
     #   cpu: 50m
     #   memory: 64Mi
@@ -441,7 +461,8 @@ postgresql:
     database: "zammad_production"
     replicationUsername: repl_user
     replicationPassword: "zammad"
-  resources: {}
+  resources:
+    {}
     # requests:
     #   cpu: 250m
     #   memory: 256Mi

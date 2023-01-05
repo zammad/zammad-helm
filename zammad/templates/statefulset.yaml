@@ -67,6 +67,13 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+          {{- if or .Values.zammadConfig.redis.user .Values.secrets.redis.useExisting }}
+            - name: REDIS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.userKey }}
+          {{- end }}
           {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
             - name: REDIS_PASSWORD
               valueFrom:
@@ -77,7 +84,7 @@ spec:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
             - name: REDIS_URL
-              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+              value: "redis://$(REDIS_USER):$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
           {{- if .Values.autoWizard.enabled }}
             - name: AUTOWIZARD_JSON
               valueFrom:
@@ -107,6 +114,13 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+          {{- if or .Values.zammadConfig.redis.user .Values.secrets.redis.useExisting }}
+            - name: REDIS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.userKey }}
+          {{- end }}
           {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
             - name: REDIS_PASSWORD
               valueFrom:
@@ -117,7 +131,7 @@ spec:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
             - name: REDIS_URL
-              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+              value: "redis://$(REDIS_USER):$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
             - name: POSTGRESQL_PASS
               valueFrom:
                 secretKeyRef:
@@ -146,6 +160,13 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+          {{- if or .Values.zammadConfig.redis.user .Values.secrets.redis.useExisting }}
+            - name: REDIS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.userKey }}
+          {{- end }}
           {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
             - name: REDIS_PASSWORD
               valueFrom:
@@ -156,7 +177,7 @@ spec:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
             - name: REDIS_URL
-              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+              value: "redis://$(REDIS_USER):$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
           {{- if or .Values.zammadConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
             - name: ELASTICSEARCH_PASSWORD
               valueFrom:
@@ -248,6 +269,13 @@ spec:
           env:
             - name: TMP
               value: "/opt/zammad/tmp"
+          {{- if or .Values.zammadConfig.redis.user .Values.secrets.redis.useExisting }}
+            - name: REDIS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.userKey }}
+          {{- end }}
           {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
             - name: REDIS_PASSWORD
               valueFrom:
@@ -258,7 +286,7 @@ spec:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
             - name: REDIS_URL
-              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+              value: "redis://$(REDIS_USER):$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
@@ -293,6 +321,13 @@ spec:
             - "script/background-worker.rb"
             - "start"
           env:
+          {{- if or .Values.zammadConfig.redis.user .Values.secrets.redis.useExisting }}
+            - name: REDIS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.userKey }}
+          {{- end }}
           {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
             - name: REDIS_PASSWORD
               valueFrom:
@@ -303,7 +338,7 @@ spec:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
             - name: REDIS_URL
-              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+              value: "redis://$(REDIS_USER):$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
@@ -331,6 +366,13 @@ spec:
             - "6042"
             - "start"
           env:
+          {{- if or .Values.zammadConfig.redis.user .Values.secrets.redis.useExisting }}
+            - name: REDIS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.userKey }}
+          {{- end }}
           {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
             - name: REDIS_PASSWORD
               valueFrom:
@@ -341,7 +383,7 @@ spec:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
             - name: REDIS_URL
-              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"          
+              value: "redis://$(REDIS_USER):$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"          
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
