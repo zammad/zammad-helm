@@ -44,11 +44,11 @@ This is relevant to **EFS** for AWS users, as well.
 
 To run OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids):
 
-* Add the extraRsyncParams `--no-perms --omit-dir-times`.
-* Set `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` empty (not empty string `""` or empty map `{}`).
-* Disable if used:
-  * also `podSecurityContext` in all subcharts.
-  * the privileged [sysctlImage](https://github.com/bitnami/charts/tree/main/bitnami/elasticsearch#default-kernel-settings) in elasticsearch subchart.
+- Add the extraRsyncParams `--no-perms --omit-dir-times`.
+- Set `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` empty (not empty string `""` or empty map `{}`).
+- Disable if used:
+  - also `podSecurityContext` in all subcharts.
+  - the privileged [sysctlImage](https://github.com/bitnami/charts/tree/main/bitnami/elasticsearch#default-kernel-settings) in elasticsearch subchart.
 
 
 ```yaml
