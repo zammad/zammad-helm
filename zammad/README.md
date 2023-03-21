@@ -40,6 +40,59 @@ Don't use an NFS-based storage class for Zammad's persistent volume.
 
 This is relevant to **EFS** for AWS users, as well.
 
+### OpenShift
+
+To run OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids):
+
+* Add the extraRsyncParams `--no-perms --omit-dir-times`.
+* Set `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` empty (not empty string `""` or empty map `{}`).
+* Disable if used:
+  * also `podSecurityContext` in all subcharts.
+  * the privileged [sysctlImage](https://github.com/bitnami/charts/tree/main/bitnami/elasticsearch#default-kernel-settings) in elasticsearch subchart.
+
+
+```yaml
+securityContext:
+  fsGroup: # must be emtpy
+  runAsUser: # must be emtpy
+  runAsNonRoot: # must be emtpy
+  runAsGroup: # must be emtpy
+
+zammadConfig:
+  initContainers:
+    zammad:
+      extraRsyncParams: "--no-perms --omit-dir-times"
+      securityContext:
+        runAsUser: # must be emtpy
+
+elasticsearch:
+  sysctlImage:
+    enabled: false
+  master:
+    podSecurityContext:
+      enabled: false
+    containerSecurityContext:
+      enabled: false
+
+memcached:
+  podSecurityContext:
+    enabled: false
+  containerSecurityContext:
+    enabled: false
+
+redis:
+  master:
+   podSecurityContext:
+     enabled: false
+   containerSecurityContext:
+     enabled: false
+  replica:
+    podSecurityContext:
+      enabled: false
+    containerSecurityContext:
+      enabled: false
+```
+
 ## Using zammad
 
 Once the zammad pod is ready, it can be accessed using the ingress or port forwarding.
