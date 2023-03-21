@@ -50,7 +50,6 @@ To run OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://cloud.r
   - also `podSecurityContext` in all subcharts.
   - the privileged [sysctlImage](https://github.com/bitnami/charts/tree/main/bitnami/elasticsearch#default-kernel-settings) in elasticsearch subchart.
 
-
 ```yaml
 securityContext:
   fsGroup: # must be emtpy
