@@ -23,7 +23,6 @@ data:
   postgresql-init: |-
     #!/bin/bash
     set -e
-    sed -e "s#.*adapter:.*#  adapter: postgresql#g" -e "s#.*database:.*#  database: {{ .Values.zammadConfig.postgresql.db }}#g" -e "s#.*username:.*#  username: {{ .Values.zammadConfig.postgresql.user }}#g" -e "s#.*password:.*#  password: ${POSTGRESQL_PASS}\\n  host: {{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}\\n  port: {{ .Values.zammadConfig.postgresql.port }}#g" < contrib/packager.io/database.yml.pkgr > config/database.yml
     if ! (bundle exec rails r 'puts User.any?' 2> /dev/null | grep -q true); then
         bundle exec rake db:migrate
         bundle exec rake db:seed
@@ -34,11 +33,8 @@ data:
   zammad-init: |-
     #!/bin/bash
     set -e
-    rsync -av {{ .Values.zammadConfig.initContainers.zammad.extraRsyncParams }} --delete --exclude 'config/database.yml' --exclude 'public/assets/images/*' --exclude 'storage/fs/*' "${ZAMMAD_TMP_DIR}/" "${ZAMMAD_DIR}"
-    rsync -av {{ .Values.zammadConfig.initContainers.zammad.extraRsyncParams }} "${ZAMMAD_TMP_DIR}"/public/assets/images/ "${ZAMMAD_DIR}"/public/assets/images
-    sed -i -e "s#config.action_dispatch.trusted_proxies =.*#config.action_dispatch.trusted_proxies = {{ .Values.zammadConfig.railsserver.trustedProxies }}#" config/environments/production.rb
     if [ -n "${AUTOWIZARD_JSON}" ]; then
-        echo "${AUTOWIZARD_JSON}" | base64 -d > auto_wizard.json
+        echo "${AUTOWIZARD_JSON}" | base64 -d > /opt/zammad/var/auto_wizard.json
     fi
     rm -f /opt/zammad/tmp/pids/*.pid
     echo "zammad init complete :)"
