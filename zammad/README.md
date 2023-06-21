@@ -103,16 +103,16 @@ Open your browser on <http://localhost:8080>
 
 ### From chart version 8.x to 9.0.0
 
-- Zammads PVC changed to only hold contents of /opt/zammad/var instead whole Zammad content
+- Zammads PVC changed to only hold contents of /opt/zammad/var instead of the whole Zammad content
   - A new PVC `zammad-var` is created for this (the old zammad PVC is kept in case you need data from there)
-  - to update Zammad you have to delete the zammad statefulset first, as the volume config is changed
+  - to update Zammad you have to delete the Zammad StatefulSet first, as the immutable volume config is changed
     - `kubectl delete sts zammad`
     - `helm upgrade zammad zammad/zammad`
-  - Zammads initContainer does also no rsync anymore
+- Zammads initContainer rsync step is no longer needed and therfore removed
 - DB config is now done via `DATABASE_URL` env var instead of creating a database.yml in the config directory
-- Zammads pod securitycontext has new default setting for "seccompProfile:" with value "type: RuntimeDefault"
+- Zammads pod securityContext has a new default setting for "seccompProfile:" with value "type: RuntimeDefault"
 - Docker registry changed to ghcr.io/zammad/zammad
-- auto_wizard.json needs to be placd into /opt/zammad/var directory now
+- auto_wizard.json is placed into /opt/zammad/var directory now
 - All subcharts have been updated
 
 ### From chart version 7.x to 8.0.0
