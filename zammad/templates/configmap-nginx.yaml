@@ -76,6 +76,15 @@ data:
             proxy_pass http://zammad-websocket;
         }
 
+        location /cable {
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "Upgrade";
+            proxy_set_header CLIENT_IP $remote_addr;
+            proxy_read_timeout 86400;
+            proxy_pass http://zammad-railsserver;
+        }
+
         location / {
             {{- if .Values.zammadConfig.nginx.knowledgeBaseUrl }}
             proxy_set_header X-ORIGINAL-URL $request_uri;
