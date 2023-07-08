@@ -103,8 +103,10 @@ Open your browser on <http://localhost:8080>
 
 ### From chart version 8.x to 9.0.0
 
-- Zammads PVC changed to only hold contents of /opt/zammad/var instead of the whole Zammad content
-  - A new PVC `zammad-var` is created for this (the old zammad PVC is kept in case you need data from there)
+- Zammads PVC changed to only hold contents of /opt/zammad/var & /opt/zammad/storage instead of the whole Zammad content
+  - A new PVC `zammad-var` is created for this
+  - the old zammad PVC is kept in case you need data from there (for example if you used filesystem storage)
+    - you need to copy the contents of /opt/zammad/storage to the new volume manually or restore them from a backup
   - to update Zammad you have to delete the Zammad StatefulSet first, as the immutable volume config is changed
     - `kubectl delete sts zammad`
     - `helm upgrade zammad zammad/zammad`

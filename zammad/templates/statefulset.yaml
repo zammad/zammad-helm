@@ -241,6 +241,8 @@ spec:
               mountPath: /tmp
             - name: {{ include "zammad.fullname" . }}-tmp
               mountPath: /var/log/nginx
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
         - name: {{ .Chart.Name }}-railsserver
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -302,6 +304,8 @@ spec:
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
         - name: {{ .Chart.Name }}-scheduler
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -343,6 +347,8 @@ spec:
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
         - name: {{ .Chart.Name }}-websocket
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -399,6 +405,8 @@ spec:
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
       {{- with .Values.securityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -414,11 +422,11 @@ spec:
         - name: {{ include "zammad.fullname" . }}-tmp
           {{- toYaml .Values.zammadConfig.tmpDirVolume | nindent 10 }}
   {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
-        - name: {{ template "zammad.fullname" . }}
+        - name: {{ template "zammad.fullname" . }}-var
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.existingClaim | default (include "zammad.fullname" .) }}
   {{- else if not .Values.persistence.enabled }}
-      - name: {{ template "zammad.fullname" . }}
+      - name: {{ template "zammad.fullname" . }}-var
         emptyDir:
           sizeLimit: {{ .Values.persistence.size | quote }}
   {{- else if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
