@@ -248,7 +248,7 @@ zammadConfig:
         capabilities:
           drop:
             - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         privileged: false
     volumePermissions:
       resources: {}
