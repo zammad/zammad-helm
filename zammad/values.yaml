@@ -46,9 +46,9 @@ secrets:
 
 securityContext:
   fsGroup: 1000
-  runAsUser: 1000
-  runAsNonRoot: true
   runAsGroup: 1000
+  runAsNonRoot: true
+  runAsUser: 1000
   seccompProfile:
     type: RuntimeDefault
 
@@ -248,7 +248,7 @@ zammadConfig:
         capabilities:
           drop:
             - ALL
-        readOnlyRootFilesystem: false
+        readOnlyRootFilesystem: true
         privileged: false
     volumePermissions:
       resources: {}
