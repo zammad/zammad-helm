@@ -265,6 +265,21 @@ zammadConfig:
             - ALL
         runAsNonRoot: false
         runAsUser: 0
+    railsserverTmp:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+      securityContext:
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+        runAsNonRoot: false
+        runAsUser: 0
     zammad:
       # set extra params to rsync command
       extraRsyncParams: ""
@@ -329,6 +344,13 @@ podAnnotations: {}
   # my-annotation: "value"
 
 volumePermissions:
+  enabled: false
+  image:
+    repository: alpine
+    tag: "3.18.2"
+    pullPolicy: IfNotPresent
+
+railsserverTmp:
   enabled: false
   image:
     repository: alpine

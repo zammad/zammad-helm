@@ -60,6 +60,9 @@ zammadConfig:
       securityContext:
         runAsUser: null
 
+railsserverTmp:
+  enabled: true
+
 elasticsearch:
   sysctlImage:
     enabled: false
