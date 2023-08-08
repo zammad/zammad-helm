@@ -36,5 +36,4 @@ data:
     if [ -n "${AUTOWIZARD_JSON}" ]; then
         echo "${AUTOWIZARD_JSON}" | base64 -d > /opt/zammad/var/auto_wizard.json
     fi
-    rm -f /opt/zammad/tmp/pids/*.pid
     echo "zammad init complete :)"

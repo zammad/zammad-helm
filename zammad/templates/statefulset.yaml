@@ -42,24 +42,27 @@ spec:
         {{- with .Values.initContainers }}
         {{- toYaml . | nindent 8}}
         {{- end }}
-        {{- if .Values.volumePermissions.enabled }}
-        - name: data-chmod
-          image: "{{ .Values.volumePermissions.image.repository }}:{{ .Values.volumePermissions.image.tag }}"
-          imagePullPolicy: {{ .Values.volumePermissions.image.pullPolicy }}
+        {{- if .Values.zammadConfig.initContainers.volumePermissions.enabled }}
+        - name: zammad-volume-permissions
+          image: "{{ .Values.zammadConfig.initContainers.volumePermissions.image.repository }}:{{ .Values.zammadConfig.initContainers.volumePermissions.image.tag }}"
+          imagePullPolicy: {{ .Values.zammadConfig.initContainers.volumePermissions.image.pullPolicy }}
           command:
             - /bin/sh
             - -cx
             - |
-              chown {{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.runAsGroup }} -R /opt/zammad
+              chown {{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.runAsGroup }} -R /opt/zammad/var
+              chmod 770 /opt/zammad/tmp
           {{- with .Values.zammadConfig.initContainers.volumePermissions.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.zammadConfig.volumePermissions }}
+          {{- with .Values.zammadConfig.initContainers.volumePermissions.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
         {{- end }}

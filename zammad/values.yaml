@@ -154,7 +154,7 @@ zammadConfig:
       capabilities:
         drop:
           - ALL
-      readOnlyRootFilesystem: true
+      readOnlyRootFilesystem: false
       privileged: false
     trustedProxies: "['127.0.0.1', '::1']"
     webConcurrency: 0
@@ -180,7 +180,7 @@ zammadConfig:
       capabilities:
         drop:
           - ALL
-      readOnlyRootFilesystem: true
+      readOnlyRootFilesystem: false
       privileged: false
 
   tmpDirVolume:
@@ -216,7 +216,7 @@ zammadConfig:
       capabilities:
         drop:
           - ALL
-      readOnlyRootFilesystem: true
+      readOnlyRootFilesystem: false
       privileged: false
 
   initContainers:
@@ -233,7 +233,7 @@ zammadConfig:
         capabilities:
           drop:
             - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         privileged: false
     postgresql:
       resources: {}
@@ -248,9 +248,14 @@ zammadConfig:
         capabilities:
           drop:
             - ALL
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         privileged: false
     volumePermissions:
+      enabled: true
+      image:
+        repository: alpine
+        tag: "3.18.3"
+        pullPolicy: IfNotPresent
       resources: {}
         # requests:
         #   cpu: 100m
@@ -263,6 +268,7 @@ zammadConfig:
         capabilities:
           drop:
             - ALL
+        privileged: true
         runAsNonRoot: false
         runAsUser: 0
     zammad:
@@ -277,10 +283,11 @@ zammadConfig:
         #   memory: 512Mi
       securityContext:
         allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
         readOnlyRootFilesystem: true
         privileged: false
-        runAsNonRoot: false
-        runAsUser: 0
 
 # additional environment vars added to all zammad services
 extraEnv: []
@@ -327,13 +334,6 @@ autoWizard:
 
 podAnnotations: {}
   # my-annotation: "value"
-
-volumePermissions:
-  enabled: false
-  image:
-    repository: alpine
-    tag: "3.18.2"
-    pullPolicy: IfNotPresent
 
 # Configuration for persistence
 persistence:
