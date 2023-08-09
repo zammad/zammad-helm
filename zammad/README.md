@@ -59,9 +59,21 @@ zammadConfig:
       extraRsyncParams: "--no-perms --omit-dir-times"
       securityContext:
         runAsUser: null
+  railsserver:
+    tmpdir: "/opt/zammad/var/tmp"
 
-railsserverTmp:
-  enabled: true
+
+initContainers:
+  - name: railsserver-tmp-init
+    image: "alpine:3.18.2"
+    command:
+      - /bin/sh
+      - -cx
+      - |
+        mkdir -p /opt/zammad/var/tmp && chmod +t /opt/zammad/var/tmp
+    volumeMounts:
+      - name: zammad-var
+        mountPath: /opt/zammad/var
 
 elasticsearch:
   sysctlImage:

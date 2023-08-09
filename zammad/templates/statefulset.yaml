@@ -63,26 +63,6 @@ spec:
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
         {{- end }}
-        {{- if .Values.railsserverTmp.enabled }}
-        - name: railsserver-tmp-init
-          image: "{{ .Values.railsserverTmp.image.repository }}:{{ .Values.railsserverTmp.image.tag }}"
-          command:
-            - /bin/sh
-            - -cx
-            - |
-              mkdir -p /opt/zammad/var/tmp && chmod +t /opt/zammad/var/tmp
-          {{- with .Values.zammadConfig.initContainers.railsserverTmp.resources }}
-          resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.zammadConfig.railsserverTmp }}
-          securityContext:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          volumeMounts:
-            - name: {{ template "zammad.fullname" . }}-var
-              mountPath: /opt/zammad/var
-        {{- end }}
         - name: zammad-init
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -278,7 +258,7 @@ spec:
             - "production"
           env:
             - name: TMP
-              value: "/opt/zammad/var/tmp"
+              value: {{ .Values.zammadConfig.railsserver.tmpdir }}
           {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
             - name: REDIS_PASSWORD
               valueFrom:
