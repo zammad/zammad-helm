@@ -158,6 +158,7 @@ zammadConfig:
       privileged: false
     trustedProxies: "['127.0.0.1', '::1']"
     webConcurrency: 0
+    tmpdir: "/opt/zammad/tmp"
 
   redis:
     # enable/disable redis chart dependency
@@ -334,6 +335,13 @@ autoWizard:
 
 podAnnotations: {}
   # my-annotation: "value"
+
+volumePermissions:
+  enabled: false
+  image:
+    repository: alpine
+    tag: "3.18.3"
+    pullPolicy: IfNotPresent
 
 # Configuration for persistence
 persistence:

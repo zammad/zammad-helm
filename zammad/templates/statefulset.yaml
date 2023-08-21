@@ -267,7 +267,7 @@ spec:
             - "production"
           env:
             - name: TMP
-              value: "/opt/zammad/tmp"
+              value: {{ .Values.zammadConfig.railsserver.tmpdir }}
           {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
             - name: REDIS_PASSWORD
               valueFrom:
