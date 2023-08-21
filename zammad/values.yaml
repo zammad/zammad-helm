@@ -333,7 +333,7 @@ volumePermissions:
   enabled: false
   image:
     repository: alpine
-    tag: "3.18.2"
+    tag: "3.18.3"
     pullPolicy: IfNotPresent
 
 # Configuration for persistence
