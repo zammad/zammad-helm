@@ -158,6 +158,7 @@ zammadConfig:
       privileged: false
     trustedProxies: "['127.0.0.1', '::1']"
     webConcurrency: 0
+    tmpdir: "/opt/zammad/tmp"
 
   redis:
     # enable/disable redis chart dependency
