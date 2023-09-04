@@ -49,6 +49,8 @@ securityContext:
   runAsUser: 1000
   runAsNonRoot: true
   runAsGroup: 1000
+  # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#configure-volume-permission-and-ownership-change-policy-for-pods
+  fsGroupChangePolicy: "OnRootMismatch"
   seccompProfile:
     type: RuntimeDefault
 
