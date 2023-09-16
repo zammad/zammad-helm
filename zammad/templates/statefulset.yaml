@@ -62,6 +62,8 @@ spec:
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
         {{- end }}
         - name: zammad-init
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -99,6 +101,8 @@ spec:
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
             - name: {{ template "zammad.fullname" . }}-init
               mountPath: /docker-entrypoint.sh
               readOnly: true
@@ -139,6 +143,8 @@ spec:
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
             - name: {{ template "zammad.fullname" . }}-init
               mountPath: /docker-entrypoint.sh
               readOnly: true
@@ -187,6 +193,8 @@ spec:
           volumeMounts:
           - name: {{ template "zammad.fullname" . }}-var
             mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
           - name: {{ template "zammad.fullname" . }}-init
             mountPath: /docker-entrypoint.sh
             readOnly: true
