@@ -193,8 +193,8 @@ spec:
           volumeMounts:
           - name: {{ template "zammad.fullname" . }}-var
             mountPath: /opt/zammad/var
-            - name: {{ template "zammad.fullname" . }}-var
-              mountPath: /opt/zammad/storage
+          - name: {{ template "zammad.fullname" . }}-var
+            mountPath: /opt/zammad/storage
           - name: {{ template "zammad.fullname" . }}-init
             mountPath: /docker-entrypoint.sh
             readOnly: true
