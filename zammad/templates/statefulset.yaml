@@ -42,24 +42,27 @@ spec:
         {{- with .Values.initContainers }}
         {{- toYaml . | nindent 8}}
         {{- end }}
-        {{- if .Values.volumePermissions.enabled }}
-        - name: data-chmod
-          image: "{{ .Values.volumePermissions.image.repository }}:{{ .Values.volumePermissions.image.tag }}"
-          imagePullPolicy: {{ .Values.volumePermissions.image.pullPolicy }}
+        {{- if .Values.zammadConfig.initContainers.volumePermissions.enabled }}
+        - name: zammad-volume-permissions
+          image: "{{ .Values.zammadConfig.initContainers.volumePermissions.image.repository }}:{{ .Values.zammadConfig.initContainers.volumePermissions.image.tag }}"
+          imagePullPolicy: {{ .Values.zammadConfig.initContainers.volumePermissions.image.pullPolicy }}
           command:
             - /bin/sh
             - -cx
             - |
-              chown {{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.runAsGroup }} -R /opt/zammad
+              chown {{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.runAsGroup }} -R /opt/zammad/var
+              chmod 770 /opt/zammad/tmp
           {{- with .Values.zammadConfig.initContainers.volumePermissions.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.zammadConfig.volumePermissions }}
+          {{- with .Values.zammadConfig.initContainers.volumePermissions.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
         {{- end }}
@@ -97,12 +100,14 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: {{ template "zammad.fullname" . }}-var
-              mountPath: /opt/zammad/var
             - name: {{ template "zammad.fullname" . }}-init
               mountPath: /docker-entrypoint.sh
               readOnly: true
               subPath: zammad-init
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/var
         - name: postgresql-init
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -137,12 +142,14 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: {{ template "zammad.fullname" . }}-var
-              mountPath: /opt/zammad/var
             - name: {{ template "zammad.fullname" . }}-init
               mountPath: /docker-entrypoint.sh
               readOnly: true
               subPath: postgresql-init
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/var
         {{- if .Values.zammadConfig.elasticsearch.initialisation }}
         - name: elasticsearch-init
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -185,12 +192,14 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-          - name: {{ template "zammad.fullname" . }}-var
-            mountPath: /opt/zammad/var
           - name: {{ template "zammad.fullname" . }}-init
             mountPath: /docker-entrypoint.sh
             readOnly: true
             subPath: elasticsearch-init
+          - name: {{ template "zammad.fullname" . }}-tmp
+            mountPath: /opt/zammad/tmp
+          - name: {{ template "zammad.fullname" . }}-var
+            mountPath: /opt/zammad/var
         {{- end }}
       containers:
         {{- with .Values.sidecars }}
@@ -227,12 +236,6 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: {{ include "zammad.fullname" . }}-var
-              mountPath: /opt/zammad/var
-            - name: {{ template "zammad.fullname" . }}-tmp
-              mountPath: /opt/zammad/tmp
-            - name: {{ include "zammad.fullname" . }}-tmp
-              mountPath: /tmp
             - name: {{ include "zammad.fullname" . }}-nginx
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
@@ -241,10 +244,14 @@ spec:
               mountPath: /etc/nginx/sites-enabled/default
               subPath: default
               readOnly: true
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /tmp
             - name: {{ include "zammad.fullname" . }}-tmp
               mountPath: /var/log/nginx
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/storage
+            - name: {{ include "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/var
         - name: {{ .Chart.Name }}-railsserver
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -304,14 +311,12 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: {{ template "zammad.fullname" . }}-var
-              mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/storage
-            - name: {{ include "zammad.fullname" . }}-tmp
-              mountPath: /opt/zammad/tmp
-            - name: {{ include "zammad.fullname" . }}-tmp
-              mountPath: /tmp
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/var
         - name: {{ .Chart.Name }}-scheduler
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -351,14 +356,12 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: {{ template "zammad.fullname" . }}-var
-              mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/storage
-            - name: {{ include "zammad.fullname" . }}-tmp
-              mountPath: /opt/zammad/tmp
-            - name: {{ include "zammad.fullname" . }}-tmp
-              mountPath: /tmp
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/var
         - name: {{ .Chart.Name }}-websocket
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -413,26 +416,24 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: {{ template "zammad.fullname" . }}-var
-              mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/storage
-            - name: {{ include "zammad.fullname" . }}-tmp
-              mountPath: /opt/zammad/tmp
-            - name: {{ include "zammad.fullname" . }}-tmp
-              mountPath: /tmp
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/var
       {{- with .Values.securityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        - name: {{ template "zammad.fullname" . }}-nginx
-          configMap:
-            name: {{ template "zammad.fullname" . }}-nginx
         - name: {{ template "zammad.fullname" . }}-init
           configMap:
             name: {{ template "zammad.fullname" . }}-init
             defaultMode: 0755
+        - name: {{ template "zammad.fullname" . }}-nginx
+          configMap:
+            name: {{ template "zammad.fullname" . }}-nginx
         - name: {{ include "zammad.fullname" . }}-tmp
           {{- toYaml .Values.zammadConfig.tmpDirVolume | nindent 10 }}
   {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
