@@ -189,6 +189,10 @@ zammadConfig:
   tmpDirVolume:
     emptyDir:
       sizeLimit: 100Mi
+      # Work around problems with world writable permissions
+      # https://github.com/kubernetes/kubernetes/issues/76158
+      # https://github.com/kubernetes/kubernetes/issues/110835
+      medium: Memory
 
   websocket:
     livenessProbe:

@@ -20,7 +20,7 @@ spec:
         {{- include "zammad.labels" . | nindent 8 }}
     spec:
       {{- with .Values.image.imagePullSecrets }}
-      imagePullSecrets: 
+      imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if .Values.serviceAccount.create }}
@@ -229,6 +229,10 @@ spec:
           volumeMounts:
             - name: {{ include "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
+            - name: {{ include "zammad.fullname" . }}-tmp
+              mountPath: /tmp
             - name: {{ include "zammad.fullname" . }}-nginx
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
@@ -237,8 +241,6 @@ spec:
               mountPath: /etc/nginx/sites-enabled/default
               subPath: default
               readOnly: true
-            - name: {{ include "zammad.fullname" . }}-tmp
-              mountPath: /tmp
             - name: {{ include "zammad.fullname" . }}-tmp
               mountPath: /var/log/nginx
             - name: {{ template "zammad.fullname" . }}-var
@@ -306,6 +308,10 @@ spec:
               mountPath: /opt/zammad/var
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/storage
+            - name: {{ include "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
+            - name: {{ include "zammad.fullname" . }}-tmp
+              mountPath: /tmp
         - name: {{ .Chart.Name }}-scheduler
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -349,6 +355,10 @@ spec:
               mountPath: /opt/zammad/var
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/storage
+            - name: {{ include "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
+            - name: {{ include "zammad.fullname" . }}-tmp
+              mountPath: /tmp
         - name: {{ .Chart.Name }}-websocket
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -407,6 +417,10 @@ spec:
               mountPath: /opt/zammad/var
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/storage
+            - name: {{ include "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
+            - name: {{ include "zammad.fullname" . }}-tmp
+              mountPath: /tmp
       {{- with .Values.securityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
