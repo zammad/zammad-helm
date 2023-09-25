@@ -44,7 +44,6 @@ This is relevant to **EFS** for AWS users, as well.
 
 To run OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids):
 
-- Add the extraRsyncParams `--no-perms --omit-dir-times`.
 - [Delete the default key](https://helm.sh/docs/chart_template_guide/values_files/#deleting-a-default-key)  `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` with `null`.
 - Disable if used:
   - also `podSecurityContext` in all subcharts.
@@ -56,7 +55,6 @@ securityContext: null
 zammadConfig:
   initContainers:
     zammad:
-      extraRsyncParams: "--no-perms --omit-dir-times"
       securityContext:
         runAsUser: null
   railsserver:

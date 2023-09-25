@@ -269,8 +269,6 @@ zammadConfig:
         runAsNonRoot: false
         runAsUser: 0
     zammad:
-      # set extra params to rsync command
-      extraRsyncParams: ""
       resources: {}
         # requests:
         #   cpu: 100m
