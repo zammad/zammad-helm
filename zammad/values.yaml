@@ -189,6 +189,9 @@ zammadConfig:
   tmpDirVolume:
     emptyDir:
       sizeLimit: 100Mi
+      # enable "medium: Memory" to Work around problems with world writable tmp dir permissions if volumePermissions.enabled is set to false
+      # see: https://github.com/kubernetes/kubernetes/issues/76158 & https://github.com/kubernetes/kubernetes/issues/110835
+      # medium: Memory
 
   websocket:
     livenessProbe:
@@ -251,9 +254,14 @@ zammadConfig:
         capabilities:
           drop:
             - ALL
-        readOnlyRootFilesystem: false
+        readOnlyRootFilesystem: true
         privileged: false
     volumePermissions:
+      enabled: true
+      image:
+        repository: alpine
+        tag: "3.18.3"
+        pullPolicy: IfNotPresent
       resources: {}
         # requests:
         #   cpu: 100m
@@ -266,6 +274,7 @@ zammadConfig:
         capabilities:
           drop:
             - ALL
+        privileged: true
         runAsNonRoot: false
         runAsUser: 0
     zammad:
@@ -278,10 +287,11 @@ zammadConfig:
         #   memory: 512Mi
       securityContext:
         allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
         readOnlyRootFilesystem: true
         privileged: false
-        runAsNonRoot: false
-        runAsUser: 0
 
 # additional environment vars added to all zammad services
 extraEnv: []
@@ -328,13 +338,6 @@ autoWizard:
 
 podAnnotations: {}
   # my-annotation: "value"
-
-volumePermissions:
-  enabled: false
-  image:
-    repository: alpine
-    tag: "3.18.3"
-    pullPolicy: IfNotPresent
 
 # Configuration for persistence
 persistence:

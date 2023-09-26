@@ -114,6 +114,14 @@ Open your browser on <http://localhost:8080>
 
 ## Upgrading
 
+### From chart version 9.x to 10.0.0
+
+- all containers uses `readOnlyRootFilesystem: true` again
+- volumePermissions init container config has been moved to initContainers section
+  - if you used it before you have to adapt your config
+  - it's also enabled by default now to workaround rails world writable tmp dir issues
+  - if you don't like to use it you might want to set tmpDirVolume.emptyDir.medium to "Memory" instead
+
 ### From chart version 8.x to 9.0.0
 
 - Zammads PVC changed to only hold contents of /opt/zammad/var & /opt/zammad/storage instead of the whole Zammad content
