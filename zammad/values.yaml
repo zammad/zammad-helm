@@ -260,7 +260,7 @@ zammadConfig:
       enabled: true
       image:
         repository: alpine
-        tag: "3.18.3"
+        tag: "3.18.4"
         pullPolicy: IfNotPresent
       resources: {}
         # requests:
