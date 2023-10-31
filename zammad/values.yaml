@@ -426,6 +426,11 @@ elasticsearch:
     heapSize: 512m
     masterOnly: false
     replicaCount: 1
+  # To use an existing Kubernetes secret containing the credentials,
+  # remove the comments on the lines below and adjust them accordingly
+  #
+  # security:
+  #   existingSecret: elastic-credentials
 
 # settings for the memcached subchart
 memcached:
