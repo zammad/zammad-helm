@@ -441,12 +441,25 @@ memcached:
 # settings for the postgres subchart
 postgresql:
   auth:
-    postgresPassword: "zammad"
     username: "zammad"
-    password: "zammad"
-    database: "zammad_production"
     replicationUsername: repl_user
+    database: "zammad_production"
+
+    # Passwords
+    postgresPassword: "zammad"
+    password: "zammad"
     replicationPassword: "zammad"
+
+    # To avoid passwords in your values.yaml, you can comment out the 3 lines above
+    # and use an existing Kubernetes secret. Remove the comments on the lines below
+    # and adjust them accordingly
+    #
+    # existingSecret: postgresql-pass
+    # secretKeys:
+    #   adminPasswordKey: postgresql-admin-password
+    #   userPasswordKey: postgresql-pass
+    #   replicationPasswordKey: postgresql-replication-password
+    #
   resources: {}
     # requests:
     #   cpu: 250m
