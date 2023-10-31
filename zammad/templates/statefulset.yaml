@@ -200,6 +200,8 @@ spec:
             mountPath: /opt/zammad/tmp
           - name: {{ template "zammad.fullname" . }}-var
             mountPath: /opt/zammad/var
+          - name: {{ template "zammad.fullname" . }}-var
+            mountPath: /opt/zammad/storage
         {{- end }}
       containers:
         {{- with .Values.sidecars }}
