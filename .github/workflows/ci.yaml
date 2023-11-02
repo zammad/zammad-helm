@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - "zammad/**"
 
 env:
   helm-version: "v3.12.1"
