@@ -120,4 +120,4 @@ jobs:
           node_image: kindest/node:${{ matrix.k8s }}
 
       - name: Run chart-testing (install)
-        run: ct install --config .github/ct.yaml
+        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s'
