@@ -10,6 +10,8 @@ service:
   type: ClusterIP
   port: 8080
 
+  # TODO: REMOVE: TEST
+
 ingress:
   enabled: false
   className: ""
