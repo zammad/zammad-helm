@@ -88,10 +88,11 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.25.14
-          - v1.26.10
-          - v1.27.7
-          - v1.28.3
+          # Versions of kindest/node
+          - v1.25.11
+          - v1.26.6
+          - v1.27.3
+          - v1.28.0
     steps:
       - name: Checkout
         uses: actions/checkout@v4
