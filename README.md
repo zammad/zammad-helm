@@ -38,4 +38,5 @@ Helm releases can be found here:
 
 ## Adding changes to this repository
 
+
 See our [contributing guidelines](https://github.com/zammad/zammad-helm/blob/master/CONTRIBUTING.md).
