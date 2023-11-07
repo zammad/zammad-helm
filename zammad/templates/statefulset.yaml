@@ -107,6 +107,8 @@ spec:
             - name: {{ template "zammad.fullname" . }}-tmp
               mountPath: /opt/zammad/tmp
             - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
+            - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
         - name: postgresql-init
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -148,6 +150,8 @@ spec:
               subPath: postgresql-init
             - name: {{ template "zammad.fullname" . }}-tmp
               mountPath: /opt/zammad/tmp
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
         {{- if .Values.zammadConfig.elasticsearch.initialisation }}
