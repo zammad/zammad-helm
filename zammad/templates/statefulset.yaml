@@ -451,9 +451,9 @@ spec:
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.existingClaim | default (include "zammad.fullname" .) }}
   {{- else if not .Values.persistence.enabled }}
-      - name: {{ template "zammad.fullname" . }}-var
-        emptyDir:
-          sizeLimit: {{ .Values.persistence.size | quote }}
+        - name: {{ template "zammad.fullname" . }}-var
+          emptyDir:
+            sizeLimit: {{ .Values.persistence.size | quote }}
   {{- else if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
   volumeClaimTemplates:
     - metadata:
