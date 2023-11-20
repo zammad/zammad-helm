@@ -23,7 +23,7 @@ even continue reviewing your changes.
 
 #### Which issue this PR fixes
 
-*(optional, in `fixes #<issue number>(, fixes #<issue_number>, ...)` format, will close that issue when PR gets merged)*
+*(optional, in `fixes #<issue number>(, fixes #<issue_number>, …)` format, will close that issue when PR gets merged)*
 
 - fixes #
 
