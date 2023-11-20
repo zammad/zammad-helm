@@ -293,7 +293,7 @@ zammadConfig:
         readOnlyRootFilesystem: true
         privileged: false
       customInit: ""
-        #  bundle exec rails runner '...'
+        #  bundle exec rails runner '…'
 
 # additional environment vars added to all zammad services
 extraEnv: []
