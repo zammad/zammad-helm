@@ -37,6 +37,6 @@ data:
         echo "${AUTOWIZARD_JSON}" | base64 -d > /opt/zammad/var/auto_wizard.json
     fi
       {{- with .Values.zammadConfig.initContainers.zammad.customInit }}
-        {{- toYaml . | nindent 4 }}
+        {{- . | nindent 4 }}
       {{- end }}
     echo "zammad init complete :)"
