@@ -5,21 +5,6 @@ metadata:
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
 data:
-{{ if .Values.zammadConfig.elasticsearch.initialisation }}
-  elasticsearch-init: |-
-    #!/bin/bash
-    set -e
-    bundle exec rails r 'Setting.set("es_url", "{{ .Values.zammadConfig.elasticsearch.schema }}://{{ if .Values.zammadConfig.elasticsearch.enabled }}{{ .Release.Name }}-elasticsearch{{ else }}{{ .Values.zammadConfig.elasticsearch.host }}{{ end }}:{{ .Values.zammadConfig.elasticsearch.port }}")'
-    ELASTICSEARCH_USER=${ELASTICSEARCH_USER:-{{ .Values.zammadConfig.elasticsearch.user }}}
-    if [ -n "${ELASTICSEARCH_USER}" ] && [ -n "${ELASTICSEARCH_PASSWORD}" ]; then
-        bundle exec rails r "Setting.set(\"es_user\", \"${ELASTICSEARCH_USER}\")"
-        bundle exec rails r "Setting.set(\"es_password\", \"${ELASTICSEARCH_PASSWORD}\")"
-    fi
-    {{- if and .Values.zammadConfig.elasticsearch.reindex }}
-    bundle exec rake zammad:searchindex:rebuild
-    {{ end }}
-    echo "elasticsearch init complete :)"
-{{ end }}
   postgresql-init: |-
     #!/bin/bash
     set -e
@@ -40,3 +25,18 @@ data:
         {{- . | nindent 4 }}
       {{- end }}
     echo "zammad init complete :)"
+{{ if .Values.zammadConfig.elasticsearch.initialisation }}
+  elasticsearch-init: |-
+    #!/bin/bash
+    set -e
+    bundle exec rails r 'Setting.set("es_url", "{{ .Values.zammadConfig.elasticsearch.schema }}://{{ if .Values.zammadConfig.elasticsearch.enabled }}{{ .Release.Name }}-elasticsearch{{ else }}{{ .Values.zammadConfig.elasticsearch.host }}{{ end }}:{{ .Values.zammadConfig.elasticsearch.port }}")'
+    ELASTICSEARCH_USER=${ELASTICSEARCH_USER:-{{ .Values.zammadConfig.elasticsearch.user }}}
+    if [ -n "${ELASTICSEARCH_USER}" ] && [ -n "${ELASTICSEARCH_PASSWORD}" ]; then
+        bundle exec rails r "Setting.set(\"es_user\", \"${ELASTICSEARCH_USER}\")"
+        bundle exec rails r "Setting.set(\"es_password\", \"${ELASTICSEARCH_PASSWORD}\")"
+    fi
+    {{- if and .Values.zammadConfig.elasticsearch.reindex }}
+    bundle exec rake zammad:searchindex:rebuild
+    {{ end }}
+    echo "elasticsearch init complete :)"
+{{ end }}
