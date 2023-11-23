@@ -66,50 +66,6 @@ spec:
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
         {{- end }}
-        - name: zammad-init
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          env:
-          {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "zammad.redisSecretName" . }}
-                  key: {{ .Values.secrets.redis.secretKey }}
-          {{- end }}
-            - name: MEMCACHE_SERVERS
-              value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
-            - name: REDIS_URL
-              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
-          {{- if .Values.autoWizard.enabled }}
-            - name: AUTOWIZARD_JSON
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "zammad.autowizardSecretName" . }}
-                  key: {{ .Values.secrets.autowizard.secretKey }}
-          {{- end }}
-          {{- if .Values.extraEnv }}
-          {{- toYaml .Values.extraEnv | nindent 12 }}
-          {{- end }}
-          {{- with .Values.zammadConfig.initContainers.zammad.resources }}
-          resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.zammadConfig.initContainers.zammad.securityContext }}
-          securityContext:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          volumeMounts:
-            - name: {{ template "zammad.fullname" . }}-init
-              mountPath: /docker-entrypoint.sh
-              readOnly: true
-              subPath: zammad-init
-            - name: {{ template "zammad.fullname" . }}-tmp
-              mountPath: /opt/zammad/tmp
-            - name: {{ template "zammad.fullname" . }}-var
-              mountPath: /opt/zammad/storage
-            - name: {{ template "zammad.fullname" . }}-var
-              mountPath: /opt/zammad/var
         - name: postgresql-init
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -148,6 +104,56 @@ spec:
               mountPath: /docker-entrypoint.sh
               readOnly: true
               subPath: postgresql-init
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /opt/zammad/tmp
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/storage
+            - name: {{ template "zammad.fullname" . }}-var
+              mountPath: /opt/zammad/var
+        - name: zammad-init
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.redisSecretName" . }}
+                  key: {{ .Values.secrets.redis.secretKey }}
+          {{- end }}
+            - name: MEMCACHE_SERVERS
+              value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+            - name: POSTGRESQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.postgresqlSecretName" . }}
+                  key: {{ .Values.secrets.postgresql.secretKey }}
+            - name: DATABASE_URL
+              value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"          {{- if .Values.autoWizard.enabled }}
+            - name: AUTOWIZARD_JSON
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.autowizardSecretName" . }}
+                  key: {{ .Values.secrets.autowizard.secretKey }}
+          {{- end }}
+          {{- if .Values.extraEnv }}
+          {{- toYaml .Values.extraEnv | nindent 12 }}
+          {{- end }}
+          {{- with .Values.zammadConfig.initContainers.zammad.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.zammadConfig.initContainers.zammad.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: {{ template "zammad.fullname" . }}-init
+              mountPath: /docker-entrypoint.sh
+              readOnly: true
+              subPath: zammad-init
             - name: {{ template "zammad.fullname" . }}-tmp
               mountPath: /opt/zammad/tmp
             - name: {{ template "zammad.fullname" . }}-var
