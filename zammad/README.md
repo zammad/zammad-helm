@@ -114,6 +114,11 @@ Open your browser on <http://localhost:8080>
 
 ## Upgrading
 
+### From chart version 10.x to 11.0.0
+
+- The chart now refers to a floating Zammad image version 6.2 now, which will automatically receive patch level updates.
+- If you want to change this, you can change `image.tag` to refer to a certain commit and `image.pullPolicy` to `IfNotExists` in [values.yaml](values.yaml).
+
 ### From chart version 9.x to 10.0.0
 
 - all containers uses `readOnlyRootFilesystem: true` again
