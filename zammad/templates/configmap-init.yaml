@@ -12,7 +12,14 @@ data:
         bundle exec rake db:migrate
         bundle exec rake db:seed
     else
+        echo Executing migrations...
         bundle exec rake db:migrate
+
+        echo Synchronizing locales...
+        bundle exec rails r "Locale.sync"
+
+        echo Synchronizing translations...
+        bundle exec rails r "Translation.sync"
     fi
     echo "postgresql init complete :)"
   zammad-init: |-
