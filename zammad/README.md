@@ -59,7 +59,7 @@ zammadConfig:
         runAsUser: null
       customInit: |
         # use an openshift uid owned /tmp for attachments upload
-        mkdir -p /opt/zammad/var/tmp && chmod +t /opt/zammad/var/tmp
+        mkdir -pv /opt/zammad/var/tmp && chmod -v +t /opt/zammad/var/tmp
   railsserver:
     tmpdir: "/opt/zammad/var/tmp"
 
