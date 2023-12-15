@@ -1,0 +1,100 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "zammad.fullname" . }}-init-{{ uuidv4 }}
+  # Use a different job name on each run to ensure a new job always runs once.
+  # Helm post-install/post-upgrade hooks cannot be used here, because
+  #   helm's --wait flag causes a deadlock: the job waits for all resources to be ready,
+  #   but the pods need the job to work properly.
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "zammad.labels" . | nindent 8 }}
+    spec:
+      {{- include "zammad.podSpec" . | nindent 6 }}
+      restartPolicy: OnFailure
+      containers:
+        {{- with .Values.initContainers }}
+        {{- toYaml . | nindent 8}}
+        {{- end }}
+        {{- if .Values.zammadConfig.initContainers.volumePermissions.enabled }}
+        - name: zammad-volume-permissions
+          image: "{{ .Values.zammadConfig.initContainers.volumePermissions.image.repository }}:{{ .Values.zammadConfig.initContainers.volumePermissions.image.tag }}"
+          imagePullPolicy: {{ .Values.zammadConfig.initContainers.volumePermissions.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -cx
+            - chown {{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.runAsGroup }} -R /opt/zammad/var
+          {{- with .Values.zammadConfig.initContainers.volumePermissions.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.zammadConfig.initContainers.volumePermissions.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            {{- include "zammad.volumeMounts" . | nindent 12 }}
+        {{- end }}
+        - name: postgresql-init
+          {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.initContainers.postgresql) .) | nindent 10 }}
+          env:
+            {{- include "zammad.env" . | nindent 12 }}
+          volumeMounts:
+            {{- include "zammad.volumeMounts" . | nindent 12 }}
+            - name: {{ template "zammad.fullname" . }}-init
+              mountPath: /docker-entrypoint.sh
+              readOnly: true
+              subPath: postgresql-init
+        - name: zammad-init
+          {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.initContainers.zammad) .) | nindent 10 }}
+          env:
+            {{- include "zammad.env" . | nindent 12 }}
+            {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+            {{- if .Values.autoWizard.enabled }}
+            - name: AUTOWIZARD_JSON
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.autowizardSecretName" . }}
+                  key: {{ .Values.secrets.autowizard.secretKey }}
+            {{- end }}
+          volumeMounts:
+            {{- include "zammad.volumeMounts" . | nindent 12 }}
+            - name: {{ template "zammad.fullname" . }}-init
+              mountPath: /docker-entrypoint.sh
+              readOnly: true
+              subPath: zammad-init
+        {{- if .Values.zammadConfig.elasticsearch.initialisation }}
+        - name: elasticsearch-init
+          {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.initContainers.elasticsearch) .) | nindent 10 }}
+          env:
+            {{- include "zammad.env" . | nindent 12 }}
+            {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+          {{- if or .Values.zammadConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
+            - name: ELASTICSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.elasticsearchSecretName" . }}
+                  key: {{ .Values.secrets.elasticsearch.secretKey }}
+          {{- end }}
+          volumeMounts:
+            {{- include "zammad.volumeMounts" . | nindent 12 }}
+            - name: {{ template "zammad.fullname" . }}-init
+              mountPath: /docker-entrypoint.sh
+              readOnly: true
+              subPath: elasticsearch-init
+        {{- end }}
+      volumes:
+        {{- include "zammad.volumes" . | nindent 8 }}
+        - name: {{ template "zammad.fullname" . }}-init
+          configMap:
+            name: {{ template "zammad.fullname" . }}-init
+            defaultMode: 0755

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "zammad.fullname" . }}-scheduler
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zammad-scheduler
+spec:
+  replicas: 1 # Not scalable, may only run once per cluster.
+  selector:
+    matchLabels:
+      {{- include "zammad.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "zammad.labels" . | nindent 8 }}
+        app.kubernetes.io/component: zammad-scheduler
+    spec:
+      {{- include "zammad.podSpec.deployment" . | nindent 6 }}
+      containers:
+        {{- with .Values.zammadConfig.scheduler.sidecars }}
+        {{- toYaml . | nindent 8}}
+        {{- end }}
+        - name: {{ .Chart.Name }}-scheduler
+          {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.scheduler) .) | nindent 10 }}
+          command:
+            - "bundle"
+            - "exec"
+            - "script/background-worker.rb"
+            - "start"
+          env:
+            {{- include "zammad.env" . | nindent 12 }}
+            {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+          volumeMounts:
+            {{- include "zammad.volumeMounts" . | nindent 12 }}
+      volumes:
+        {{- include "zammad.volumes" . | nindent 8 }}

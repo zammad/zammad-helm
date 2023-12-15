@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "zammad.fullname" . }}-websocket
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zammad-websocket
+spec:
+  replicas: 1 # Not scalable, may only run once per cluster.
+  selector:
+    matchLabels:
+      {{- include "zammad.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "zammad.labels" . | nindent 8 }}
+        app.kubernetes.io/component: zammad-websocket
+    spec:
+      {{- include "zammad.podSpec.deployment" . | nindent 6 }}
+      containers:
+        {{- with .Values.zammadConfig.websocket.sidecars }}
+        {{- toYaml . | nindent 8}}
+        {{- end }}
+        - name: {{ .Chart.Name }}-websocket
+          {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.websocket) .) | nindent 10 }}
+          command:
+            - "bundle"
+            - "exec"
+            - "script/websocket-server.rb"
+            - "-b"
+            - "0.0.0.0"
+            - "-p"
+            - "6042"
+            - "start"
+          env:
+            {{- include "zammad.env" . | nindent 12 }}
+            {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+          ports:
+            - name: websocket
+              containerPort: 6042
+          volumeMounts:
+            {{- include "zammad.volumeMounts" . | nindent 12 }}
+      volumes:
+        {{- include "zammad.volumes" . | nindent 8 }}

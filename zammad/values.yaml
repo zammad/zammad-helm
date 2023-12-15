@@ -92,6 +92,7 @@ zammadConfig:
     # externalS3Url: https://user:pw@external-minio-service/bucket
 
   nginx:
+    replicas: 1
     trustedProxies: []
     extraHeaders: []
       # - 'HeaderName "Header Value"'
@@ -129,6 +130,8 @@ zammadConfig:
           - ALL
       readOnlyRootFilesystem: true
       privileged: false
+    # can be used to add additional containers / sidecars
+    sidecars: []
 
   postgresql:
     # enable/disable postgresql chart dependency
@@ -146,6 +149,7 @@ zammadConfig:
     options: "pool=50"
 
   railsserver:
+    replicas: 1
     livenessProbe:
       tcpSocket:
         port: 3000
@@ -177,6 +181,8 @@ zammadConfig:
           - ALL
       readOnlyRootFilesystem: true
       privileged: false
+    # can be used to add additional containers / sidecars
+    sidecars: []
     trustedProxies: "['127.0.0.1', '::1']"
     webConcurrency: 0
     tmpdir: "/opt/zammad/tmp"
@@ -204,6 +210,19 @@ zammadConfig:
           - ALL
       readOnlyRootFilesystem: true
       privileged: false
+    # can be used to add additional containers / sidecars
+    sidecars: []
+
+  storageVolume:
+    # Enable this for 'File' based storage in Zammad. You must provide an externally managed 'extistingClaim'
+    #   with 'ReadWriteMany' permisssion in this case.
+    enabled: false
+    ##
+    ## A manually managed Persistent Volume and Claim
+    ## If defined, PVC must be created manually before volume will be bound
+    ## The value is evaluated as a template, so, for example, the name can depend on .Release or .Chart
+    ##
+    # existingClaim:
 
   tmpDirVolume:
     emptyDir:
@@ -243,6 +262,8 @@ zammadConfig:
           - ALL
       readOnlyRootFilesystem: true
       privileged: false
+    # can be used to add additional containers / sidecars
+    sidecars: []
 
   initContainers:
     elasticsearch:
@@ -360,24 +381,6 @@ autoWizard:
 podAnnotations: {}
   # my-annotation: "value"
 
-# Configuration for persistence
-persistence:
-  enabled: true
-  ## A manually managed Persistent Volume and Claim
-  ## If defined, PVC must be created manually before volume will be bound
-  ## The value is evaluated as a template, so, for example, the name can depend on .Release or .Chart
-  ##
-  # existingClaim:
-  accessModes:
-    - ReadWriteOnce
-  storageClass: ""
-  size: 5Gi
-  annotations: {}
-
-# running zammad with more than 1 replica will need a ReadWriteMany storage volume!
-# https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
-replicas: 1
-
 nodeSelector: {}
 tolerations: []
 affinity: {}
@@ -411,26 +414,6 @@ initContainers: []
   #     - name: help-zammad
   #       mountPath: /opt/zammad
 
-# can be used to add additional containers / sidecars
-sidecars: []
-  # - name: s3-backup
-  #   image: some-aws-s3-backup:latest
-  #   env:
-  #     - name: AWS_DEFAULT_REGION
-  #       value: "eu-central-1"
-  #     - name: AWS_ACCESS_KEY_ID
-  #       value: "xxxxxxxxxxxx"
-  #     - name: AWS_SECRET_ACCESS_KEY
-  #       value: "xxxxxxxxxxxx"
-  #     - name: SYNC_DIR
-  #       value: "/opt/zammad"
-  #     - name: AWS_SYNC_BUCKET
-  #       value: "some-backup-bucket"
-  #     - name: AWS_SYNC_SCHEDULE
-  #       value: "0 * * * *"
-  #   volumeMounts:
-  #     - name: help-zammad
-  #       mountPath: /opt/zammad
 
 # dependency charts config
 

@@ -31,6 +31,15 @@ helm repo add zammad https://zammad.github.io/zammad-helm
 helm upgrade --install zammad zammad/zammad
 ```
 
+Once the Zammad pod is ready, it can be accessed using the ingress or port forwarding.
+To use port forwarding:
+
+```console
+kubectl port-forward service/zammad-nginx 8080
+```
+
+Now you can open <http://localhost:8080> in your browser.
+
 ## Uninstalling the Chart
 
 To remove the chart again use the following:
@@ -142,18 +151,27 @@ redis:
       enabled: false
 ```
 
-## Using Zammad
-
-Once the Zammad pod is ready, it can be accessed using the ingress or port forwarding.
-To use port forwarding:
-
-```console
-kubectl port-forward service/zammad 8080
-```
-
-Now you can open <http://localhost:8080> in your browser.
-
 ## Upgrading
+
+### From Chart Version 11.x to 12.0.0
+
+#### The Previous `StatefulSet` Was Split up into `Deployments`
+
+- `replicas` can be set independently now for `zammad-nginx` and `zammad-railsserver`, allowing free scaling and HA setup for these.
+  - For `zammad-scheduler` and `zammad-websocket`, `replicas` is fixed to `1` as they may only run once in the cluster.
+- The `initContainers` moved to a new `zammad-init` `Job` now which will be run on every `helm upgrade`. This greatly reduces startup time.
+- The nginx `Service` was renamed from `zammad` to `zammad-nginx`.
+- The previous `Values.sidecars` setting does not exist any more. Instead, you need to specify sidecars now on a per deployment basis, e.g. `Values.zammadConfig.scheduler.sidecars`.
+
+#### Storage Requirements Changed
+
+- Zammad no longer requires a volume for `var/`
+- If you use the default `DB` or the new `S3` storage backend for file storage, you don't need to do anything.
+- If you use the `File` storage backend instead, Zammad now requires a `ReadWriteMany` volume for `storage/` that is shared in the cluster.
+  - If you already had one via `persistence.existingClaim` before, you need to ensure it has `ReadWriteMany` access to be mountable across nodes.
+  - If you used the default `PersistentVolumeClaim` of the `StatefulSet`, you need to take manual action:
+    - You can either migrate to `S3` storage **before upgrading** to the new major version as described above in [Configuration](#how-to-migrate-from-file-to-s3-storage).
+    - Or you can provide an `existingClaim` with `ReadWriteMany` permission and migrate your existing data to it from the old `StatefulSet`.
 
 ### From Chart Version 10.x to 11.0.0
 
