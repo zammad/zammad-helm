@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - "zammad/**"
 
 env:
   helm-version: "v3.12.3"
@@ -44,12 +42,12 @@ jobs:
         with:
           version: "${{ env.helm-version }}"
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.7
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.4.0
+        uses: helm/chart-testing-action@v2.6.1
 
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct.yaml
@@ -61,9 +59,10 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.25.11
-          - v1.26.6
-          - v1.27.3
+          - v1.25.14
+          - v1.26.10
+          - v1.27.7
+          - v1.28.3
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -89,9 +88,11 @@ jobs:
     strategy:
       matrix:
         k8s:
+          # Versions of kindest/node
           - v1.25.11
           - v1.26.6
           - v1.27.3
+          - v1.28.0
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -103,12 +104,12 @@ jobs:
         with:
           version: "${{ env.helm-version }}"
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.7
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.4.0
+        uses: helm/chart-testing-action@v2.6.1
 
       - name: Run chart-testing (list-changed)
         id: list-changed
@@ -122,4 +123,4 @@ jobs:
           node_image: kindest/node:${{ matrix.k8s }}
 
       - name: Run chart-testing (install)
-        run: ct install --config .github/ct.yaml
+        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s'

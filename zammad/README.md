@@ -57,21 +57,11 @@ zammadConfig:
     zammad:
       securityContext:
         runAsUser: null
+      customInit: |
+        # use an openshift uid owned /tmp for attachments upload
+        mkdir -pv /opt/zammad/var/tmp && chmod -v +t /opt/zammad/var/tmp
   railsserver:
     tmpdir: "/opt/zammad/var/tmp"
-
-
-initContainers:
-  - name: railsserver-tmp-init
-    image: "alpine:3.18.2"
-    command:
-      - /bin/sh
-      - -cx
-      - |
-        mkdir -p /opt/zammad/var/tmp && chmod +t /opt/zammad/var/tmp
-    volumeMounts:
-      - name: zammad-var
-        mountPath: /opt/zammad/var
 
 elasticsearch:
   sysctlImage:

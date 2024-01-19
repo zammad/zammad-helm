@@ -5,6 +5,33 @@ metadata:
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
 data:
+  postgresql-init: |-
+    #!/bin/bash
+    set -e
+    if ! (bundle exec rails r 'puts User.any?' 2> /dev/null | grep -q true); then
+        bundle exec rake db:migrate
+        bundle exec rake db:seed
+    else
+        echo Executing migrations...
+        bundle exec rake db:migrate
+
+        echo Synchronizing locales...
+        bundle exec rails r "Locale.sync"
+
+        echo Synchronizing translations...
+        bundle exec rails r "Translation.sync"
+    fi
+    echo "postgresql init complete :)"
+  zammad-init: |-
+    #!/bin/bash
+    set -e
+    if [ -n "${AUTOWIZARD_JSON}" ]; then
+        echo "${AUTOWIZARD_JSON}" | base64 -d > /opt/zammad/var/auto_wizard.json
+    fi
+      {{- with .Values.zammadConfig.initContainers.zammad.customInit }}
+        {{- . | nindent 4 }}
+      {{- end }}
+    echo "zammad init complete :)"
 {{ if .Values.zammadConfig.elasticsearch.initialisation }}
   elasticsearch-init: |-
     #!/bin/bash
@@ -20,20 +47,3 @@ data:
     {{ end }}
     echo "elasticsearch init complete :)"
 {{ end }}
-  postgresql-init: |-
-    #!/bin/bash
-    set -e
-    if ! (bundle exec rails r 'puts User.any?' 2> /dev/null | grep -q true); then
-        bundle exec rake db:migrate
-        bundle exec rake db:seed
-    else
-        bundle exec rake db:migrate
-    fi
-    echo "postgresql init complete :)"
-  zammad-init: |-
-    #!/bin/bash
-    set -e
-    if [ -n "${AUTOWIZARD_JSON}" ]; then
-        echo "${AUTOWIZARD_JSON}" | base64 -d > /opt/zammad/var/auto_wizard.json
-    fi
-    echo "zammad init complete :)"
