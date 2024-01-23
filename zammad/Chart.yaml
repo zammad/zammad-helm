@@ -16,7 +16,7 @@ maintainers:
 dependencies:
   - name: elasticsearch
     repository: https://charts.bitnami.com/bitnami
-    version: 19.10.3
+    version: 19.17.0
     condition: zammadConfig.elasticsearch.enabled
   - name: memcached
     version: 6.5.4
@@ -30,3 +30,7 @@ dependencies:
     version: 17.11.7
     repository: https://charts.bitnami.com/bitnami
     condition: zammadConfig.redis.enabled
+  - name: minio
+    version: 13.2.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: zammadConfig.minio.enabled

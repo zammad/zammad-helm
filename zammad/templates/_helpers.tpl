@@ -105,3 +105,16 @@ redis secret name
 {{ template "zammad.fullname" . }}-{{ .Values.secrets.redis.secretName }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+minio access URL
+*/}}
+{{- define "zammad.S3Url" -}}
+{{- with .Values.zammadConfig.minio.externalS3Url -}}
+{{ . }}
+{{- else -}}
+{{- if .Values.zammadConfig.minio.enabled -}}
+http://zammadadmin:zammadadmin@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true
+{{- end -}}
+{{- end -}}
+{{- end -}}
