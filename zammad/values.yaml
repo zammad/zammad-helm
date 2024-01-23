@@ -471,7 +471,7 @@ minio:
     # existingSecret: minio-credentials
 
   defaultBuckets: zammad
-  disableWebUI:   false
+  disableWebUI: false
 
 # settings for the postgres subchart
 postgresql:
