@@ -105,12 +105,34 @@ Open your browser on <http://localhost:8080>
 ### From chart version 10.x to 10.3.0
 
 - This release adds support for using S3 storage with Zammad. It will be the default storage for new systems.
-- A future version of Zammad will increase the scalability by splitting up the `Statefulset` into several `Deployment`s which can be scaled. This means volumes will then have to support `ReadWriteMany` access.
 - If you used the `DB` storage provider until now, there is nothing you have to do. You can turn off `zammadConfig.minio.enabled` to avoid starting the minio pod.
 - If you used the `File` storage provider until now, you need to check:
   - If you already use an `externalVolumeClaim` with `ReadWriteMany` access, you can keep using that.
   - If you already use an `externalVolumeClaim` with another access mode, we recommend migrating to S3 storage (see below).
   - If you used the default storage of the Zammad `StatefulSet`, we also recommend migrating to S3 storage (see below).
+
+#### How to migrate from `File` to `S3` storage
+
+- In the admin panel, go to "System -> Storage" and select "Simple Storage (S3)" as the new storage provider.
+- Migrate existing `File` store content by running `kubectl exec zammad-0 -c zammad-railsserver -- rails r "Store::File.move('File', 'S3')"`. Example:
+```
+kubectl exec zammad-0 -c zammad-railsserver -- rails r "Store::File.move('File', 'S3')"
+I, [2024-01-24T11:06:13.501572 #168]  INFO -- : ActionCable is using the redis instance at redis://:zammad@zammad-redis-master:6379.
+I, [2024-01-24T11:06:13.506180#168-5980]  INFO -- : Using memcached as Rails cache store.
+I, [2024-01-24T11:06:13.506246#168-5980]  INFO -- : Using the Redis back end for Zammad's web socket session store.
+I, [2024-01-24T11:06:14.561169#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/ab76/81d1/a4177/4c41f/12ddb67/96ee19e/a7e7c780a3227936c507cfbfe946afb9'
+I, [2024-01-24T11:06:14.561654#168-5980]  INFO -- : Moved file ab7681d1a41774c41f12ddb6796ee19ea7e7c780a3227936c507cfbfe946afb9 from File to S3
+I, [2024-01-24T11:06:14.566327#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/dbaa/01dd/0df3a/33bce/e87c420/f221f59/6df9db38a402b30fccea09cc444a9fb0'
+I, [2024-01-24T11:06:14.566513#168-5980]  INFO -- : Moved file dbaa01dd0df3a33bcee87c420f221f596df9db38a402b30fccea09cc444a9fb0 from File to S3
+I, [2024-01-24T11:06:14.627896#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/e81f/fb09/c5a26/f2081/f93401a/cbe8fff/9983e56c86fccb48d17a2eb1e5900b5b'
+I, [2024-01-24T11:06:14.628460#168-5980]  INFO -- : Moved file e81ffb09c5a26f2081f93401acbe8fff9983e56c86fccb48d17a2eb1e5900b5b from File to S3
+I, [2024-01-24T11:06:14.669747#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/d9e1/6e6b/affa8/867f9/539c69c/e42dba1/1b3941da90dfd56875cd4e2f5063aef2'
+I, [2024-01-24T11:06:14.670425#168-5980]  INFO -- : Moved file d9e16e6baffa8867f9539c69ce42dba11b3941da90dfd56875cd4e2f5063aef2 from File to S3
+```
+
+#### Background Information
+
+A future version of Zammad will increase the scalability by splitting up the `Statefulset` into several `Deployment`s which can be scaled. This means volumes will then have to support `ReadWriteMany` access.
 
 ### From chart version 9.x to 10.0.0
 
