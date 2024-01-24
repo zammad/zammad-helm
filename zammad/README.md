@@ -13,7 +13,7 @@ This directory contains a Kubernetes chart to deploy [Zammad](https://zammad.org
 This chart will do the following:
 
 - Install Zammad statefulset
-- Install Elasticsearch, Memcached, PostgreSQL & Redis as requirements
+- Install Elasticsearch, Memcached, PostgreSQL, Redis & Minio as requirements
 
 ## Installing the Chart
 
@@ -31,14 +31,6 @@ See [Customizing the Chart Before Installing](https://helm.sh/docs/intro/using_h
 ```console
 helm show values zammad/zammad
 ```
-
-### Important note for NFS filesystems
-
-For persistent volumes, NFS filesystems should work correctly for **Elasticsearch** and **PostgreSQL**; however, errors will occur if Zammad itself uses an NFS-based persistent volume. Websockets will break completely. This is particularly bad news for receiving notifications from the application and using the Chat module.
-
-Don't use an NFS-based storage class for Zammad's persistent volume.
-
-This is relevant to **EFS** for AWS users, as well.
 
 ### OpenShift
 
@@ -78,6 +70,12 @@ memcached:
   containerSecurityContext:
     enabled: false
 
+minio:
+  podSecurityContext:
+    enabled: false
+  containerSecurityContext:
+    enabled: false
+
 redis:
   master:
    podSecurityContext:
@@ -91,7 +89,7 @@ redis:
       enabled: false
 ```
 
-## Using zammad
+## Using Zammad
 
 Once the zammad pod is ready, it can be accessed using the ingress or port forwarding.
 To use port forwarding:
@@ -103,6 +101,16 @@ kubectl -n zammad port-forward service/zammad 8080
 Open your browser on <http://localhost:8080>
 
 ## Upgrading
+
+### From chart version 10.x to 10.3.0
+
+- This release adds support for using S3 storage with Zammad. It will be the default storage for new systems.
+- A future version of Zammad will increase the scalability by splitting up the `Statefulset` into several `Deployment`s which can be scaled. This means volumes will then have to support `ReadWriteMany` access.
+- If you used the `DB` storage provider until now, there is nothing you have to do. You can turn off `zammadConfig.minio.enabled` to avoid starting the minio pod.
+- If you used the `File` storage provider until now, you need to check:
+  - If you already use an `externalVolumeClaim` with `ReadWriteMany` access, you can keep using that.
+  - If you already use an `externalVolumeClaim` with another access mode, we recommend migrating to S3 storage (see below).
+  - If you used the default storage of the Zammad `StatefulSet`, we also recommend migrating to S3 storage (see below).
 
 ### From chart version 9.x to 10.0.0
 
