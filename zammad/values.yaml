@@ -459,7 +459,7 @@ memcached:
     #   cpu: 100m
     #   memory: 128Mi
 
-# settings for the memcached subchart
+# settings for the minio subchart
 minio:
   auth:
     rootUser: zammadadmin

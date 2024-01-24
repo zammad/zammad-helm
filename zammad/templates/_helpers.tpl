@@ -107,14 +107,14 @@ redis secret name
 {{- end -}}
 
 {{/*
-minio access URL
+S3 access URL
 */}}
 {{- define "zammad.S3Url" -}}
 {{- with .Values.zammadConfig.minio.externalS3Url -}}
-{{ . }}
+{{ . | quote }}
 {{- else -}}
 {{- if .Values.zammadConfig.minio.enabled -}}
-http://zammadadmin:zammadadmin@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true
+"http://zammadadmin:zammadadmin@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
 {{- end -}}
 {{- end -}}
 {{- end -}}
