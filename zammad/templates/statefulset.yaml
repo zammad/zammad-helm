@@ -88,8 +88,7 @@ spec:
                   key: {{ .Values.secrets.postgresql.secretKey }}
             - name: DATABASE_URL
               value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
-            - name: S3_URL
-              value: {{ template "zammad.S3Url" . }}
+            {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if .Values.extraEnv }}
             {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
@@ -134,8 +133,7 @@ spec:
                   key: {{ .Values.secrets.postgresql.secretKey }}
             - name: DATABASE_URL
               value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"          {{- if .Values.autoWizard.enabled }}
-            - name: S3_URL
-              value: {{ template "zammad.S3Url" . }}
+            {{ include "zammad.env.S3_URL" . | nindent 12 }}
             - name: AUTOWIZARD_JSON
               valueFrom:
                 secretKeyRef:
@@ -187,8 +185,7 @@ spec:
                   key: {{ .Values.secrets.postgresql.secretKey }}
             - name: DATABASE_URL
               value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
-            - name: S3_URL
-              value: {{ template "zammad.S3Url" . }}
+            {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if or .Values.zammadConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
             - name: ELASTICSEARCH_PASSWORD
               valueFrom:
@@ -310,8 +307,7 @@ spec:
                   key: {{ .Values.secrets.postgresql.secretKey }}
             - name: DATABASE_URL
               value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
-            - name: S3_URL
-              value: {{ template "zammad.S3Url" . }}
+            {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
@@ -368,8 +364,7 @@ spec:
                   key: {{ .Values.secrets.postgresql.secretKey }}
             - name: DATABASE_URL
               value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
-            - name: S3_URL
-              value: {{ template "zammad.S3Url" . }}
+            {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
@@ -419,8 +414,7 @@ spec:
                   key: {{ .Values.secrets.postgresql.secretKey }}
             - name: DATABASE_URL
               value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
-            - name: S3_URL
-              value: {{ template "zammad.S3Url" . }}
+            {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
