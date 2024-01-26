@@ -18,6 +18,10 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     version: 19.17.0
     condition: zammadConfig.elasticsearch.enabled
+  - name: minio
+    version: 13.2.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: zammadConfig.minio.enabled
   - name: memcached
     version: 6.9.0
     repository: https://charts.bitnami.com/bitnami
@@ -30,7 +34,3 @@ dependencies:
     version: 17.17.1
     repository: https://charts.bitnami.com/bitnami
     condition: zammadConfig.redis.enabled
-  - name: minio
-    version: 13.2.0
-    repository: https://charts.bitnami.com/bitnami
-    condition: zammadConfig.minio.enabled
