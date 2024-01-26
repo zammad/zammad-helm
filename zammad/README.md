@@ -13,7 +13,7 @@ This directory contains a Kubernetes chart to deploy [Zammad](https://zammad.org
 This chart will do the following:
 
 - Install Zammad statefulset
-- Install Elasticsearch, Memcached, PostgreSQL, Redis & Minio as requirements
+- Install Elasticsearch, Memcached, PostgreSQL, Redis & Minio (optional) as requirements
 
 ## Installing the Chart
 

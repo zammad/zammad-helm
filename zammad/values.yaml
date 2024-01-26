@@ -83,7 +83,7 @@ zammadConfig:
 
   minio:
     # enable/disable minio chart dependency
-    enabled: true
+    enabled: false
 
     #
     # externalS3Url: https://user:pw@external-minio-service/bucket
