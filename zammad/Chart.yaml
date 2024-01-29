@@ -1,6 +1,6 @@
 apiVersion: v2
 name: zammad
-version: 10.2.1
+version: 10.3.0
 appVersion: 6.2.0-1
 description: Zammad is a web based open source helpdesk/customer support system with many features to manage customer communication via several channels like telephone, facebook, twitter, chat and e-mails.
 home: https://zammad.org
@@ -16,17 +16,21 @@ maintainers:
 dependencies:
   - name: elasticsearch
     repository: https://charts.bitnami.com/bitnami
-    version: 19.10.3
+    version: 19.17.0
     condition: zammadConfig.elasticsearch.enabled
+  - name: minio
+    version: 13.2.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: zammadConfig.minio.enabled
   - name: memcached
-    version: 6.5.4
+    version: 6.9.0
     repository: https://charts.bitnami.com/bitnami
     condition: zammadConfig.memcached.enabled
   - name: postgresql
-    version: 12.6.4
+    version: 12.12.10
     repository: https://charts.bitnami.com/bitnami
     condition: zammadConfig.postgresql.enabled
   - name: redis
-    version: 17.11.7
+    version: 17.17.1
     repository: https://charts.bitnami.com/bitnami
     condition: zammadConfig.redis.enabled

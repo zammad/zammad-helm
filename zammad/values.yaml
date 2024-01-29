@@ -81,6 +81,13 @@ zammadConfig:
     host: zammad-memcached
     port: 11211
 
+  minio:
+    # enable/disable minio chart dependency
+    enabled: false
+
+    # Uncomment this in case you want to use an external S3 service.
+    # externalS3Url: https://user:pw@external-minio-service/bucket
+
   nginx:
     trustedProxies: []
     extraHeaders: []
@@ -451,6 +458,22 @@ memcached:
     # limits:
     #   cpu: 100m
     #   memory: 128Mi
+
+# settings for the minio subchart
+minio:
+  auth:
+    rootUser: zammadadmin
+    rootPassword: zammadadmin
+
+    # Use existing secret for credentials details (auth.rootUser and
+    # auth.rootPassword will be ignored and picked up from this secret).
+    # The secret has to contain the keys root-user and root-password)
+    # existingSecret: minio-credentials
+
+  defaultBuckets: zammad
+
+  # You can use this to enable the web UI for debugging.
+  disableWebUI: true
 
 # settings for the postgres subchart
 postgresql:
