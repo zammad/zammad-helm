@@ -85,7 +85,7 @@ zammadConfig:
     # enable/disable minio chart dependency
     enabled: false
 
-    #
+    # Uncomment this in case you want to use an external S3 service.
     # externalS3Url: https://user:pw@external-minio-service/bucket
 
   nginx:
@@ -471,7 +471,9 @@ minio:
     # existingSecret: minio-credentials
 
   defaultBuckets: zammad
-  disableWebUI: false
+
+  # You can use this to enable the web UI for debugging.
+  disableWebUI: true
 
 # settings for the postgres subchart
 postgresql:
