@@ -1,19 +1,26 @@
 # Zammad Helm Chart
 
-This directory contains a Kubernetes chart to deploy [Zammad](https://zammad.org/) ticket system.
+A [Helm](https://helm.sh) chart to install [Zammad](https://zammad.org) on [Kubernetes](https://kubernetes.io)
 
-## Prerequisites Details
+[Zammad](https://zammad.org/) is a web based open source helpdesk/customer support system with many
+features to manage customer communication via several channels like telephone,
+facebook, twitter, chat and e-mails. It is distributed under version 3 of the
+GNU AFFERO General Public License (GNU AGPLv3).
 
-- Kubernetes 1.19+
-- Helm 3.x
-- Cluster with at least 4GB of free RAM
-
-## Chart Details
+## Introduction
 
 This chart will do the following:
 
-- Install Zammad statefulset
+- Install a Zammad `StatefulSet`
 - Install Elasticsearch, Memcached, PostgreSQL, Redis & Minio (optional) as requirements
+
+Be aware that the Zammad Helm chart version is different from the actual Zammad version.
+
+## Prerequisites
+
+- Kubernetes 1.19+
+- Helm 3.2.0+
+- Cluster with at least 4GB of free RAM
 
 ## Installing the Chart
 
@@ -21,20 +28,66 @@ To install the chart use the following:
 
 ```console
 helm repo add zammad https://zammad.github.io/zammad-helm
-helm upgrade --install zammad zammad/zammad --namespace zammad
+helm upgrade --install zammad zammad/zammad
 ```
+
+## Uninstalling the Chart
+
+To remove the chart again use the following:
+
+```console
+helm delete zammad
+```
+
+This will uninstall the Zammad `StatefulSet`, but keep the associated `PVC`s.
+Please delete them manually if you're sure.
 
 ## Configuration
 
-See [Customizing the Chart Before Installing](https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing). To see all configurable options with detailed comments, visit the chart's [values.yaml](./values.yaml), or run these configuration commands:
+See [Customizing the Chart Before Installing](https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing).
+To see all configurable options with detailed comments, visit the chart's [values.yaml](./values.yaml), or run this configuration command:
 
 ```console
 helm show values zammad/zammad
 ```
 
-### OpenShift
+### Choosing the Storage Provider
 
-To run OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids):
+Zammad uses the database as the default storage provider for new systems. This works well for the majority of systems.
+Only if you have a large volume of tickets and attachments, you may need to store attachments in another storage provider.
+
+We recommend the `S3` storage provider using the optional `minio` subchart in this case.
+
+You can also use `File` storage. In this case, you should check:
+
+- If you already use an `externalVolumeClaim` with `ReadWriteMany` access, you can keep using that.
+- If you already use an `externalVolumeClaim` with another access mode, we recommend migrating to S3 storage (see below).
+- If you used the default `PVC` of the Zammad `StatefulSet`, we also recommend migrating to S3 storage (see below).
+
+Background information: a future version of Zammad will increase the scalability by splitting up the current `Statefulset`
+into several `Deployment`s which can be scaled. This means the `PVC` of the current `StatefulSet` will then not be usable any more,
+and any volumes will have to support `ReadWriteMany` access.
+
+#### How to migrate from `File` to `S3` storage
+
+- In the admin panel, go to "System -> Storage" and select "Simple Storage (S3)" as the new storage provider.
+- Migrate existing `File` store content by running `kubectl exec zammad-0 -c zammad-railsserver -- rails r "Store::File.move('File', 'S3')"`. Example:
+
+```log
+kubectl exec zammad-0 -c zammad-railsserver -- rails r "Store::File.move('File', 'S3')"
+I, [2024-01-24T11:06:13.501572 #168]  INFO -- : ActionCable is using the redis instance at redis://:zammad@zammad-redis-master:6379.
+I, [2024-01-24T11:06:13.506180#168-5980]  INFO -- : Using memcached as Rails cache store.
+I, [2024-01-24T11:06:13.506246#168-5980]  INFO -- : Using the Redis back end for Zammad's web socket session store.
+I, [2024-01-24T11:06:14.561169#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/ab76/81d1/a4177/4c41f/12ddb67/96ee19e/a7e7c780a3227936c507cfbfe946afb9'
+I, [2024-01-24T11:06:14.561654#168-5980]  INFO -- : Moved file ab7681d1a41774c41f12ddb6796ee19ea7e7c780a3227936c507cfbfe946afb9 from File to S3
+I, [2024-01-24T11:06:14.566327#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/dbaa/01dd/0df3a/33bce/e87c420/f221f59/6df9db38a402b30fccea09cc444a9fb0'
+I, [2024-01-24T11:06:14.566513#168-5980]  INFO -- : Moved file dbaa01dd0df3a33bcee87c420f221f596df9db38a402b30fccea09cc444a9fb0 from File to S3
+I, [2024-01-24T11:06:14.627896#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/e81f/fb09/c5a26/f2081/f93401a/cbe8fff/9983e56c86fccb48d17a2eb1e5900b5b'
+```
+
+### Deploying on OpenShift
+
+To deploy on OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids):
 
 - [Delete the default key](https://helm.sh/docs/chart_template_guide/values_files/#deleting-a-default-key)  `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` with `null`.
 - Disable if used:
@@ -91,51 +144,18 @@ redis:
 
 ## Using Zammad
 
-Once the zammad pod is ready, it can be accessed using the ingress or port forwarding.
+Once the Zammad pod is ready, it can be accessed using the ingress or port forwarding.
 To use port forwarding:
 
 ```console
-kubectl -n zammad port-forward service/zammad 8080
+kubectl port-forward service/zammad 8080
 ```
 
-Open your browser on <http://localhost:8080>
+Now you can open <http://localhost:8080> in your browser.
 
 ## Upgrading
 
-### From chart version 10.x to 10.3.0
-
-- This release adds support for using S3 storage with Zammad. It will be the default storage for new systems.
-- If you used the `DB` storage provider until now, there is nothing you have to do. You can turn off `zammadConfig.minio.enabled` to avoid starting the minio pod.
-- If you used the `File` storage provider until now, you need to check:
-  - If you already use an `externalVolumeClaim` with `ReadWriteMany` access, you can keep using that.
-  - If you already use an `externalVolumeClaim` with another access mode, we recommend migrating to S3 storage (see below).
-  - If you used the default storage of the Zammad `StatefulSet`, we also recommend migrating to S3 storage (see below).
-
-#### How to migrate from `File` to `S3` storage
-
-- In the admin panel, go to "System -> Storage" and select "Simple Storage (S3)" as the new storage provider.
-- Migrate existing `File` store content by running `kubectl exec zammad-0 -c zammad-railsserver -- rails r "Store::File.move('File', 'S3')"`. Example:
-
-```log
-kubectl exec zammad-0 -c zammad-railsserver -- rails r "Store::File.move('File', 'S3')"
-I, [2024-01-24T11:06:13.501572 #168]  INFO -- : ActionCable is using the redis instance at redis://:zammad@zammad-redis-master:6379.
-I, [2024-01-24T11:06:13.506180#168-5980]  INFO -- : Using memcached as Rails cache store.
-I, [2024-01-24T11:06:13.506246#168-5980]  INFO -- : Using the Redis back end for Zammad's web socket session store.
-I, [2024-01-24T11:06:14.561169#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/ab76/81d1/a4177/4c41f/12ddb67/96ee19e/a7e7c780a3227936c507cfbfe946afb9'
-I, [2024-01-24T11:06:14.561654#168-5980]  INFO -- : Moved file ab7681d1a41774c41f12ddb6796ee19ea7e7c780a3227936c507cfbfe946afb9 from File to S3
-I, [2024-01-24T11:06:14.566327#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/dbaa/01dd/0df3a/33bce/e87c420/f221f59/6df9db38a402b30fccea09cc444a9fb0'
-I, [2024-01-24T11:06:14.566513#168-5980]  INFO -- : Moved file dbaa01dd0df3a33bcee87c420f221f596df9db38a402b30fccea09cc444a9fb0 from File to S3
-I, [2024-01-24T11:06:14.627896#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/e81f/fb09/c5a26/f2081/f93401a/cbe8fff/9983e56c86fccb48d17a2eb1e5900b5b'
-I, [2024-01-24T11:06:14.628460#168-5980]  INFO -- : Moved file e81ffb09c5a26f2081f93401acbe8fff9983e56c86fccb48d17a2eb1e5900b5b from File to S3
-I, [2024-01-24T11:06:14.669747#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/d9e1/6e6b/affa8/867f9/539c69c/e42dba1/1b3941da90dfd56875cd4e2f5063aef2'
-I, [2024-01-24T11:06:14.670425#168-5980]  INFO -- : Moved file d9e16e6baffa8867f9539c69ce42dba11b3941da90dfd56875cd4e2f5063aef2 from File to S3
-```
-
-#### Background Information
-
-A future version of Zammad will increase the scalability by splitting up the `Statefulset` into several `Deployment`s which can be scaled. This means volumes will then have to support `ReadWriteMany` access.
-
-### From chart version 9.x to 10.0.0
+### From Chart Version 9.x to 10.0.0
 
 - all containers uses `readOnlyRootFilesystem: true` again
 - volumePermissions init container config has been moved to initContainers section
@@ -143,7 +163,7 @@ A future version of Zammad will increase the scalability by splitting up the `St
   - it's also enabled by default now to workaround rails world writable tmp dir issues
   - if you don't like to use it you might want to set tmpDirVolume.emptyDir.medium to "Memory" instead
 
-### From chart version 8.x to 9.0.0
+### From Chart Version 8.x to 9.0.0
 
 - Zammads PVC changed to only hold contents of /opt/zammad/var & /opt/zammad/storage instead of the whole Zammad content
   - A new PVC `zammad-var` is created for this
@@ -159,7 +179,7 @@ A future version of Zammad will increase the scalability by splitting up the `St
 - auto_wizard.json is placed into /opt/zammad/var directory now
 - All subcharts have been updated
 
-### From chart version 7.x to 8.0.0
+### From Chart Version 7.x to 8.0.0
 
 SecurityContexts of pod and containers are configurable now.
 We also changed the default securitycontexts, to be a bit more restrictive, therefore the major version upgrade of the chart.
@@ -197,7 +217,7 @@ If you wan't the old behaviout use the new `.Values.zammadConfig.initContainers.
 
 We've also set the Elasticsearch master heapsize to "512m" by default.
 
-### From chart version 6.x to 7.0.0
+### From Chart Version 6.x to 7.0.0
 
 - Bitnami Elasticsearch chart is used now as Elastic does not support the old chart anymore in favour of ECK operator
   - reindexing of all data is needed so get sure "zammadConfig.elasticsearch.reindex" is set to "true"
@@ -216,19 +236,19 @@ We've also set the Elasticsearch master heapsize to "512m" by default.
   - livenessProbes and readinessProbe have been adjusted to not be the same
   - config values has been removed from chart readme as it's easier to maintain them at a single place
 
-### From chart version 6.0.4 to 6.0.x
+### From Chart Version 6.0.4 to 6.0.x
 
 - minimum helm version now is 3.2.0+
 - minimum Kubernetes version now is 1.19+
 
-### From chart version 5.x to 6.x
+### From Chart Version 5.x to 6.x
 
 - `envConfig` variable was replaced with `zammadConfig`
 - `nginx`, `rails`, `scheduler`, `websocket` and `zammad` vars has been merged into `zammadConfig`
 - Chart dependency vars have changed (reside in `zammadConfig` too now), so if you've disabled any of them you have to adapt to the new values from the Chart.yaml
 - `extraEnv` var is a list now
 
-### From chart version 4.x to 5.x
+### From Chart Version 4.x to 5.x
 
 - health checks have been extended from boolean flags that simply toggle readinessProbes and livenessProbes on the containers to templated
   ones: .zammad.{nginx,rails,websocket}.readinessProbe and .zammad.{nginx,rails,websocket}.livenessProbe have been removed in favor of livenessProbe/readinessProbe
@@ -236,7 +256,7 @@ We've also set the Elasticsearch master heapsize to "512m" by default.
 - resource constraints have been grouped under .{nginx,railsserver,websocket} from above. They are disabled by default (same as prior versions), but in your overrides, make sure
   to reflect those changes.
 
-### From chart version 1.x
+### From Chart Version 1.x
 
 This has changed:
 
