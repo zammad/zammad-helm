@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  helm-version: "v3.12.1"
+  helm-version: "v3.12.3"
   kubeconform-version: "v0.6.3"
 
 jobs:
