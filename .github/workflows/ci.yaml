@@ -38,7 +38,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Helm
-        uses: azure/setup-helm@v3.5
+        uses: azure/setup-helm@v4.0
         with:
           version: "${{ env.helm-version }}"
 
@@ -59,7 +59,6 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.26.13
           - v1.27.10
           - v1.28.6
           - v1.29.1
@@ -70,7 +69,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Helm
-        uses: azure/setup-helm@v3.5
+        uses: azure/setup-helm@v4.0
         with:
           version: "${{ env.helm-version }}"
 
@@ -89,8 +88,6 @@ jobs:
       matrix:
         k8s:
           # Versions of kindest/node
-          - v1.25.16
-          - v1.26.13
           - v1.27.10
           - v1.28.6
           - v1.29.1
@@ -101,7 +98,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Helm
-        uses: azure/setup-helm@v3.5
+        uses: azure/setup-helm@v4.0
         with:
           version: "${{ env.helm-version }}"
 
