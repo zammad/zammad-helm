@@ -88,7 +88,7 @@ jobs:
     strategy:
       matrix:
         k8s:
-          # Versions of kindest/node
+          # Versions of kindest/node TEST
           - v1.25.16
           - v1.26.13
           - v1.27.10
