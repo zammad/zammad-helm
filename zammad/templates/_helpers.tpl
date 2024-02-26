@@ -63,46 +63,66 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/*
-autowizard secret name
+autowizard config
 */}}
-{{- define "zammad.autowizardSecretName" -}}
+{{- define "zammad.autowizardConfig" -}}
 {{- if .Values.secrets.autowizard.useExisting -}}
-{{ .Values.secrets.autowizard.secretName }}
+{{- $password := (lookup "v1" "Secret" .Release.Namespace .Values.secrets.autowizard.secretName .) -}}
+{{- if $password -}}
+{{ index $password "data" .Values.secrets.autowizard.secretKey | b64dec  }}
 {{- else -}}
-{{ template "zammad.fullname" . }}-{{ .Values.secrets.autowizard.secretName }}
+{{- fail "Unable to retrieve the autowizard secret (.Values.secrets.autowizard.secretName)" }}
+{{- end -}}
+{{- else -}}
+{{ .Values.autoWizard.config | b64enc }}
 {{- end -}}
 {{- end -}}
 
 {{/*
-elasticsearch secret name
+elasticsearch password
 */}}
-{{- define "zammad.elasticsearchSecretName" -}}
+{{- define "zammad.elasticsearchPassword" -}}
 {{- if .Values.secrets.elasticsearch.useExisting -}}
-{{ .Values.secrets.elasticsearch.secretName }}
+{{- $password := (lookup "v1" "Secret" .Release.Namespace .Values.secrets.elasticsearch.secretName .) -}}
+{{- if $password -}}
+{{ index $password "data" .Values.secrets.elasticsearch.secretKey  | b64dec  }}
 {{- else -}}
-{{ template "zammad.fullname" . }}-{{ .Values.secrets.elasticsearch.secretName }}
+{{- fail "Unable to retrieve the elasticsearch secret (.Values.secrets.elasticsearch.secretName)" }}
+{{- end -}}
+{{- else -}}
+{{ .Values.zammadConfig.elasticsearch.pass }}
 {{- end -}}
 {{- end -}}
 
 {{/*
-postgresql secret name
+postgresql password
 */}}
-{{- define "zammad.postgresqlSecretName" -}}
+{{- define "zammad.postgresqlPassword" -}}
 {{- if .Values.secrets.postgresql.useExisting -}}
-{{ .Values.secrets.postgresql.secretName }}
+{{- $password := (lookup "v1" "Secret" .Release.Namespace .Values.secrets.postgresql.secretName .) -}}
+{{- if $password -}}
+{{ index $password "data" .Values.secrets.postgresql.secretKey  | b64dec  }}
 {{- else -}}
-{{ template "zammad.fullname" . }}-{{ .Values.secrets.postgresql.secretName }}
+{{- fail "Unable to retrieve the postgresql secret (.Values.secrets.postgresql.secretName)" }}
+{{- end -}}
+{{- else -}}
+{{ .Values.zammadConfig.postgresql.pass }}
 {{- end -}}
 {{- end -}}
 
 {{/*
-redis secret name
+redis password
 */}}
-{{- define "zammad.redisSecretName" -}}
+{{- define "zammad.redisPassword" -}}
 {{- if .Values.secrets.redis.useExisting -}}
-{{ .Values.secrets.redis.secretName }}
+{{- $password := (lookup "v1" "Secret" .Release.Namespace .Values.secrets.redis.secretName .) -}}
+{{- if $password -}}
+{{ index $password "data" .Values.secrets.redis.secretKey  | b64dec  }}
 {{- else -}}
-{{ template "zammad.fullname" . }}-{{ .Values.secrets.redis.secretName }}
+{{- fail "Unable to retrieve the redis secret (.Values.secrets.redis.secretName)" }}
+{{- end -}}
+{{- else -}}
+{{ .Values.zammadConfig.redis.pass }}
 {{- end -}}
 {{- end -}}
 
@@ -130,7 +150,7 @@ S3 access URL
   value: "http://$(MINIO_ROOT_USER):$(MINIO_ROOT_PASSWORD)@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
 {{- else -}}
 - name: S3_URL
-  value: "http://{{ .Values.minio.auth.rootUser }}:{{ .Values.minio.auth.rootPassword }}@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
+  value: "http://{{ .Values.minio.auth.rootUser }}:{{ .Values.minio.auth.rootPassword | urlquery }}@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
 {{- end -}}
 {{- end -}}
 {{- end -}}
