@@ -56,6 +56,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs:
       - lint-chart
+      - super-linter
     strategy:
       matrix:
         k8s:
