@@ -142,7 +142,7 @@ spec:
             {{ include "zammad.env.DATABASE_URL" . | nindent 12 }}
             {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if or .Values.zammadConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
-            {{ include "zammad.env.ELASTICSEARCH_PASSWORD" | nindent 12 }}
+            {{ include "zammad.env.ELASTICSEARCH_PASSWORD" . | nindent 12 }}
           {{- end }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}

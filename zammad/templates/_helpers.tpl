@@ -82,7 +82,7 @@ elasticsearch password
 */}}
 {{- define "zammad.env.ELASTICSEARCH_PASSWORD" -}}
 - name: ELASTICSEARCH_PASSWORD
-{{- if .Values.secrets.elasticsearch.useExisting -}}
+{{- if .Values.secrets.elasticsearch.useExisting }}
   valueFrom:
     secretKeyRef:
       key: {{ .Values.secrets.elasticsearch.secretKey }}
@@ -96,7 +96,7 @@ elasticsearch password
 database URL
 */}}
 {{- define "zammad.env.DATABASE_URL" -}}
-{{- if .Values.secrets.postgresql.useExisting -}}
+{{- if .Values.secrets.postgresql.useExisting }}
 - name: POSTGRESQL_PASS
   valueFrom:
     secretKeyRef:
@@ -115,7 +115,7 @@ database URL
 redis URL
 */}}
 {{- define "zammad.env.REDIS_URL" -}}
-{{- if .Values.secrets.redis.useExisting -}}
+{{- if .Values.secrets.redis.useExisting }}
 - name: REDIS_PASSWORD
   valueFrom:
     secretKeyRef:
@@ -133,7 +133,7 @@ redis URL
 S3 access URL
 */}}
 {{- define "zammad.env.S3_URL" -}}
-{{- with .Values.zammadConfig.minio.externalS3Url -}}
+{{- with .Values.zammadConfig.minio.externalS3Url }}
 - name: S3_URL
   value: {{ . | quote }}
 {{- else -}}

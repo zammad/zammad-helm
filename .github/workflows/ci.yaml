@@ -91,6 +91,9 @@ jobs:
           - v1.27.10
           - v1.28.6
           - v1.29.1
+        configurations:
+          - default
+          - full
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -120,5 +123,14 @@ jobs:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s }}
 
-      - name: Run chart-testing (install)
+      - name: Install secrets
+        if: matrix.configurations == 'full'
+        run: kubectl create -f .github/workflows/ci/full-secrets.yml
+
+      - name: Run chart-testing (default install)
+        if: matrix.configurations != 'full'
         run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s'
+
+      - name: Run chart-testing (full install)
+        if: matrix.configurations == 'full'
+        run: ct install --config .github/ct.yaml --helm-extra-args '--values .github/workflows/ci/full-values.yml --timeout 900s'
