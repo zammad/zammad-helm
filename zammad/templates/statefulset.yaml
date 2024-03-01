@@ -332,6 +332,8 @@ spec:
           {{- end }}
           volumeMounts:
             - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /tmp
+            - name: {{ template "zammad.fullname" . }}-tmp
               mountPath: /opt/zammad/tmp
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/storage
@@ -377,6 +379,8 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /tmp
             - name: {{ template "zammad.fullname" . }}-tmp
               mountPath: /opt/zammad/tmp
             - name: {{ template "zammad.fullname" . }}-var
@@ -438,6 +442,8 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
+            - name: {{ template "zammad.fullname" . }}-tmp
+              mountPath: /tmp
             - name: {{ template "zammad.fullname" . }}-tmp
               mountPath: /opt/zammad/tmp
             - name: {{ template "zammad.fullname" . }}-var
