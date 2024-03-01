@@ -72,10 +72,8 @@ spec:
           env:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
-            - name: REDIS_URL
-              value: "redis://:{{ include "zammad.redisPassword" . | urlquery }}@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
-            - name: DATABASE_URL
-              value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:{{ include "zammad.postgresqlPassword" . | urlquery }}@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
+            {{ include "zammad.env.REDIS_URL" . | nindent 12 }}
+            {{ include "zammad.env.DATABASE_URL" . | nindent 12 }}
             {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if .Values.extraEnv }}
             {{- toYaml .Values.extraEnv | nindent 12 }}
@@ -105,13 +103,11 @@ spec:
           env:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
-            - name: REDIS_URL
-              value: "redis://:{{ include "zammad.redisPassword" . | urlquery }}@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
-            - name: DATABASE_URL
-              value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:{{ include "zammad.postgresqlPassword" . | urlquery }}@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"          {{- if .Values.autoWizard.enabled }}
+            {{ include "zammad.env.REDIS_URL" . | nindent 12 }}
+            {{ include "zammad.env.DATABASE_URL" . | nindent 12 }}
             {{ include "zammad.env.S3_URL" . | nindent 12 }}
-            - name: AUTOWIZARD_JSON
-              value: {{ include "zammad.autowizardConfig" . | urlquery }}
+          {{- if .Values.autoWizard.enabled }}
+            {{ include "zammad.env.AUTOWIZARD_JSON" . | nindent 12 }}
           {{- end }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
@@ -142,14 +138,11 @@ spec:
           env:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
-            - name: REDIS_URL
-              value: "redis://:{{ include "zammad.redisPassword" . | urlquery }}@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
-            - name: DATABASE_URL
-              value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:{{ include "zammad.postgresqlPassword" . | urlquery }}@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
+            {{ include "zammad.env.REDIS_URL" . | nindent 12 }}
+            {{ include "zammad.env.DATABASE_URL" . | nindent 12 }}
             {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if or .Values.zammadConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
-            - name: ELASTICSEARCH_PASSWORD
-              value: {{ include "zammad.elasticsearchPassword" . | quote }}
+            {{ include "zammad.env.ELASTICSEARCH_PASSWORD" | nindent 12 }}
           {{- end }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
@@ -249,10 +242,8 @@ spec:
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
             - name: RAILS_TRUSTED_PROXIES
               value: "{{ .Values.zammadConfig.railsserver.trustedProxies }}"
-            - name: REDIS_URL
-              value: "redis://:{{ include "zammad.redisPassword" . | urlquery }}@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
-            - name: DATABASE_URL
-              value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:{{ include "zammad.postgresqlPassword" . | urlquery }}@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
+            {{ include "zammad.env.REDIS_URL" . | nindent 12 }}
+            {{ include "zammad.env.DATABASE_URL" . | nindent 12 }}
             {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
@@ -296,10 +287,8 @@ spec:
           env:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
-            - name: REDIS_URL
-              value: "redis://:{{ include "zammad.redisPassword" . | urlquery }}@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
-            - name: DATABASE_URL
-              value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:{{ include "zammad.postgresqlPassword" . | urlquery }}@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
+            {{ include "zammad.env.REDIS_URL" . | nindent 12 }}
+            {{ include "zammad.env.DATABASE_URL" . | nindent 12 }}
             {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
@@ -336,10 +325,8 @@ spec:
           env:
             - name: MEMCACHE_SERVERS
               value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
-            - name: REDIS_URL
-              value: "redis://:{{ include "zammad.redisPassword" . | urlquery }}@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
-            - name: DATABASE_URL
-              value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:{{ include "zammad.postgresqlPassword" . | urlquery }}@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
+            {{ include "zammad.env.REDIS_URL" . | nindent 12 }}
+            {{ include "zammad.env.DATABASE_URL" . | nindent 12 }}
             {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}

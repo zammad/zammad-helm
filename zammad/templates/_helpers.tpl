@@ -65,64 +65,67 @@ Create the name of the service account to use
 {{/*
 autowizard config
 */}}
-{{- define "zammad.autowizardConfig" -}}
+{{- define "zammad.env.AUTOWIZARD_JSON" -}}
+- name: AUTOWIZARD_JSON
 {{- if .Values.secrets.autowizard.useExisting -}}
-{{- $password := (lookup "v1" "Secret" .Release.Namespace .Values.secrets.autowizard.secretName .) -}}
-{{- if $password -}}
-{{ index $password "data" .Values.secrets.autowizard.secretKey | b64dec  }}
+  valueFrom:
+    secretKeyRef:
+      key: {{ .Values.secrets.autowizard.secretKey }}
+      name: {{ .Values.secrets.autowizard.secretName }}
 {{- else -}}
-{{- fail "Unable to retrieve the autowizard secret (.Values.secrets.autowizard.secretName)" }}
-{{- end -}}
-{{- else -}}
-{{ .Values.autoWizard.config | b64enc }}
+  value: {{ .Values.autoWizard.config | b64enc | quote }}
 {{- end -}}
 {{- end -}}
 
 {{/*
 elasticsearch password
 */}}
-{{- define "zammad.elasticsearchPassword" -}}
+{{- define "zammad.env.ELASTICSEARCH_PASSWORD" -}}
+- name: ELASTICSEARCH_PASSWORD
 {{- if .Values.secrets.elasticsearch.useExisting -}}
-{{- $password := (lookup "v1" "Secret" .Release.Namespace .Values.secrets.elasticsearch.secretName .) -}}
-{{- if $password -}}
-{{ index $password "data" .Values.secrets.elasticsearch.secretKey  | b64dec  }}
+  valueFrom:
+    secretKeyRef:
+      key: {{ .Values.secrets.elasticsearch.secretKey }}
+      name: {{ .Values.secrets.elasticsearch.secretName }}
 {{- else -}}
-{{- fail "Unable to retrieve the elasticsearch secret (.Values.secrets.elasticsearch.secretName)" }}
-{{- end -}}
-{{- else -}}
-{{ .Values.zammadConfig.elasticsearch.pass }}
+  value: {{ .Values.zammadConfig.elasticsearch.pass | quote }}
 {{- end -}}
 {{- end -}}
 
 {{/*
-postgresql password
+database URL
 */}}
-{{- define "zammad.postgresqlPassword" -}}
+{{- define "zammad.env.DATABASE_URL" -}}
 {{- if .Values.secrets.postgresql.useExisting -}}
-{{- $password := (lookup "v1" "Secret" .Release.Namespace .Values.secrets.postgresql.secretName .) -}}
-{{- if $password -}}
-{{ index $password "data" .Values.secrets.postgresql.secretKey  | b64dec  }}
+- name: POSTGRESQL_PASS
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.secrets.postgresql.secretName }}
+      key: {{ .Values.secrets.postgresql.secretKey }}
+- name: DATABASE_URL
+  value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
 {{- else -}}
-{{- fail "Unable to retrieve the postgresql secret (.Values.secrets.postgresql.secretName)" }}
-{{- end -}}
-{{- else -}}
-{{ .Values.zammadConfig.postgresql.pass }}
+- name: DATABASE_URL
+  value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:{{ .Values.zammadConfig.postgresql.pass | urlquery }}@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
 {{- end -}}
 {{- end -}}
 
+
 {{/*
-redis password
+redis URL
 */}}
-{{- define "zammad.redisPassword" -}}
+{{- define "zammad.env.REDIS_URL" -}}
 {{- if .Values.secrets.redis.useExisting -}}
-{{- $password := (lookup "v1" "Secret" .Release.Namespace .Values.secrets.redis.secretName .) -}}
-{{- if $password -}}
-{{ index $password "data" .Values.secrets.redis.secretKey  | b64dec  }}
+- name: REDIS_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.secrets.redis.secretName }}
+      key: {{ .Values.secrets.redis.secretKey }}
+- name: REDIS_URL
+  value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
 {{- else -}}
-{{- fail "Unable to retrieve the redis secret (.Values.secrets.redis.secretName)" }}
-{{- end -}}
-{{- else -}}
-{{ .Values.zammadConfig.redis.pass }}
+- name: REDIS_URL
+  value: "redis://:{{ .Values.zammadConfig.redis.pass | urlquery }}@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
 {{- end -}}
 {{- end -}}
 
