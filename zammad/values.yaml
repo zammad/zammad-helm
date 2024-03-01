@@ -33,6 +33,10 @@ ingress:
     #   hosts:
     #     - chart-example.local
 
+# Please note that when using existing secrets, passwords
+#   for PostgreSQL, Redis and S3 may not contain special characters
+#   which would require URL encoding. This is only possible for
+#   passwords stored in the user values.
 secrets:
   autowizard:
     useExisting: false
