@@ -125,7 +125,7 @@ jobs:
         run: kubectl create namespace zammad
 
       - name: Install secrets
-        run: kubectl create --namespace zammad --filename zammad/ci/full-secrets.yml
+        run: kubectl create --namespace zammad --filename zammad/ci/full-secrets.yaml
 
       - name: Run chart-testing (default install)
         run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s'
