@@ -5,3 +5,4 @@ chart-repos:
 check-version-increment: true
 debug: true
 target-branch: main
+namespace: zammad

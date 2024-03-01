@@ -123,9 +123,12 @@ jobs:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s }}
 
+      - name: Create Namespace 'zammad'
+        run: kubectl create namespace zammad
+
       - name: Install secrets
         if: matrix.configurations == 'full'
-        run: kubectl create -f .github/ci/full-secrets.yml
+        run: kubectl create --namespace zammad --filename .github/ci/full-secrets.yml
 
       - name: Run chart-testing (default install)
         if: matrix.configurations != 'full'
