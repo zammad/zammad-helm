@@ -116,13 +116,18 @@ S3 access URL
 {{- else -}}
 {{- if .Values.zammadConfig.minio.enabled -}}
 {{- if .Values.minio.auth.existingSecret -}}
-{{ $existingSecret := (lookup "v1" "Secret" .Release.Namespace .Values.minio.auth.existingSecret) }}
-{{- if $existingSecret }}
+- name: MINIO_ROOT_USER
+  valueFrom:
+    secretKeyRef:
+      key: root-user
+      name: {{ .Values.minio.auth.existingSecret }}
+- name: MINIO_ROOT_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      key: root-password
+      name: {{ .Values.minio.auth.existingSecret }}
 - name: S3_URL
-  value: "http://{{ index $existingSecret "data" "root-user" | b64dec }}:{{ index $existingSecret "data" "root-password" | b64dec }}@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
-{{- else }}
-{{- fail "Unable to retrieve the secret used to set the minio authentication values (Values.minio.auth.existingSecret)" }}
-{{- end -}}
+  value: "http://$(MINIO_ROOT_USER):$(MINIO_ROOT_PASSWORD)@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
 {{- else -}}
 - name: S3_URL
   value: "http://{{ .Values.minio.auth.rootUser }}:{{ .Values.minio.auth.rootPassword }}@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
