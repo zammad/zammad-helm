@@ -107,7 +107,11 @@ spec:
             {{ include "zammad.env.DATABASE_URL" . | nindent 12 }}
             {{ include "zammad.env.S3_URL" . | nindent 12 }}
           {{- if .Values.autoWizard.enabled }}
-            {{ include "zammad.env.AUTOWIZARD_JSON" . | nindent 12 }}
+            - name: AUTOWIZARD_JSON
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "zammad.autowizardSecretName" . }}
+                  key: {{ .Values.secrets.autowizard.secretKey }}
           {{- end }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}

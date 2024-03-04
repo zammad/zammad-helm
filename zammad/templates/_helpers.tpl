@@ -63,17 +63,13 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/*
-autowizard config
+autowizard secret name
 */}}
-{{- define "zammad.env.AUTOWIZARD_JSON" -}}
-- name: AUTOWIZARD_JSON
+{{- define "zammad.autowizardSecretName" -}}
 {{- if .Values.secrets.autowizard.useExisting -}}
-  valueFrom:
-    secretKeyRef:
-      key: {{ .Values.secrets.autowizard.secretKey }}
-      name: {{ .Values.secrets.autowizard.secretName }}
+{{ .Values.secrets.autowizard.secretName }}
 {{- else -}}
-  value: {{ .Values.autoWizard.config | b64enc | quote }}
+{{ template "zammad.fullname" . }}-{{ .Values.secrets.autowizard.secretName }}
 {{- end -}}
 {{- end -}}
 
