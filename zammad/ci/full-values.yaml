@@ -1,8 +1,8 @@
 secrets:
-  # autowizard:
-  #   useExisting: true
-  #   secretKey: autowizard
-  #   secretName: autowizard
+  autowizard:
+    useExisting: true
+    secretKey: autowizard
+    secretName: autowizard
   elasticsearch:
     useExisting: true
     secretKey: elasticsearch-password
@@ -15,6 +15,9 @@ secrets:
     useExisting: true
     secretKey: redis-password
     secretName: redis-existing-secret
+
+autoWizard:
+  enabled: true
 
 elasticsearch:
   security:
