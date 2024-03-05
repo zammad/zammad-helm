@@ -5,5 +5,4 @@ zammad/Chart.lock
 zammad/index.yaml
 zammad/requirements.lock
 
-# user values for local deployment from git
 values.yaml
