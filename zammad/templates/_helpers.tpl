@@ -74,54 +74,35 @@ autowizard secret name
 {{- end -}}
 
 {{/*
-elasticsearch password
+elasticsearch secret name
 */}}
-{{- define "zammad.env.ELASTICSEARCH_PASSWORD" -}}
-- name: ELASTICSEARCH_PASSWORD
-{{- if .Values.secrets.elasticsearch.useExisting }}
-  valueFrom:
-    secretKeyRef:
-      key: {{ .Values.secrets.elasticsearch.secretKey }}
-      name: {{ .Values.secrets.elasticsearch.secretName }}
+{{- define "zammad.elasticsearchSecretName" -}}
+{{- if .Values.secrets.elasticsearch.useExisting -}}
+{{ .Values.secrets.elasticsearch.secretName }}
 {{- else -}}
-  value: {{ .Values.zammadConfig.elasticsearch.pass | quote }}
+{{ template "zammad.fullname" . }}-{{ .Values.secrets.elasticsearch.secretName }}
 {{- end -}}
 {{- end -}}
 
 {{/*
-database URL
+postgresql secret name
 */}}
-{{- define "zammad.env.DATABASE_URL" -}}
-{{- if .Values.secrets.postgresql.useExisting }}
-- name: POSTGRESQL_PASS
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.secrets.postgresql.secretName }}
-      key: {{ .Values.secrets.postgresql.secretKey }}
-- name: DATABASE_URL
-  value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
+{{- define "zammad.postgresqlSecretName" -}}
+{{- if .Values.secrets.postgresql.useExisting -}}
+{{ .Values.secrets.postgresql.secretName }}
 {{- else -}}
-- name: DATABASE_URL
-  value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:{{ .Values.zammadConfig.postgresql.pass | urlquery }}@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
+{{ template "zammad.fullname" . }}-{{ .Values.secrets.postgresql.secretName }}
 {{- end -}}
 {{- end -}}
-
 
 {{/*
-redis URL
+redis secret name
 */}}
-{{- define "zammad.env.REDIS_URL" -}}
-{{- if .Values.secrets.redis.useExisting }}
-- name: REDIS_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.secrets.redis.secretName }}
-      key: {{ .Values.secrets.redis.secretKey }}
-- name: REDIS_URL
-  value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+{{- define "zammad.redisSecretName" -}}
+{{- if .Values.secrets.redis.useExisting -}}
+{{ .Values.secrets.redis.secretName }}
 {{- else -}}
-- name: REDIS_URL
-  value: "redis://:{{ .Values.zammadConfig.redis.pass | urlquery }}@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+{{ template "zammad.fullname" . }}-{{ .Values.secrets.redis.secretName }}
 {{- end -}}
 {{- end -}}
 
@@ -129,7 +110,7 @@ redis URL
 S3 access URL
 */}}
 {{- define "zammad.env.S3_URL" -}}
-{{- with .Values.zammadConfig.minio.externalS3Url }}
+{{- with .Values.zammadConfig.minio.externalS3Url -}}
 - name: S3_URL
   value: {{ . | quote }}
 {{- else -}}
@@ -149,7 +130,7 @@ S3 access URL
   value: "http://$(MINIO_ROOT_USER):$(MINIO_ROOT_PASSWORD)@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
 {{- else -}}
 - name: S3_URL
-  value: "http://{{ .Values.minio.auth.rootUser }}:{{ .Values.minio.auth.rootPassword | urlquery }}@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
+  value: "http://{{ .Values.minio.auth.rootUser }}:{{ .Values.minio.auth.rootPassword }}@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
 {{- end -}}
 {{- end -}}
 {{- end -}}

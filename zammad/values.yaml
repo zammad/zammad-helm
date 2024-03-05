@@ -33,10 +33,9 @@ ingress:
     #   hosts:
     #     - chart-example.local
 
-# Please note that when using existing secrets, passwords
-#   for PostgreSQL, Redis and S3 may not contain special characters
-#   which would require URL encoding. This is only possible for
-#   passwords stored in the user values.
+# Please note that passwords for PostgreSQL, Redis and S3 may not
+#   contain special characters which would require URL encoding.
+# See also https://github.com/zammad/zammad-helm/issues/251
 secrets:
   autowizard:
     useExisting: false
