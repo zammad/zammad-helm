@@ -1,0 +1,37 @@
+secrets:
+  autowizard:
+    useExisting: true
+    secretKey: autowizard
+    secretName: autowizard
+  elasticsearch:
+    useExisting: true
+    secretKey: elasticsearch-password
+    secretName: elasticsearch-existing-secret
+  postgresql:
+    useExisting: true
+    secretKey: postgresql-password
+    secretName: postgresql-existing-secret
+  redis:
+    useExisting: true
+    secretKey: redis-password
+    secretName: redis-existing-secret
+
+autoWizard:
+  enabled: true
+
+elasticsearch:
+  security:
+    existingSecret: elasticsearch-existing-secret
+
+minio:
+  auth:
+    existingSecret: minio-existing-secret
+
+redis:
+  auth:
+    existingSecret: redis-existing-secret
+    existingSecretPasswordKey: redis-password
+
+zammadConfig:
+  minio:
+    enabled: true
