@@ -25,12 +25,9 @@ data:
   zammad-init: |-
     #!/bin/bash
     set -e
-    if [ -n "${AUTOWIZARD_JSON}" ]; then
-        echo "${AUTOWIZARD_JSON}" | base64 -d > /opt/zammad/var/auto_wizard.json
-    fi
-      {{- with .Values.zammadConfig.initContainers.zammad.customInit }}
-        {{- . | nindent 4 }}
-      {{- end }}
+    {{- with .Values.zammadConfig.initContainers.zammad.customInit }}
+      {{- . | nindent 4 }}
+    {{- end }}
     echo "zammad init complete :)"
 {{ if .Values.zammadConfig.elasticsearch.initialisation }}
   elasticsearch-init: |-

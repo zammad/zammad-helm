@@ -111,6 +111,7 @@ spec:
               mountPath: /opt/zammad/storage
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
+      {{- if .Values.zammadConfig.initContainers.zammad.customInit }}
         - name: zammad-init
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -134,13 +135,6 @@ spec:
             - name: DATABASE_URL
               value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
             {{ include "zammad.env.S3_URL" . | nindent 12 }}
-          {{- if .Values.autoWizard.enabled }}
-            - name: AUTOWIZARD_JSON
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "zammad.autowizardSecretName" . }}
-                  key: {{ .Values.secrets.autowizard.secretKey }}
-          {{- end }}
           {{- if .Values.extraEnv }}
           {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
@@ -163,6 +157,7 @@ spec:
               mountPath: /opt/zammad/storage
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
+        {{- end }}
         {{- if .Values.zammadConfig.elasticsearch.initialisation }}
         - name: elasticsearch-init
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -286,7 +281,7 @@ spec:
               value: {{ .Values.zammadConfig.railsserver.tmpdir }}
           {{- if .Values.autoWizard.enabled }}
             - name: AUTOWIZARD_RELATIVE_PATH
-              value: var/auto_wizard.json
+              value: tmp/auto_wizard/auto_wizard.json
           {{- end }}
           {{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
             - name: REDIS_PASSWORD
@@ -340,6 +335,10 @@ spec:
               mountPath: /opt/zammad/storage
             - name: {{ template "zammad.fullname" . }}-var
               mountPath: /opt/zammad/var
+          {{- if .Values.autoWizard.enabled }}
+            - name: autowizard
+              mountPath: "/opt/zammad/tmp/auto_wizard"
+          {{- end }}
         - name: {{ .Chart.Name }}-scheduler
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -456,6 +455,14 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+      {{- if .Values.autoWizard.enabled }}
+        - name: autowizard
+          secret:
+            secretName: {{ template "zammad.autowizardSecretName" . }}
+            items:
+            - key: {{ .Values.secrets.autowizard.secretKey }}
+              path: auto_wizard.json
+      {{- end }}
         - name: {{ template "zammad.fullname" . }}-init
           configMap:
             name: {{ template "zammad.fullname" . }}-init
