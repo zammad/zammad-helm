@@ -135,3 +135,155 @@ S3 access URL
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+environment variables for the Zammad Rails stack
+*/}}
+{{- define "zammad.env" -}}
+{{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting -}}
+- name: REDIS_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ template "zammad.redisSecretName" . }}
+      key: {{ .Values.secrets.redis.secretKey }}
+{{- end }}
+- name: MEMCACHE_SERVERS
+  value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
+- name: RAILS_TRUSTED_PROXIES
+  value: "{{ .Values.zammadConfig.railsserver.trustedProxies }}"
+- name: REDIS_URL
+  value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+- name: POSTGRESQL_PASS
+  valueFrom:
+    secretKeyRef:
+      name: {{ template "zammad.postgresqlSecretName" . }}
+      key: {{ .Values.secrets.postgresql.secretKey }}
+- name: DATABASE_URL
+  value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
+{{ include "zammad.env.S3_URL" . }}
+- name: TMP # All zammad containers need the possibility to create temporary files, e.g. for file uploads or image resizing.
+  value: {{ .Values.zammadConfig.railsserver.tmpdir }}
+{{- with .Values.extraEnv }}
+{{ toYaml . }}
+{{- end }}
+{{- end -}}
+
+{{/*
+environment variable to let Rails fail during startup if migrations are pending
+*/}}
+{{- define "zammad.env.failOnPendingMigrations" -}}
+# Let containers fail if migrations are pending.
+- name: RAILS_CHECK_PENDING_MIGRATIONS
+  value: 'true'
+{{- end -}}
+
+{{/*
+volume mounts for the Zammad Rails stack
+*/}}
+{{- define "zammad.volumeMounts" -}}
+- name: {{ template "zammad.fullname" . }}-tmp
+  mountPath: /tmp
+- name: {{ template "zammad.fullname" . }}-tmp
+  mountPath: /opt/zammad/tmp
+{{- if .Values.zammadConfig.storageVolume.enabled }}
+- name: {{ template "zammad.fullname" . }}-storage
+  mountPath: /opt/zammad/storage
+{{- end -}}
+{{- end -}}
+
+{{/*
+volumes for the Zammad Rails stack
+*/}}
+{{- define "zammad.volumes" -}}
+- name: {{ include "zammad.fullname" . }}-tmp
+  {{- toYaml .Values.zammadConfig.tmpDirVolume | nindent 2 }}
+{{- if .Values.zammadConfig.storageVolume.enabled }}
+{{- if .Values.zammadConfig.storageVolume.existingClaim }}
+- name: {{ template "zammad.fullname" . }}-storage
+  persistentVolumeClaim:
+    claimName: {{ .Values.zammadConfig.storageVolume.existingClaim | default (include "zammad.fullname" .) }}
+{{- else }}
+  {{ fail "Please provide an existing PersistentVolumeClaim with ReadWriteMany access if you enable .Values.zammadConfig.storageVolume." }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+shared configuration for Zammad Pods
+*/}}
+{{- define "zammad.podSpec" -}}
+{{- with .Values.image.imagePullSecrets }}
+imagePullSecrets:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- if .Values.serviceAccount.create }}
+serviceAccountName: {{ include "zammad.serviceAccountName" . }}
+{{- end }}
+{{- with .Values.nodeSelector }}
+nodeSelector:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with .Values.affinity }}
+affinity:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with .Values.tolerations }}
+tolerations:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with .Values.securityContext }}
+securityContext:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end -}}
+
+{{/*
+shared configuration for Zammad Deployment Pods
+*/}}
+{{- define "zammad.podSpec.deployment" -}}
+{{ include "zammad.podSpec" . }}
+{{- if .Values.zammadConfig.initContainers.volumePermissions.enabled }}
+initContainers:
+  - name: zammad-tmp-permissions
+    image: "{{ .Values.zammadConfig.initContainers.volumePermissions.image.repository }}:{{ .Values.zammadConfig.initContainers.volumePermissions.image.tag }}"
+    imagePullPolicy: {{ .Values.zammadConfig.initContainers.volumePermissions.image.pullPolicy }}
+    command:
+      - /bin/sh
+      - -cx
+      - chmod 770 /opt/zammad/tmp
+    {{- with .Values.zammadConfig.initContainers.volumePermissions.resources }}
+    resources:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.zammadConfig.initContainers.volumePermissions.securityContext }}
+    securityContext:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    volumeMounts:
+      {{- include "zammad.volumeMounts" . | nindent 6 }}
+{{- end }}
+{{- end -}}
+
+{{/*
+shared configuration for Zammad containers
+*/}}
+{{- define "zammad.containerSpec" -}}
+image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+imagePullPolicy: {{ .Values.image.pullPolicy }}
+{{- with .containerConfig.livenessProbe }}
+livenessProbe:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with .containerConfig.readinessProbe }}
+readinessProbe:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with .containerConfig.resources }}
+resources:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with .containerConfig.securityContext }}
+securityContext:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end -}}
