@@ -142,6 +142,8 @@ zammadConfig:
     port: 5432
     # needs to be the same as the postgresql.auth.username
     user: zammad
+    # additional connection options
+    options: "pool=50"
 
   railsserver:
     livenessProbe:
