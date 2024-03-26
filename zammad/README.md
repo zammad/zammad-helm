@@ -155,6 +155,18 @@ Now you can open <http://localhost:8080> in your browser.
 
 ## Upgrading
 
+### From Chart Version 10.x to 11.0.0
+
+- Minimum Zammad version is now 6.3.0, where there is no `var/` folder any more, and the related
+  mount points have been removed.
+- The handling of the Autowizard secret was simplified. It is no longer processed by an init container,
+  but instead mounted directly into the Zammad container. Therefore the secret must contain the actual
+  raw JSON value, and not the Base64 encoded JSON. So if you use an existing Autowizard secret,
+  you will need to change it to contain the raw value now.
+- There is a new `.Values.zammadConfig.postgresql.options` setting that can be used to specify additional
+  settings for the database connection. By default it specifies Zammad's default Rails DB pool size of 50.
+  For large installations you may need to increase this value.
+
 ### From Chart Version 9.x to 10.0.0
 
 - all containers uses `readOnlyRootFilesystem: true` again
