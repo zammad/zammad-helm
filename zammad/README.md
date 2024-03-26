@@ -161,7 +161,7 @@ Now you can open <http://localhost:8080> in your browser.
   mount points have been removed.
 - The handling of the Autowizard secret was simplified. It is no longer processed by an init container,
   but instead mounted directly into the Zammad container. Therefore the secret must contain the actual
-  raw JSON value, and not the Base64 encoded JSON. So if you use an existing Autowizard secret,
+  raw JSON value, and not the base64 encoded JSON. So if you use an existing Autowizard secret,
   you will need to change it to contain the raw value now.
 - There is a new `.Values.zammadConfig.postgresql.options` setting that can be used to specify additional
   settings for the database connection. By default it specifies Zammad's default Rails DB pool size of 50.
