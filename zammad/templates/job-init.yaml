@@ -32,7 +32,7 @@ spec:
           command:
             - /bin/sh
             - -cx
-            - chown {{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.runAsGroup }} -R /opt/zammad/var
+            - chmod 770 /opt/zammad/tmp
           {{- with .Values.zammadConfig.initContainers.volumePermissions.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
@@ -54,24 +54,19 @@ spec:
               mountPath: /docker-entrypoint.sh
               readOnly: true
               subPath: postgresql-init
+        {{- if .Values.zammadConfig.initContainers.zammad.customInit }}
         - name: zammad-init
           {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.initContainers.zammad) .) | nindent 10 }}
           env:
             {{- include "zammad.env" . | nindent 12 }}
             {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
-            {{- if .Values.autoWizard.enabled }}
-            - name: AUTOWIZARD_JSON
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "zammad.autowizardSecretName" . }}
-                  key: {{ .Values.secrets.autowizard.secretKey }}
-            {{- end }}
           volumeMounts:
             {{- include "zammad.volumeMounts" . | nindent 12 }}
             - name: {{ template "zammad.fullname" . }}-init
               mountPath: /docker-entrypoint.sh
               readOnly: true
               subPath: zammad-init
+        {{- end }}
         {{- if .Values.zammadConfig.elasticsearch.initialisation }}
         - name: elasticsearch-init
           {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.initContainers.elasticsearch) .) | nindent 10 }}

@@ -159,7 +159,7 @@ environment variables for the Zammad Rails stack
       name: {{ template "zammad.postgresqlSecretName" . }}
       key: {{ .Values.secrets.postgresql.secretKey }}
 - name: DATABASE_URL
-  value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}"
+  value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}?{{ .Values.zammadConfig.postgresql.options }}"
 {{ include "zammad.env.S3_URL" . }}
 - name: TMP # All zammad containers need the possibility to create temporary files, e.g. for file uploads or image resizing.
   value: {{ .Values.zammadConfig.railsserver.tmpdir }}
@@ -206,6 +206,14 @@ volumes for the Zammad Rails stack
   {{ fail "Please provide an existing PersistentVolumeClaim with ReadWriteMany access if you enable .Values.zammadConfig.storageVolume." }}
 {{- end -}}
 {{- end -}}
+{{- if .Values.autoWizard.enabled }}
+- name: autowizard
+  secret:
+    secretName: {{ template "zammad.autowizardSecretName" . }}
+    items:
+    - key: {{ .Values.secrets.autowizard.secretKey }}
+      path: auto_wizard.json
+{{- end }}
 {{- end -}}
 
 {{/*
@@ -244,7 +252,7 @@ shared configuration for Zammad Deployment Pods
 {{ include "zammad.podSpec" . }}
 {{- if .Values.zammadConfig.initContainers.volumePermissions.enabled }}
 initContainers:
-  - name: zammad-tmp-permissions
+  - name: zammad-volume-permissions
     image: "{{ .Values.zammadConfig.initContainers.volumePermissions.image.repository }}:{{ .Values.zammadConfig.initContainers.volumePermissions.image.tag }}"
     imagePullPolicy: {{ .Values.zammadConfig.initContainers.volumePermissions.image.pullPolicy }}
     command:

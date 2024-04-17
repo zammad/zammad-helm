@@ -42,12 +42,16 @@ spec:
             {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
           {{- if .Values.autoWizard.enabled }}
             - name: AUTOWIZARD_RELATIVE_PATH
-              value: var/auto_wizard.json
+              value: tmp/auto_wizard/auto_wizard.json
           {{- end }}
           ports:
             - name: railsserver
               containerPort: 3000
           volumeMounts:
             {{- include "zammad.volumeMounts" . | nindent 12 }}
+            {{- if .Values.autoWizard.enabled }}
+            - name: autowizard
+              mountPath: "/opt/zammad/tmp/auto_wizard"
+            {{- end }}
       volumes:
         {{- include "zammad.volumes" . | nindent 8 }}
