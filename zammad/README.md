@@ -159,13 +159,12 @@ redis:
 
 - `replicas` can be set independently now for `zammad-nginx` and `zammad-railsserver`, allowing free scaling and HA setup for these.
   - For `zammad-scheduler` and `zammad-websocket`, `replicas` is fixed to `1` as they may only run once in the cluster.
-- The `initContainers` moved to a new `zammad-init` `Job` now which will be run on every `helm upgrade`. This greatly reduces startup time.
+- The `initContainers` moved to a new `zammad-init` `Job` now which will be run on every `helm upgrade`. This reduces startup time greatly.
 - The nginx `Service` was renamed from `zammad` to `zammad-nginx`.
 - The previous `Values.sidecars` setting does not exist any more. Instead, you need to specify sidecars now on a per deployment basis, e.g. `Values.zammadConfig.scheduler.sidecars`.
 
 #### Storage Requirements Changed
 
-- Zammad no longer requires a volume for `var/`
 - If you use the default `DB` or the new `S3` storage backend for file storage, you don't need to do anything.
 - If you use the `File` storage backend instead, Zammad now requires a `ReadWriteMany` volume for `storage/` that is shared in the cluster.
   - If you already had one via `persistence.existingClaim` before, you need to ensure it has `ReadWriteMany` access to be mountable across nodes.
