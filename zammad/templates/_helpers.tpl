@@ -166,6 +166,10 @@ environment variables for the Zammad Rails stack
 {{- with .Values.extraEnv }}
 {{ toYaml . }}
 {{- end }}
+{{- if .Values.autoWizard.enabled }}
+- name: AUTOWIZARD_RELATIVE_PATH
+  value: tmp/auto_wizard/auto_wizard.json
+{{- end }}
 {{- end -}}
 
 {{/*
@@ -189,6 +193,10 @@ volume mounts for the Zammad Rails stack
 - name: {{ template "zammad.fullname" . }}-storage
   mountPath: /opt/zammad/storage
 {{- end -}}
+{{- if .Values.autoWizard.enabled }}
+- name: autowizard
+  mountPath: "/opt/zammad/tmp/auto_wizard"
+{{- end }}
 {{- end -}}
 
 {{/*
