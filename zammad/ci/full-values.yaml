@@ -33,5 +33,8 @@ redis:
     existingSecretPasswordKey: redis-password
 
 zammadConfig:
+  storageVolume:
+    enabled: true
+    existingClaim: 'storage-volume-claim'
   minio:
     enabled: true
