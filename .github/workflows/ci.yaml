@@ -124,7 +124,7 @@ jobs:
       - name: Create Namespace 'zammad'
         run: kubectl create namespace zammad
 
-      - name: Install secrets
+      - name: Install additional objects for 'full' test scenario
         run: kubectl create --namespace zammad --filename zammad/ci/full-objects.yaml
 
       - name: Run chart-testing (install)
