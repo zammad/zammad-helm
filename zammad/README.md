@@ -167,10 +167,10 @@ redis:
 
 - If you use the default `DB` or the new `S3` storage backend for file storage, you don't need to do anything.
 - If you use the `File` storage backend instead, Zammad now requires a `ReadWriteMany` volume for `storage/` that is shared in the cluster.
-  - If you already had one via `persistence.existingClaim` before, you need to ensure it has `ReadWriteMany` access to be mountable across nodes.
+  - If you already had one via `persistence.existingClaim` before, you need to ensure it has `ReadWriteMany` access to be mountable across nodes and provide it via `zammadConfig.storageVolume.existingClaim`.
   - If you used the default `PersistentVolumeClaim` of the `StatefulSet`, you need to take manual action:
     - You can either migrate to `S3` storage **before upgrading** to the new major version as described above in [Configuration](#how-to-migrate-from-file-to-s3-storage).
-    - Or you can provide an `existingClaim` with `ReadWriteMany` permission and migrate your existing data to it from the old `StatefulSet`.
+    - Or you can provide a `zammadConfig.storageVolume.existingClaim` with `ReadWriteMany` permission and migrate your existing data to it from the old `StatefulSet`.
 
 ### From Chart Version 10.x to 11.0.0
 
