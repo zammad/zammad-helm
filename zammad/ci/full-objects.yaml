@@ -45,7 +45,7 @@ metadata:
   name: storage-volume-claim
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce   # Testing env does not provide ReadWrite Many, but for CI this is enough.
   resources:
     requests:
       storage: 32Mi
