@@ -264,9 +264,7 @@ initContainers:
     image: "{{ .Values.zammadConfig.initContainers.volumePermissions.image.repository }}:{{ .Values.zammadConfig.initContainers.volumePermissions.image.tag }}"
     imagePullPolicy: {{ .Values.zammadConfig.initContainers.volumePermissions.image.pullPolicy }}
     command:
-      - /bin/sh
-      - -cx
-      - chmod 770 /opt/zammad/tmp
+      {{- .Values.zammadConfig.initContainers.volumePermissions.command | toYaml | nindent 6 }}
     {{- with .Values.zammadConfig.initContainers.volumePermissions.resources }}
     resources:
       {{- toYaml . | nindent 6 }}

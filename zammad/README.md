@@ -67,15 +67,8 @@ Only if you have a large volume of tickets and attachments, you may need to stor
 
 We recommend the `S3` storage provider using the optional `minio` subchart in this case.
 
-You can also use `File` storage. In this case, you should check:
-
-- If you already use an `externalVolumeClaim` with `ReadWriteMany` access, you can keep using that.
-- If you already use an `externalVolumeClaim` with another access mode, we recommend migrating to S3 storage (see below).
-- If you used the default `PVC` of the Zammad `StatefulSet`, we also recommend migrating to S3 storage (see below).
-
-Background information: a future version of Zammad will increase the scalability by splitting up the current `Statefulset`
-into several `Deployment`s which can be scaled. This means the `PVC` of the current `StatefulSet` will then not be usable any more,
-and any volumes will have to support `ReadWriteMany` access.
+You can also use `File` storage. In this case, you need to provide an existing `PVC` via `zammadConfig.storageVolume`.
+Note that this `PVC` must provide `ReadWriteMany` access to work properly for the different Deployments which may be on different nodes.
 
 #### How to migrate from `File` to `S3` storage
 
@@ -111,11 +104,15 @@ zammadConfig:
     zammad:
       securityContext:
         runAsUser: null
-      customInit: |
+  volumePermissions:
+    command:
+      - /bin/sh
+      - -cx
+      - |
         # use an openshift uid owned /tmp for attachments upload
-        mkdir -pv /opt/zammad/tmp && chmod -v +t /opt/zammad/tmp
+        mkdir -pv /opt/zammad/tmp/tmp && chmod -v +t /opt/zammad/tmp/tmp
   railsserver:
-    tmpdir: "/opt/zammad/tmp"
+    tmpdir: "/opt/zammad/tmp/tmp"
 
 elasticsearch:
   sysctlImage:

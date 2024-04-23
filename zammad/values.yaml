@@ -185,6 +185,7 @@ zammadConfig:
     sidecars: []
     trustedProxies: "['127.0.0.1', '::1']"
     webConcurrency: 0
+    # tmpdir will be used by all Zammad/Rails containers
     tmpdir: "/opt/zammad/tmp"
 
   redis:
@@ -296,12 +297,18 @@ zammadConfig:
             - ALL
         readOnlyRootFilesystem: true
         privileged: false
+    # volumePermissions will be used by all Zammad Pods
     volumePermissions:
       enabled: true
       image:
         repository: alpine
         tag: "3.18.4"
         pullPolicy: IfNotPresent
+      command:
+        - /bin/sh
+        - -cx
+        - |
+          chmod 770 /opt/zammad/tmp
       resources: {}
         # requests:
         #   cpu: 100m
