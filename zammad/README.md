@@ -105,14 +105,10 @@ zammadConfig:
       securityContext:
         runAsUser: null
   volumePermissions:
-    command:
-      - /bin/sh
-      - -cx
-      - |
-        # use an openshift uid owned /tmp for attachments upload
-        mkdir -pv /opt/zammad/tmp/tmp && chmod -v +t /opt/zammad/tmp/tmp
-  railsserver:
-    tmpdir: "/opt/zammad/tmp/tmp"
+    enabled: false
+  tmpDirVolume:
+    emptyDir:
+      medium: memory
 
 elasticsearch:
   sysctlImage:
