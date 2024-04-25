@@ -55,5 +55,4 @@ spec:
   resources:
     requests:
       storage: 32Mi
-  namespace: zammad
 type: Opaque
