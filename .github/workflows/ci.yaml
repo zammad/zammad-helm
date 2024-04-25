@@ -6,8 +6,8 @@ on:
       - main
 
 env:
-  helm-version: "v3.12.1"
-  kubeconform-version: "v0.6.3"
+  helm-version: "v3.14.4"
+  kubeconform-version: "v0.6.4"
 
 jobs:
   super-linter:
