@@ -1,5 +1,7 @@
 name: sync-readme
 
+permissions: read-all
+
 on:
   push:
     branches:
