@@ -55,4 +55,4 @@ spec:
   resources:
     requests:
       storage: 32Mi
-type: Opaque
+
