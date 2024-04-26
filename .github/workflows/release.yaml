@@ -1,15 +1,21 @@
 name: Release Charts
 
+permissions: read-all
+
 on:
   push:
     branches:
       - main
 
 env:
-  helm-version: "v3.10.1"
+  helm-version: "v3.14.4"
 
 jobs:
   release:
+    permissions:
+      contents: write # to push chart release and create a release (helm/chart-releaser-action)
+      packages: write # needed for ghcr access
+      id-token: write # needed for keyless signing
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout

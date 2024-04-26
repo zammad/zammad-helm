@@ -1,13 +1,15 @@
 name: ci
 
+permissions: read-all
+
 on:
   pull_request:
     branches:
       - main
 
 env:
-  helm-version: "v3.12.1"
-  kubeconform-version: "v0.6.3"
+  helm-version: "v3.14.4"
+  kubeconform-version: "v0.6.4"
 
 jobs:
   super-linter:
@@ -19,7 +21,7 @@ jobs:
           fetch-depth: 0
 
       - name: Lint Code Base
-        uses: github/super-linter/slim@v5
+        uses: github/super-linter/slim@v6
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

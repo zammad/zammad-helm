@@ -1,5 +1,7 @@
 name: sync-readme
 
+permissions: read-all
+
 on:
   push:
     branches:
@@ -9,6 +11,8 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: write # for git push
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
