@@ -13,11 +13,11 @@ data:
     server_tokens off;
 
     upstream zammad-railsserver {
-        server localhost:3000;
+        server {{ template "zammad.fullname" . }}-railsserver:3000;
     }
 
     upstream zammad-websocket {
-        server localhost:6042;
+        server {{ template "zammad.fullname" . }}-websocket:6042;
     }
 
     server {
@@ -106,9 +106,9 @@ data:
     }
   nginx.conf: |-
     worker_processes auto;
-    
+
     pid /tmp/nginx.pid;
-    
+
     include /etc/nginx/modules-enabled/*.conf;
 
     events {

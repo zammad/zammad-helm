@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "zammad.fullname" . }}-railsserver
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zammad-railsserver
+spec:
+  replicas: {{ .Values.zammadConfig.railsserver.replicas }}
+  selector:
+    matchLabels:
+      {{- include "zammad.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "zammad.labels" . | nindent 8 }}
+        app.kubernetes.io/component: zammad-railsserver
+    spec:
+      {{- include "zammad.podSpec.deployment" . | nindent 6 }}
+      containers:
+        {{- with .Values.zammadConfig.railsserver.sidecars }}
+        {{- toYaml . | nindent 8}}
+        {{- end }}
+        - name: {{ .Chart.Name }}-railsserver
+          {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.railsserver) .) | nindent 10 }}
+          command:
+            - "bundle"
+            - "exec"
+            - "puma"
+            - "-b"
+            - "tcp://[::]:3000"
+            - "-w"
+            - "{{ .Values.zammadConfig.railsserver.webConcurrency }}"
+            - "-e"
+            - "production"
+          env:
+            {{- include "zammad.env" . | nindent 12 }}
+            {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+          ports:
+            - name: railsserver
+              containerPort: 3000
+          volumeMounts:
+            {{- include "zammad.volumeMounts" . | nindent 12 }}
+      volumes:
+        {{- include "zammad.volumes" . | nindent 8 }}

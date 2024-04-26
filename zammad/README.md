@@ -31,6 +31,15 @@ helm repo add zammad https://zammad.github.io/zammad-helm
 helm upgrade --install zammad zammad/zammad
 ```
 
+Once the Zammad pod is ready, it can be accessed using the ingress or port forwarding.
+To use port forwarding:
+
+```console
+kubectl port-forward service/zammad-nginx 8080
+```
+
+Now you can open <http://localhost:8080> in your browser.
+
 ## Uninstalling the Chart
 
 To remove the chart again use the following:
@@ -58,15 +67,8 @@ Only if you have a large volume of tickets and attachments, you may need to stor
 
 We recommend the `S3` storage provider using the optional `minio` subchart in this case.
 
-You can also use `File` storage. In this case, you should check:
-
-- If you already use an `externalVolumeClaim` with `ReadWriteMany` access, you can keep using that.
-- If you already use an `externalVolumeClaim` with another access mode, we recommend migrating to S3 storage (see below).
-- If you used the default `PVC` of the Zammad `StatefulSet`, we also recommend migrating to S3 storage (see below).
-
-Background information: a future version of Zammad will increase the scalability by splitting up the current `Statefulset`
-into several `Deployment`s which can be scaled. This means the `PVC` of the current `StatefulSet` will then not be usable any more,
-and any volumes will have to support `ReadWriteMany` access.
+You can also use `File` storage. In this case, you need to provide an existing `PVC` via `zammadConfig.storageVolume`.
+Note that this `PVC` must provide `ReadWriteMany` access to work properly for the different Deployments which may be on different nodes.
 
 #### How to migrate from `File` to `S3` storage
 
@@ -102,11 +104,11 @@ zammadConfig:
     zammad:
       securityContext:
         runAsUser: null
-      customInit: |
-        # use an openshift uid owned /tmp for attachments upload
-        mkdir -pv /opt/zammad/var/tmp && chmod -v +t /opt/zammad/var/tmp
-  railsserver:
-    tmpdir: "/opt/zammad/var/tmp"
+  volumePermissions:
+    enabled: false
+  tmpDirVolume:
+    emptyDir:
+      medium: memory
 
 elasticsearch:
   sysctlImage:
@@ -142,18 +144,26 @@ redis:
       enabled: false
 ```
 
-## Using Zammad
-
-Once the Zammad pod is ready, it can be accessed using the ingress or port forwarding.
-To use port forwarding:
-
-```console
-kubectl port-forward service/zammad 8080
-```
-
-Now you can open <http://localhost:8080> in your browser.
-
 ## Upgrading
+
+### From Chart Version 11.x to 12.0.0
+
+#### The Previous `StatefulSet` Was Split up into `Deployments`
+
+- `replicas` can be set independently now for `zammad-nginx` and `zammad-railsserver`, allowing free scaling and HA setup for these.
+  - For `zammad-scheduler` and `zammad-websocket`, `replicas` is fixed to `1` as they may only run once in the cluster.
+- The `initContainers` moved to a new `zammad-init` `Job` now which will be run on every `helm upgrade`. This reduces startup time greatly.
+- The nginx `Service` was renamed from `zammad` to `zammad-nginx`.
+- The previous `Values.sidecars` setting does not exist any more. Instead, you need to specify sidecars now on a per deployment basis, e.g. `Values.zammadConfig.scheduler.sidecars`.
+
+#### Storage Requirements Changed
+
+- If you use the default `DB` or the new `S3` storage backend for file storage, you don't need to do anything.
+- If you use the `File` storage backend instead, Zammad now requires a `ReadWriteMany` volume for `storage/` that is shared in the cluster.
+  - If you already had one via `persistence.existingClaim` before, you need to ensure it has `ReadWriteMany` access to be mountable across nodes and provide it via `zammadConfig.storageVolume.existingClaim`.
+  - If you used the default `PersistentVolumeClaim` of the `StatefulSet`, you need to take manual action:
+    - You can either migrate to `S3` storage **before upgrading** to the new major version as described above in [Configuration](#how-to-migrate-from-file-to-s3-storage).
+    - Or you can provide a `zammadConfig.storageVolume.existingClaim` with `ReadWriteMany` permission and migrate your existing data to it from the old `StatefulSet`.
 
 ### From Chart Version 10.x to 11.0.0
 

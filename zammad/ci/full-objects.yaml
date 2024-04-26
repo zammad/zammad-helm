@@ -38,3 +38,14 @@ kind: Secret
 metadata:
   name: autowizard
 type: Opaque
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: storage-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce   # Testing env does not provide ReadWrite Many, but for CI this is enough.
+  resources:
+    requests:
+      storage: 32Mi

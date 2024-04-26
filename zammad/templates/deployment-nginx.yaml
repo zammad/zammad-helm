@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "zammad.fullname" . }}-nginx
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zammad-nginx
+spec:
+  replicas: {{ .Values.zammadConfig.nginx.replicas }}
+  selector:
+    matchLabels:
+      {{- include "zammad.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "zammad.labels" . | nindent 8 }}
+        app.kubernetes.io/component: zammad-nginx
+    spec:
+      {{- include "zammad.podSpec.deployment" . | nindent 6 }}
+      containers:
+        {{- with .Values.zammadConfig.nginx.sidecars }}
+        {{- toYaml . | nindent 8}}
+        {{- end }}
+        - name: {{ .Chart.Name }}-nginx
+          {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.nginx) .) | nindent 10 }}
+          command:
+            - /usr/sbin/nginx
+            - -g
+            - 'daemon off;'
+          env:
+            {{- include "zammad.env" . | nindent 12 }}
+            {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 8080
+          volumeMounts:
+            {{- include "zammad.volumeMounts" . | nindent 12 }}
+            - name: {{ include "zammad.fullname" . }}-nginx
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: {{ include "zammad.fullname" . }}-nginx
+              mountPath: /etc/nginx/sites-enabled/default
+              subPath: default
+              readOnly: true
+            - name: {{ include "zammad.fullname" . }}-tmp
+              mountPath: /var/log/nginx
+      volumes:
+        {{- include "zammad.volumes" . | nindent 8 }}
+        - name: {{ template "zammad.fullname" . }}-init
+          configMap:
+            name: {{ template "zammad.fullname" . }}-init
+            defaultMode: 0755
+        - name: {{ template "zammad.fullname" . }}-nginx
+          configMap:
+            name: {{ template "zammad.fullname" . }}-nginx
