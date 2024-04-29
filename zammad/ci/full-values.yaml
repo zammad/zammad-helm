@@ -23,6 +23,9 @@ elasticsearch:
   security:
     existingSecret: elasticsearch-existing-secret
 
+ingress:
+  enabled: true
+
 minio:
   auth:
     existingSecret: minio-existing-secret

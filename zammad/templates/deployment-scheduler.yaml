@@ -25,7 +25,7 @@ spec:
         {{- with .Values.zammadConfig.scheduler.sidecars }}
         {{- toYaml . | nindent 8}}
         {{- end }}
-        - name: {{ .Chart.Name }}-scheduler
+        - name: zammad-scheduler
           {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.scheduler) .) | nindent 10 }}
           command:
             - "bundle"

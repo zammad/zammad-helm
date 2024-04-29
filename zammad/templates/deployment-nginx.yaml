@@ -25,7 +25,7 @@ spec:
         {{- with .Values.zammadConfig.nginx.sidecars }}
         {{- toYaml . | nindent 8}}
         {{- end }}
-        - name: {{ .Chart.Name }}-nginx
+        - name: zammad-nginx
           {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.nginx) .) | nindent 10 }}
           command:
             - /usr/sbin/nginx
