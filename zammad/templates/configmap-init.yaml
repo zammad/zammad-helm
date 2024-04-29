@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "zammad.fullname" . }}-init
+  name: {{ include "zammad.fullname" . }}-init
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
 data:

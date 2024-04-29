@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "zammad.fullname" . }}-nginx
+  name: {{ include "zammad.fullname" . }}-nginx
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
     app.kubernetes.io/component: zammad-nginx
@@ -25,7 +25,7 @@ spec:
         {{- with .Values.zammadConfig.nginx.sidecars }}
         {{- toYaml . | nindent 8}}
         {{- end }}
-        - name: {{ .Chart.Name }}-nginx
+        - name: zammad-nginx
           {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.nginx) .) | nindent 10 }}
           command:
             - /usr/sbin/nginx
@@ -51,10 +51,10 @@ spec:
               mountPath: /var/log/nginx
       volumes:
         {{- include "zammad.volumes" . | nindent 8 }}
-        - name: {{ template "zammad.fullname" . }}-init
+        - name: {{ include "zammad.fullname" . }}-init
           configMap:
-            name: {{ template "zammad.fullname" . }}-init
+            name: {{ include "zammad.fullname" . }}-init
             defaultMode: 0755
-        - name: {{ template "zammad.fullname" . }}-nginx
+        - name: {{ include "zammad.fullname" . }}-nginx
           configMap:
-            name: {{ template "zammad.fullname" . }}-nginx
+            name: {{ include "zammad.fullname" . }}-nginx

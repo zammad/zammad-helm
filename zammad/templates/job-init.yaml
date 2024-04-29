@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "zammad.fullname" . }}-init-{{ uuidv4 }}
+  name: {{ include "zammad.fullname" . }}-init-{{ uuidv4 }}
   # Use a different job name on each run to ensure a new job always runs once.
   # Helm post-install/post-upgrade hooks cannot be used here, because
   #   helm's --wait flag causes a deadlock: the job waits for all resources to be ready,
@@ -48,7 +48,7 @@ spec:
             {{- include "zammad.env" . | nindent 12 }}
           volumeMounts:
             {{- include "zammad.volumeMounts" . | nindent 12 }}
-            - name: {{ template "zammad.fullname" . }}-init
+            - name: {{ include "zammad.fullname" . }}-init
               mountPath: /docker-entrypoint.sh
               readOnly: true
               subPath: postgresql-init
@@ -60,7 +60,7 @@ spec:
             {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
           volumeMounts:
             {{- include "zammad.volumeMounts" . | nindent 12 }}
-            - name: {{ template "zammad.fullname" . }}-init
+            - name: {{ include "zammad.fullname" . }}-init
               mountPath: /docker-entrypoint.sh
               readOnly: true
               subPath: zammad-init
@@ -75,19 +75,19 @@ spec:
             - name: ELASTICSEARCH_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ template "zammad.elasticsearchSecretName" . }}
+                  name: {{ include "zammad.elasticsearchSecretName" . }}
                   key: {{ .Values.secrets.elasticsearch.secretKey }}
           {{- end }}
           volumeMounts:
             {{- include "zammad.volumeMounts" . | nindent 12 }}
-            - name: {{ template "zammad.fullname" . }}-init
+            - name: {{ include "zammad.fullname" . }}-init
               mountPath: /docker-entrypoint.sh
               readOnly: true
               subPath: elasticsearch-init
         {{- end }}
       volumes:
         {{- include "zammad.volumes" . | nindent 8 }}
-        - name: {{ template "zammad.fullname" . }}-init
+        - name: {{ include "zammad.fullname" . }}-init
           configMap:
-            name: {{ template "zammad.fullname" . }}-init
+            name: {{ include "zammad.fullname" . }}-init
             defaultMode: 0755
