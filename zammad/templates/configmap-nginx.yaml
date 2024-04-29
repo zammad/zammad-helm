@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "zammad.fullname" . }}-nginx
+  name: {{ include "zammad.fullname" . }}-nginx
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
 data:
@@ -13,11 +13,11 @@ data:
     server_tokens off;
 
     upstream zammad-railsserver {
-        server {{ template "zammad.fullname" . }}-railsserver:3000;
+        server {{ include "zammad.fullname" . }}-railsserver:3000;
     }
 
     upstream zammad-websocket {
-        server {{ template "zammad.fullname" . }}-websocket:6042;
+        server {{ include "zammad.fullname" . }}-websocket:6042;
     }
 
     server {

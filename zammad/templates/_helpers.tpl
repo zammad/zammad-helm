@@ -69,7 +69,7 @@ autowizard secret name
 {{- if .Values.secrets.autowizard.useExisting -}}
 {{ .Values.secrets.autowizard.secretName }}
 {{- else -}}
-{{ template "zammad.fullname" . }}-{{ .Values.secrets.autowizard.secretName }}
+{{ include "zammad.fullname" . }}-{{ .Values.secrets.autowizard.secretName }}
 {{- end -}}
 {{- end -}}
 
@@ -80,7 +80,7 @@ elasticsearch secret name
 {{- if .Values.secrets.elasticsearch.useExisting -}}
 {{ .Values.secrets.elasticsearch.secretName }}
 {{- else -}}
-{{ template "zammad.fullname" . }}-{{ .Values.secrets.elasticsearch.secretName }}
+{{ include "zammad.fullname" . }}-{{ .Values.secrets.elasticsearch.secretName }}
 {{- end -}}
 {{- end -}}
 
@@ -91,7 +91,7 @@ postgresql secret name
 {{- if .Values.secrets.postgresql.useExisting -}}
 {{ .Values.secrets.postgresql.secretName }}
 {{- else -}}
-{{ template "zammad.fullname" . }}-{{ .Values.secrets.postgresql.secretName }}
+{{ include "zammad.fullname" . }}-{{ .Values.secrets.postgresql.secretName }}
 {{- end -}}
 {{- end -}}
 
@@ -102,7 +102,7 @@ redis secret name
 {{- if .Values.secrets.redis.useExisting -}}
 {{ .Values.secrets.redis.secretName }}
 {{- else -}}
-{{ template "zammad.fullname" . }}-{{ .Values.secrets.redis.secretName }}
+{{ include "zammad.fullname" . }}-{{ .Values.secrets.redis.secretName }}
 {{- end -}}
 {{- end -}}
 
@@ -127,10 +127,10 @@ S3 access URL
       key: root-password
       name: {{ .Values.minio.auth.existingSecret }}
 - name: S3_URL
-  value: "http://$(MINIO_ROOT_USER):$(MINIO_ROOT_PASSWORD)@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
+  value: "http://$(MINIO_ROOT_USER):$(MINIO_ROOT_PASSWORD)@{{ include "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
 {{- else -}}
 - name: S3_URL
-  value: "http://{{ .Values.minio.auth.rootUser }}:{{ .Values.minio.auth.rootPassword }}@{{ template "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
+  value: "http://{{ .Values.minio.auth.rootUser }}:{{ .Values.minio.auth.rootPassword }}@{{ include "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -144,7 +144,7 @@ environment variables for the Zammad Rails stack
 - name: REDIS_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ template "zammad.redisSecretName" . }}
+      name: {{ include "zammad.redisSecretName" . }}
       key: {{ .Values.secrets.redis.secretKey }}
 {{- end }}
 - name: MEMCACHE_SERVERS
@@ -156,7 +156,7 @@ environment variables for the Zammad Rails stack
 - name: POSTGRESQL_PASS
   valueFrom:
     secretKeyRef:
-      name: {{ template "zammad.postgresqlSecretName" . }}
+      name: {{ include "zammad.postgresqlSecretName" . }}
       key: {{ .Values.secrets.postgresql.secretKey }}
 - name: DATABASE_URL
   value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}?{{ .Values.zammadConfig.postgresql.options }}"
@@ -185,12 +185,12 @@ environment variable to let Rails fail during startup if migrations are pending
 volume mounts for the Zammad Rails stack
 */}}
 {{- define "zammad.volumeMounts" -}}
-- name: {{ template "zammad.fullname" . }}-tmp
+- name: {{ include "zammad.fullname" . }}-tmp
   mountPath: /tmp
-- name: {{ template "zammad.fullname" . }}-tmp
+- name: {{ include "zammad.fullname" . }}-tmp
   mountPath: /opt/zammad/tmp
 {{- if .Values.zammadConfig.storageVolume.enabled }}
-- name: {{ template "zammad.fullname" . }}-storage
+- name: {{ include "zammad.fullname" . }}-storage
   mountPath: /opt/zammad/storage
 {{- end -}}
 {{- if .Values.autoWizard.enabled }}
@@ -207,7 +207,7 @@ volumes for the Zammad Rails stack
   {{- toYaml .Values.zammadConfig.tmpDirVolume | nindent 2 }}
 {{- if .Values.zammadConfig.storageVolume.enabled }}
 {{- if .Values.zammadConfig.storageVolume.existingClaim }}
-- name: {{ template "zammad.fullname" . }}-storage
+- name: {{ include "zammad.fullname" . }}-storage
   persistentVolumeClaim:
     claimName: {{ .Values.zammadConfig.storageVolume.existingClaim | default (include "zammad.fullname" .) }}
 {{- else }}
@@ -217,7 +217,7 @@ volumes for the Zammad Rails stack
 {{- if .Values.autoWizard.enabled }}
 - name: autowizard
   secret:
-    secretName: {{ template "zammad.autowizardSecretName" . }}
+    secretName: {{ include "zammad.autowizardSecretName" . }}
     items:
     - key: {{ .Values.secrets.autowizard.secretKey }}
       path: auto_wizard.json
