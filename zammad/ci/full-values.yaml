@@ -41,3 +41,11 @@ zammadConfig:
     existingClaim: 'storage-volume-claim'
   minio:
     enabled: true
+  customVolumes:
+    - name: custom-volume
+      configMap:
+        name: helm-tests
+  customVolumeMounts:
+    - name: custom-volume
+      mountPath: /opt/zammad/lib/tasks/helm
+      readOnly: true

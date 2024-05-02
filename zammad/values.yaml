@@ -232,6 +232,18 @@ zammadConfig:
       # see: https://github.com/kubernetes/kubernetes/issues/76158 & https://github.com/kubernetes/kubernetes/issues/110835
       # medium: Memory
 
+  # Custom volumes for all Zammad Pods.
+  customVolumes:
+    # - name: custom-volume
+    #   configMap:
+    #     name: my-config-map
+
+  # Custom volumeMounts for all Zammad Pods.
+  customVolumeMounts:
+    # - name: custom-volume
+    #   mountPath: "/opt/zammad/config_map"
+    #   readOnly: true
+
   websocket:
     livenessProbe:
       tcpSocket:
