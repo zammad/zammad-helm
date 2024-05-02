@@ -377,7 +377,7 @@ autoWizard:
   #         "lastname": "Admin",
   #         "email": "email@example.org",
   #         "organization": "ZammadTest",
-  #         "password": "YourPassword"
+  #         "password": "..."
   #       }
   #     ],
   #     "Settings": [
