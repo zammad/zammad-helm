@@ -197,6 +197,9 @@ volume mounts for the Zammad Rails stack
 - name: autowizard
   mountPath: "/opt/zammad/tmp/auto_wizard"
 {{- end }}
+{{- with .Values.zammadConfig.customVolumeMounts }}
+{{ toYaml . }}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -222,6 +225,9 @@ volumes for the Zammad Rails stack
     - key: {{ .Values.secrets.autowizard.secretKey }}
       path: auto_wizard.json
 {{- end }}
+{{- with .Values.zammadConfig.customVolumes }}
+{{ toYaml . }}
+{{- end -}}
 {{- end -}}
 
 {{/*

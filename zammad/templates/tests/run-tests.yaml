@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "zammad.fullname" . }}-run-tests"
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+    {{- include "zammad.podSpec.deployment" . | nindent 4 }}
+    containers:
+      - name: zammad-run-tests
+        {{- include "zammad.containerSpec" (merge (dict "containerConfig" dict) .) | nindent 8 }}
+        command: ['bundle']
+        args: ['exec', 'rake', 'zammad:helm:test']
+        env:
+          {{- include "zammad.env" . | nindent 12 }}
+          {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+        volumeMounts:
+          {{- include "zammad.volumeMounts" . | nindent 10 }}
+    volumes:
+      {{- include "zammad.volumes" . | nindent 6 }}
+    restartPolicy: Never
