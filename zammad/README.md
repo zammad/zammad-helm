@@ -144,6 +144,19 @@ redis:
       enabled: false
 ```
 
+### Deploying with ArgoCD
+
+Due to the way Argo CD syncs Helm charts into the cluster and this chart deploying the initialization job, the default configuration can lead to Sync loops where Argo CD will create an infinite amount of initialization jobs.
+To prevent this, disable the random name for the initialization job and add the according annotation to the job to let Argo CD treat it as a Sync Hook.
+
+```yaml
+zammadConfig:
+  initJob:
+    randomName: false
+    annotations:
+      argocd.argoproj.io/hook: Sync
+```
+
 ## Upgrading
 
 ### From Chart Version 11.x to 12.0.0

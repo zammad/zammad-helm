@@ -1,13 +1,21 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "zammad.fullname" . }}-init-{{ uuidv4 }}
+  {{- if .Values.zammadConfig.initJob.randomName }}
   # Use a different job name on each run to ensure a new job always runs once.
+  name: {{ include "zammad.fullname" . }}-init-{{ uuidv4 }}
+  {{- else }}
+  name: {{ include "zammad.fullname" . }}-init
+  {{- end}}
   # Helm post-install/post-upgrade hooks cannot be used here, because
   #   helm's --wait flag causes a deadlock: the job waits for all resources to be ready,
   #   but the pods need the job to work properly.
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
+  {{- with .Values.zammadConfig.initJob.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   ttlSecondsAfterFinished: 300
   template:
