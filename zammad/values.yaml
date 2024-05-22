@@ -354,6 +354,11 @@ zammadConfig:
       customInit: ""
         #  bundle exec rails runner '…'
 
+  initJob:
+    randomName: true
+    annotations: {}
+    # my-annotation: "value"
+
 # additional environment vars added to all zammad services
 extraEnv: []
   # - name: FOO_BAR
