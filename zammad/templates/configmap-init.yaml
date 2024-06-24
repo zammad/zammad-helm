@@ -4,7 +4,6 @@ metadata:
   name: {{ include "zammad.fullname" . }}-init
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
-    app.kubernetes.io/component: zammad-init
 data:
   postgresql-init: |-
     #!/bin/bash
