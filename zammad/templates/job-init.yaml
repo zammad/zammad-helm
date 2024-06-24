@@ -12,6 +12,7 @@ metadata:
   #   but the pods need the job to work properly.
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zammad-init
   {{- with .Values.zammadConfig.initJob.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -26,6 +27,7 @@ spec:
       {{- end }}
       labels:
         {{- include "zammad.labels" . | nindent 8 }}
+        app.kubernetes.io/component: zammad-init
     spec:
       {{- include "zammad.podSpec" . | nindent 6 }}
       restartPolicy: OnFailure
