@@ -11,7 +11,7 @@ GNU AFFERO General Public License (GNU AGPLv3).
 
 This chart will do the following:
 
-- Install a Zammad `StatefulSet`
+- Install several `Deployment`s for the different Zammad services
 - Install Elasticsearch, Memcached, PostgreSQL, Redis & Minio (optional) as requirements
 
 Be aware that the Zammad Helm chart version is different from the actual Zammad version.
@@ -47,9 +47,6 @@ To remove the chart again use the following:
 ```console
 helm delete zammad
 ```
-
-This will uninstall the Zammad `StatefulSet`, but keep the associated `PVC`s.
-Please delete them manually if you're sure.
 
 ## Configuration
 
