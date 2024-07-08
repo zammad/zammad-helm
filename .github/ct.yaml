@@ -4,6 +4,7 @@ chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
 check-version-increment: true
 debug: true
+upgrade: true
 target-branch: main
 namespace: zammad
 release-label: zammad
