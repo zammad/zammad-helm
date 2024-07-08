@@ -16,7 +16,7 @@ maintainers:
 dependencies:
   - name: elasticsearch
     repository: https://charts.bitnami.com/bitnami
-    version: 19.21.2
+    version: 19.17.6
     condition: zammadConfig.elasticsearch.enabled
   - name: minio
     version: 13.8.4
