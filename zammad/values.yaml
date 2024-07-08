@@ -314,7 +314,7 @@ zammadConfig:
       enabled: true
       image:
         repository: alpine
-        tag: "3.18.4"
+        tag: "3.20.1"
         pullPolicy: IfNotPresent
       command:
         - /bin/sh
