@@ -49,3 +49,15 @@ zammadConfig:
     - name: custom-volume
       mountPath: /opt/zammad/lib/tasks/helm
       readOnly: true
+
+commonLabels:
+  my-common-label: my-common-label-value
+
+podLabels:
+  my-pod-label: my-pod-label-value
+
+commonAnnotations:
+  my-common-annotation: my-common-annotation-value
+
+podAnnotations:
+  my-pod-annotation: my-pod-annotation-value

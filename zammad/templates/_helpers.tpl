@@ -41,6 +41,19 @@ helm.sh/chart: {{ include "zammad.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.commonLabels }}
+{{ toYaml . }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Pod labels
+*/}}
+{{- define "zammad.podLabels" -}}
+{{ include "zammad.labels" . }}
+{{- with .Values.podLabels }}
+{{ toYaml . }}
+{{- end }}
 {{- end -}}
 
 {{/*
@@ -49,6 +62,25 @@ Selector labels
 {{- define "zammad.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "zammad.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}
+
+{{/*
+Common annotations
+*/}}
+{{- define "zammad.annotations" -}}
+{{- with .Values.commonAnnotations }}
+{{ toYaml . }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Pod annotations
+*/}}
+{{- define "zammad.podAnnotations" -}}
+{{ include "zammad.annotations" . }}
+{{- with .Values.podAnnotations }}
+{{ toYaml . }}
+{{- end }}
 {{- end -}}
 
 {{/*

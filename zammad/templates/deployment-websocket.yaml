@@ -5,6 +5,8 @@ metadata:
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
     app.kubernetes.io/component: zammad-websocket
+  annotations:
+    {{- include "zammad.annotations" . | nindent 4 }}
 spec:
   replicas: 1 # Not scalable, may only run once per cluster.
   selector:
@@ -12,13 +14,11 @@ spec:
       {{- include "zammad.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
-        {{- include "zammad.labels" . | nindent 8 }}
+        {{- include "zammad.podLabels" . | nindent 8 }}
         app.kubernetes.io/component: zammad-websocket
+      annotations:
+        {{- include "zammad.podAnnotations" . | nindent 8 }}
     spec:
       {{- include "zammad.podSpec.deployment" . | nindent 6 }}
       containers:
