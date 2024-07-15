@@ -15,12 +15,12 @@ spec:
   template:
     metadata:
       annotations:
-        {{- include "zammad.annotations" . | nindent 8 }}
+        {{- include "zammad.podAnnotations" . | nindent 8 }}
         {{- with .Values.zammadConfig.websocket.podAnnotations }}
         {{- toYaml . | nindent 8}}
         {{- end }}
       labels:
-        {{- include "zammad.labels" . | nindent 8 }}
+        {{- include "zammad.podLabels" . | nindent 8 }}
         app.kubernetes.io/component: zammad-websocket
         {{- with .Values.zammadConfig.websocket.podLabels }}
         {{- toYaml . | nindent 8}}

@@ -426,6 +426,10 @@ commonLabels: {}
   # my-label: "value"
 commonAnnotations: {}
   # my-annotation: "value"
+podLabels: {}
+    # my-label: "value"
+podAnnotations: {}
+  # my-annotation: "value"
 
 nodeSelector: {}
 tolerations: []

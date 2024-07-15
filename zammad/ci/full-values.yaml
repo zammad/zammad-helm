@@ -51,32 +51,38 @@ zammadConfig:
       readOnly: true
   nginx:
     podLabels:
-      my-pod-label: my-pod-label-value
+      my-nginx-pod-label: my-nginx-pod-label-value
     podAnnotations:
-      my-pod-annotation: my-pod-annotation-value
+      my-nginx-pod-annotation: my-nginx-pod-annotation-value
   railsserver:
     podLabels:
-      my-pod-label: my-pod-label-value
+      my-railsserver-pod-label: my-railsserver-pod-label-value
     podAnnotations:
-      my-pod-annotation: my-pod-annotation-value
+      my-railsserver-pod-annotation: my-railsserver-pod-annotation-value
   scheduler:
     podLabels:
-      my-pod-label: my-pod-label-value
+      my-scheduler-pod-label: my-scheduler-pod-label-value
     podAnnotations:
-      my-pod-annotation: my-pod-annotation-value
+      my-scheduler-pod-annotation: my-scheduler-pod-annotation-value
   websocket:
     podLabels:
-      my-pod-label: my-pod-label-value
+      my-websocket-pod-label: my-websocket-pod-label-value
     podAnnotations:
-      my-pod-annotation: my-pod-annotation-value
+      my-websocket-pod-annotation: my-websocket-pod-annotation-value
   initJob:
     podLabels:
-      my-pod-label: my-pod-label-value
+      my-initJob-pod-label: my-initJob-pod-label-value
     podAnnotations:
-      my-pod-annotation: my-pod-annotation-value
+      my-initJob-pod-annotation: my-initJob-pod-annotation-value
 
 commonLabels:
   my-common-label: my-common-label-value
 
 commonAnnotations:
   my-common-annotation: my-common-annotation-value
+
+podLabels:
+  my-pod-label: my-pod-label-value
+
+podAnnotations:
+  my-pod-annotation: my-pod-annotation-value

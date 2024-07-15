@@ -23,12 +23,12 @@ spec:
   template:
     metadata:
       annotations:
-        {{- include "zammad.annotations" . | nindent 8 }}
+        {{- include "zammad.podAnnotations" . | nindent 8 }}
         {{- with .Values.zammadConfig.initJob.podAnnotations }}
         {{- toYaml . | nindent 8}}
         {{- end }}
       labels:
-        {{- include "zammad.labels" . | nindent 8 }}
+        {{- include "zammad.podLabels" . | nindent 8 }}
         app.kubernetes.io/component: zammad-init
         {{- with .Values.zammadConfig.initJob.podLabels }}
         {{- toYaml . | nindent 8}}
