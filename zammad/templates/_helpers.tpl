@@ -47,16 +47,6 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 {{/*
-Pod labels
-*/}}
-{{- define "zammad.podLabels" -}}
-{{ include "zammad.labels" . }}
-{{- with .Values.podLabels }}
-{{ toYaml . }}
-{{- end }}
-{{- end -}}
-
-{{/*
 Selector labels
 */}}
 {{- define "zammad.selectorLabels" -}}
@@ -69,16 +59,6 @@ Common annotations
 */}}
 {{- define "zammad.annotations" -}}
 {{- with .Values.commonAnnotations }}
-{{ toYaml . }}
-{{- end }}
-{{- end -}}
-
-{{/*
-Pod annotations
-*/}}
-{{- define "zammad.podAnnotations" -}}
-{{ include "zammad.annotations" . }}
-{{- with .Values.podAnnotations }}
 {{ toYaml . }}
 {{- end }}
 {{- end -}}

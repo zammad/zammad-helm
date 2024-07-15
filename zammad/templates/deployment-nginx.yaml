@@ -15,10 +15,16 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "zammad.podLabels" . | nindent 8 }}
+        {{- include "zammad.labels" . | nindent 8 }}
         app.kubernetes.io/component: zammad-nginx
+        {{- with .Values.zammadConfig.nginx.podLabels }}
+        {{- toYaml . | nindent 8}}
+        {{- end }}
       annotations:
-        {{- include "zammad.podAnnotations" . | nindent 8 }}
+        {{- include "zammad.annotations" . | nindent 8 }}
+        {{- with .Values.zammadConfig.nginx.podAnnotations }}
+        {{- toYaml . | nindent 8}}
+        {{- end }}
     spec:
       {{- include "zammad.podSpec.deployment" . | nindent 6 }}
       containers:

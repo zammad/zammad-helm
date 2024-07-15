@@ -49,15 +49,34 @@ zammadConfig:
     - name: custom-volume
       mountPath: /opt/zammad/lib/tasks/helm
       readOnly: true
+  nginx:
+    podLabels:
+      my-pod-label: my-pod-label-value
+    podAnnotations:
+      my-pod-annotation: my-pod-annotation-value
+  railsserver:
+    podLabels:
+      my-pod-label: my-pod-label-value
+    podAnnotations:
+      my-pod-annotation: my-pod-annotation-value
+  scheduler:
+    podLabels:
+      my-pod-label: my-pod-label-value
+    podAnnotations:
+      my-pod-annotation: my-pod-annotation-value
+  websocket:
+    podLabels:
+      my-pod-label: my-pod-label-value
+    podAnnotations:
+      my-pod-annotation: my-pod-annotation-value
+  initJob:
+    podLabels:
+      my-pod-label: my-pod-label-value
+    podAnnotations:
+      my-pod-annotation: my-pod-annotation-value
 
 commonLabels:
   my-common-label: my-common-label-value
 
-podLabels:
-  my-pod-label: my-pod-label-value
-
 commonAnnotations:
   my-common-annotation: my-common-annotation-value
-
-podAnnotations:
-  my-pod-annotation: my-pod-annotation-value
