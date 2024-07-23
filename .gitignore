@@ -1,0 +1,4 @@
+# Ignore files from main / development branches.
+zammad/charts
+zammad/Chart.lock
+values.yaml
