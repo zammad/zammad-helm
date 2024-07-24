@@ -4,6 +4,8 @@ metadata:
   name: {{ include "zammad.fullname" . }}-nginx
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
+  annotations:
+    {{- include "zammad.annotations" . | nindent 4 }}
 data:
   default: |-
     #

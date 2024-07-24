@@ -132,6 +132,10 @@ zammadConfig:
       privileged: false
     # can be used to add additional containers / sidecars
     sidecars: []
+    podLabels: {}
+      # my-label: "value"
+    podAnnotations: {}
+      # my-annotation: "value"
 
   postgresql:
     # enable/disable postgresql chart dependency
@@ -187,6 +191,10 @@ zammadConfig:
     webConcurrency: 0
     # tmpdir will be used by all Zammad/Rails containers
     tmpdir: "/opt/zammad/tmp"
+    podLabels: {}
+      # my-label: "value"
+    podAnnotations: {}
+      # my-annotation: "value"
 
   redis:
     # enable/disable redis chart dependency
@@ -213,6 +221,10 @@ zammadConfig:
       privileged: false
     # can be used to add additional containers / sidecars
     sidecars: []
+    podLabels: {}
+      # my-label: "value"
+    podAnnotations: {}
+      # my-annotation: "value"
 
   storageVolume:
     # Enable this for 'File' based storage in Zammad. You must provide an externally managed 'extistingClaim'
@@ -277,6 +289,10 @@ zammadConfig:
       privileged: false
     # can be used to add additional containers / sidecars
     sidecars: []
+    podLabels: {}
+      # my-label: "value"
+    podAnnotations: {}
+      # my-annotation: "value"
 
   initContainers:
     elasticsearch:
@@ -358,6 +374,10 @@ zammadConfig:
     randomName: true
     annotations: {}
     # my-annotation: "value"
+    podLabels: {}
+      # my-label: "value"
+    podAnnotations: {}
+    # my-annotation: "value"
 
 # additional environment vars added to all zammad services
 extraEnv: []
@@ -402,6 +422,12 @@ autoWizard:
   #     ]
   #   }
 
+commonLabels: {}
+  # my-label: "value"
+commonAnnotations: {}
+  # my-annotation: "value"
+podLabels: {}
+    # my-label: "value"
 podAnnotations: {}
   # my-annotation: "value"
 

@@ -13,21 +13,26 @@ metadata:
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
     app.kubernetes.io/component: zammad-init
-  {{- with .Values.zammadConfig.initJob.annotations }}
   annotations:
+    {{- include "zammad.annotations" . | nindent 4 }}
+  {{- with .Values.zammadConfig.initJob.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   ttlSecondsAfterFinished: 300
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- include "zammad.podAnnotations" . | nindent 8 }}
+        {{- with .Values.zammadConfig.initJob.podAnnotations }}
+        {{- toYaml . | nindent 8}}
+        {{- end }}
       labels:
-        {{- include "zammad.labels" . | nindent 8 }}
+        {{- include "zammad.podLabels" . | nindent 8 }}
         app.kubernetes.io/component: zammad-init
+        {{- with .Values.zammadConfig.initJob.podLabels }}
+        {{- toYaml . | nindent 8}}
+        {{- end }}
     spec:
       {{- include "zammad.podSpec" . | nindent 6 }}
       restartPolicy: OnFailure

@@ -4,6 +4,8 @@ metadata:
   name: {{ include "zammad.fullname" . }}-init
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
+  annotations:
+    {{- include "zammad.annotations" . | nindent 4 }}
 data:
   postgresql-init: |-
     #!/bin/bash
