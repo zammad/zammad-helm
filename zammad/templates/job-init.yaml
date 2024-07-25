@@ -19,7 +19,6 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  backoffLimit: 20
   ttlSecondsAfterFinished: 300
   template:
     metadata:
