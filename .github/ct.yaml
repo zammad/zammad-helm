@@ -4,7 +4,7 @@ chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
 check-version-increment: true
 debug: true
-upgrade: true
+# upgrade: true # Causes issues because of low performance on default GitHub actions servers.
 target-branch: main
 namespace: zammad
 release-label: zammad

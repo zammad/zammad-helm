@@ -1,0 +1,96 @@
+name: "Update Zammad version and dependency charts (patch and minor only)"
+
+sources:
+  zammad:
+    kind: dockerimage
+    spec:
+      image: "zammad/zammad-docker-compose"
+      architecture: "linux/amd64"
+      tagfilter: "6\\.3.*"
+  elasticsearch:
+    kind: helmchart
+    spec:
+      url: https://charts.bitnami.com/bitnami
+      name: elasticsearch
+      versionfilter:
+        pattern: "19.x.x"
+  minio:
+    kind: helmchart
+    spec:
+      url: https://charts.bitnami.com/bitnami
+      name: minio
+      versionfilter:
+        pattern: "13.x.x"
+  memcached:
+    kind: helmchart
+    spec:
+      url: https://charts.bitnami.com/bitnami
+      name: memcached
+      versionfilter:
+        pattern: "6.x.x"
+  postgresql:
+    kind: helmchart
+    spec:
+      url: https://charts.bitnami.com/bitnami
+      name: postgresql
+      versionfilter:
+        pattern: "12.x.x"
+  redis:
+    kind: helmchart
+    spec:
+      url: https://charts.bitnami.com/bitnami
+      name: redis
+      versionfilter:
+        pattern: "17.x.x"
+
+conditions: {}
+
+targets:
+  zammad:
+    kind: helmchart
+    sourceid: zammad
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.appVersion"
+      versionincrement: patch
+  elasticsearch:
+    kind: helmchart
+    sourceid: elasticsearch
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.dependencies[0].version"
+      versionincrement: patch
+  minio:
+    kind: helmchart
+    sourceid: minio
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.dependencies[1].version"
+      versionincrement: patch
+  memcached:
+    kind: helmchart
+    sourceid: memcached
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.dependencies[2].version"
+      versionincrement: patch
+  postgresql:
+    kind: helmchart
+    sourceid: postgresql
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.dependencies[3].version"
+      versionincrement: patch
+  redis:
+    kind: helmchart
+    sourceid: redis
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.dependencies[4].version"
+      versionincrement: patch
