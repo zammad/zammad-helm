@@ -480,6 +480,14 @@ elasticsearch:
     heapSize: 512m
     masterOnly: false
     replicaCount: 1
+    resources: {}
+      # requests:
+      #   cpu: 50m
+      #   memory: 512Mi
+      # limits:
+      #   cpu: 100m
+      #   memory: 1024Mi
+
   # To use an existing Kubernetes secret containing the credentials,
   # remove the comments on the lines below and adjust them accordingly
   #
@@ -535,13 +543,14 @@ postgresql:
     #   userPasswordKey: postgresql-pass
     #   replicationPasswordKey: postgresql-replication-password
     #
-  resources: {}
-    # requests:
-    #   cpu: 250m
-    #   memory: 256Mi
-    # limits:
-    #   cpu: 500m
-    #   memory: 512Mi
+  primary:
+    resources: {}
+      # requests:
+      #   cpu: 250m
+      #   memory: 256Mi
+      # limits:
+      #   cpu: 500m
+      #   memory: 512Mi
 
 # settings for the redis subchart
 redis:
