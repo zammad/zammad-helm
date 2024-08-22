@@ -10,6 +10,8 @@ on:
 env:
   helm-version: "v3.15.4"
 
+invalid-key: false
+
 jobs:
   release:
     permissions:
