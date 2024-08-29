@@ -7,6 +7,14 @@ sources:
       image: "zammad/zammad-docker-compose"
       architecture: "linux/amd64"
       tagfilter: "6\\.3\\.1-\\d{3}"
+  alpine:
+    kind: dockerimage
+    spec:
+      image: "alpine"
+      architecture: "linux/amd64"
+      versionfilter:
+        pattern: '3.x.x'
+        kind: semver
   elasticsearch:
     kind: helmchart
     spec:
@@ -54,6 +62,13 @@ targets:
       file: "Chart.yaml"
       key: "$.appVersion"
       versionincrement: patch
+  alpine:
+    kind: file
+    sourceid: alpine
+    spec:
+      file: zammad/values.yaml
+      matchpattern: '        tag: "\d+\.\d+\.\d+"'
+      replacepattern: '        tag: "{{ source `alpine` }}"'
   elasticsearch:
     kind: helmchart
     sourceid: elasticsearch
