@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ include "zammad.fullname" . }}-helm-rake-task"
+  name: "{{ include "zammad.fullname" . }}-deploy-helm-test-rake-task"
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
   annotations:
@@ -23,7 +23,7 @@ data:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "zammad.fullname" . }}-run-tests"
+  name: "{{ include "zammad.fullname" . }}-run-helm-test-rake-task"
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
   annotations:
