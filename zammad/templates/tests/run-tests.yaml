@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ include "zammad.fullname" . }}-deploy-helm-test-rake-task"
+  name: "{{ include "zammad.fullname" . }}-helm-test-rake-task"
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
   annotations:
@@ -47,5 +47,5 @@ spec:
       {{- include "zammad.volumes" . | nindent 6 }}
       - name: helm-rake-test-volume
         configMap:
-          name: "{{ include "zammad.fullname" . }}-helm-rake-task"
+          name: "{{ include "zammad.fullname" . }}-helm-test-rake-task"
     restartPolicy: Never
