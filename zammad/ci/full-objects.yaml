@@ -59,18 +59,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: helm-tests
+  name: custom-file
   namespace: zammad
 data:
-  helm-test.rake: |-
-    namespace :zammad do
-      namespace :helm do
-        desc 'Runs a set of Helm tests'
-        task test: :environment do |_task, args|
-          puts 'Checking if temporary file can be created...'
-          Tempfile.create do |f|
-            puts '  Temporary file was created successfully.'
-          end
-        end
-      end
-    end
+  custom_file.txt: test

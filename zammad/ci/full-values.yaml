@@ -44,10 +44,10 @@ zammadConfig:
   customVolumes:
     - name: custom-volume
       configMap:
-        name: helm-tests
+        name: custom-file
   customVolumeMounts:
     - name: custom-volume
-      mountPath: /opt/zammad/lib/tasks/helm
+      mountPath: /opt/zammad/custom_mount
       readOnly: true
   nginx:
     podLabels:
