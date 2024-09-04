@@ -32,6 +32,7 @@ jobs:
           VALIDATE_JSCPD: false
           VALIDATE_KUBERNETES_KUBECONFORM: false
           VALIDATE_YAML: false
+          VALIDATE_YAML_PRETTIER: false
 
   lint-chart:
     runs-on: ubuntu-22.04
