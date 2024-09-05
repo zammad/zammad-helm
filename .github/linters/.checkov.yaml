@@ -1,0 +1,27 @@
+---
+# Don't report passed checks in output
+quiet: true
+
+skip-path:
+  - zammad/templates/tests
+  - zammad/ci
+  - zammad/charts
+
+skip-check:
+  # These checks don't seem to make sense with a / our Helm chart
+  - CKV_K8S_21  # "The default namespace should not be used"
+  - CKV_K8S_10  # "CPU requests should be set"
+  - CKV_K8S_11  # "CPU limits should be set"
+  - CKV_K8S_15  # "Image Pull Policy should be Always"
+  - CKV_K8S_12  # "Memory requests should be set"
+  - CKV_K8S_13  # "Memory limits should be set"
+  - CKV_K8S_43  # "Image should use digest"
+  - CKV_K8S_38  # "Ensure that Service Account Tokens are only mounted where necessary"
+  - CKV_K8S_20  # "Containers should not run with allowPrivilegeEscalation"
+  - CKV_K8S_16  # "Container should not be privileged"
+  - CKV_K8S_40  # "Containers should run as a high UID to avoid host conflict"
+  - CKV_K8S_23  # "Minimize the admission of root containers"
+  - CKV_K8S_22  # "Use read-only filesystem for containers where possible"
+
+  # Maybe consider for improvement
+  - CKV_K8S_35  # "Prefer using secrets as files over secrets as environment variables"
