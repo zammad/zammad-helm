@@ -38,7 +38,7 @@ data:
         access_log /dev/stdout;
         error_log  /dev/stderr;
 
-        client_max_body_size 50M;
+        client_max_body_size {{ .Values.zammadConfig.nginx.clientMaxBodySize }};
 
         {{- /* Trusted proxies */}}
         {{ if .Values.zammadConfig.nginx.trustedProxies }}

@@ -50,6 +50,7 @@ zammadConfig:
       mountPath: /opt/zammad/custom_mount
       readOnly: true
   nginx:
+    clientMaxBodySize: 111M
     podLabels:
       my-nginx-pod-label: my-nginx-pod-label-value
     podAnnotations:
