@@ -35,6 +35,9 @@ spec:
         {{- end }}
     spec:
       {{- include "zammad.podSpec" . | nindent 6 }}
+      {{- with .Values.zammadConfig.initJob.podSpec }}
+      {{- toYaml . | nindent 6}}
+      {{- end }}
       restartPolicy: OnFailure
       containers:
         {{- with .Values.initContainers }}
