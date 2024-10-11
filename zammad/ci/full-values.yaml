@@ -87,3 +87,6 @@ podLabels:
 
 podAnnotations:
   my-pod-annotation: my-pod-annotation-value
+
+podSpec:
+  activeDeadlineSeconds: 1337
