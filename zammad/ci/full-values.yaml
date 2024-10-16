@@ -75,6 +75,8 @@ zammadConfig:
       my-initJob-pod-label: my-initJob-pod-label-value
     podAnnotations:
       my-initJob-pod-annotation: my-initJob-pod-annotation-value
+    podSpec:
+      activeDeadlineSeconds: 1337
 
 commonLabels:
   my-common-label: my-common-label-value
@@ -87,6 +89,3 @@ podLabels:
 
 podAnnotations:
   my-pod-annotation: my-pod-annotation-value
-
-podSpec:
-  activeDeadlineSeconds: 1337
