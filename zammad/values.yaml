@@ -380,6 +380,8 @@ zammadConfig:
       # my-label: "value"
     podAnnotations: {}
     # my-annotation: "value"
+    podSpec: {}
+    # my-podspec: "value"
 
 # additional environment vars added to all zammad services
 extraEnv: []
