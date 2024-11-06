@@ -481,9 +481,10 @@ elasticsearch:
   ingest:
     replicaCount: 0
   master:
-    heapSize: 512m
+    heapSize: 1G
     masterOnly: false
     replicaCount: 1
+    resourcesPreset: medium
     resources: {}
       # requests:
       #   cpu: 50m
