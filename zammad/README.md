@@ -159,8 +159,8 @@ zammadConfig:
 ### From Chart Version 12.x to 13.0.0
 
 - All subcharts received updates to the latest major version. Please refer to their upgrading instructions.
-- Note especially [bitnami/postgresql#upgrading](https://artifacthub.io/packages/helm/bitnami/postgresql#upgrading), because the upgrade to PostgeSQL 17
-  will require manual action to upgrade the cluster data to the new version.
+- Note especially [bitnami/postgresql#upgrading](https://artifacthub.io/packages/helm/bitnami/postgresql#upgrading),
+  because the upgrade to PostgeSQL 17 will require manual action to upgrade the cluster data to the new version.
 
 ### From Chart Version 11.x to 12.0.0
 
