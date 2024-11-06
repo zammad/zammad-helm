@@ -260,11 +260,11 @@ We've also set the Elasticsearch master heapsize to "512m" by default.
 - Bitnami Elasticsearch chart is used now as Elastic does not support the old chart anymore in favour of ECK operator
   - reindexing of all data is needed so get sure "zammadConfig.elasticsearch.reindex" is set to "true"
 - Memchached was updated from 6.0.16 to 6.3.0
-- PostgreSql chart was updated from 10.16.2 to 12.1.0
+- PostgreSQL chart was updated from 10.16.2 to 12.1.0
   - this includes major version change of Postgres DB version too
   - backup / restore is needed to update
   - postgres password settings were changed
-  - see also upgrading [PostgreSql upgrading notes](https://github.com/bitnami/charts/tree/main/bitnami/postgresql#upgrading)
+  - see also upgrading [PostgreSQL upgrading notes](https://github.com/bitnami/charts/tree/main/bitnami/postgresql#upgrading)
 - Redis chart is updated from 16.8.7 to 17.3.7
   - see [Redis upgrading notes](https://github.com/bitnami/charts/tree/main/bitnami/redis#to-1700)
 - Zammad
