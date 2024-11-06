@@ -304,16 +304,16 @@ This has changed:
   - import your filebackup here
 - all requirement charts has been updated to the latest versions
   - Elasticsearch
-    - docker image was changed to elastic/elasticsearch
+    - docker image was changed to `elastic/elasticsearch`
     - version was raised from 5.6 to 7.6
     - reindexing will be done automatically
   - Postgres
-    - bitnami/postgresql chart is used instead of stable/postgresql
+    - `bitnami/postgresql` chart is used instead of `stable/postgresql`
     - version was raised from 10.6.0 to 11.7.0
     - there is no automated upgrade path
     - you have to import a backup manually
   - Memcached
-    - bitnami/memcached chart is used instead of stable/memcached
+    - `bitnami/memcached` chart is used instead of `stable/memcached`
     - version was raised from 1.5.6 to 1.5.22
     - nothing to do here
 
@@ -333,14 +333,14 @@ kubectl -n zammad delete pvc data-zammad-postgresql-0 data-zammad-elasticsearch-
 helm upgrade --install zammad zammad/zammad --namespace=zammad --version=2.0.3
 ```
 
-- Import your file and SQL backups inside the Zammad & Postgresql containers
+- Import your file and SQL backups inside the Zammad & PostgreSQL containers
 
 ### From Zammad 2.6.x to 3.x
 
 As Helm 2.x was deprecated Helm 3.x is needed now to install Zammad Helm chart.
 Minimum Kubernetes version is 1.16.x now.
 
-As Porstgresql dependency Helm chart was updated to, have a look at the upgrading instructions to 9.0.0 and 10.0.0 of the Postgresql chart:
+As Porstgresql dependency Helm chart was updated to, have a look at the upgrading instructions to 9.0.0 and 10.0.0 of the PostgreSQL chart:
 
 - <https://artifacthub.io/packages/helm/bitnami/postgresql#to-9-0-0>
 - <https://artifacthub.io/packages/helm/bitnami/postgresql#to-10-0-0>
