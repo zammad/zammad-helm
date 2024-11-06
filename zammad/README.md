@@ -88,7 +88,7 @@ I, [2024-01-24T11:06:14.627896#168-5980]  INFO -- : storage remove '/opt/zammad/
 
 To deploy on OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids):
 
-- [Delete the default key](https://helm.sh/docs/chart_template_guide/values_files/#deleting-a-default-key)  `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` with `null`.
+- [Delete the default key](https://helm.sh/docs/chart_template_guide/values_files/#deleting-a-default-key) `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` with `null`.
 - Disable if used:
   - also `podSecurityContext` in all subcharts.
   - the privileged [sysctlImage](https://github.com/bitnami/charts/tree/main/bitnami/elasticsearch#default-kernel-settings) in elasticsearch subchart.
@@ -130,10 +130,10 @@ minio:
 
 redis:
   master:
-   podSecurityContext:
-     enabled: false
-   containerSecurityContext:
-     enabled: false
+    podSecurityContext:
+      enabled: false
+    containerSecurityContext:
+      enabled: false
   replica:
     podSecurityContext:
       enabled: false
@@ -235,13 +235,13 @@ securityContext:
 On the containerlevel the following settings are used fo all zammad containers now (some init containers may run as root though):
 
 ```yaml
-    securityContext:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      readOnlyRootFilesystem: true
-      privileged: false
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  privileged: false
 ```
 
 As `readOnlyRootFilesystem: true` is set for all Zammad containers, the Nginx container writes its PID and tmp files to `/tmp`.
