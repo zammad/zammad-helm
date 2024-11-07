@@ -6,7 +6,10 @@ sources:
     spec:
       image: "zammad/zammad-docker-compose"
       architecture: "linux/amd64"
-      tagfilter: "6\\.3\\.1-\\d{3}"
+      tagfilter: "^6\\.4\\.0$"
+      # tagfilter: "^6\\.4\\.0-\\d{1}"
+      # tagfilter: "^6\\.4\\.0-\\d{2}"
+      # tagfilter: "^6\\.4\\.0-\\d{3}"
   alpine:
     kind: dockerimage
     spec:
@@ -21,35 +24,35 @@ sources:
       url: https://charts.bitnami.com/bitnami
       name: elasticsearch
       versionfilter:
-        pattern: "19.x.x"
+        pattern: "21.x.x"
   minio:
     kind: helmchart
     spec:
       url: https://charts.bitnami.com/bitnami
       name: minio
       versionfilter:
-        pattern: "13.x.x"
+        pattern: "14.x.x"
   memcached:
     kind: helmchart
     spec:
       url: https://charts.bitnami.com/bitnami
       name: memcached
       versionfilter:
-        pattern: "6.x.x"
+        pattern: "7.x.x"
   postgresql:
     kind: helmchart
     spec:
       url: https://charts.bitnami.com/bitnami
       name: postgresql
       versionfilter:
-        pattern: "12.x.x"
+        pattern: "16.x.x"
   redis:
     kind: helmchart
     spec:
       url: https://charts.bitnami.com/bitnami
       name: redis
       versionfilter:
-        pattern: "17.x.x"
+        pattern: "20.x.x"
 
 conditions: {}
 

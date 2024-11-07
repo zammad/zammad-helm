@@ -484,6 +484,7 @@ elasticsearch:
     heapSize: 512m
     masterOnly: false
     replicaCount: 1
+    resourcesPreset: medium
     resources: {}
       # requests:
       #   cpu: 50m

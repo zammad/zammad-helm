@@ -88,7 +88,7 @@ I, [2024-01-24T11:06:14.627896#168-5980]  INFO -- : storage remove '/opt/zammad/
 
 To deploy on OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids):
 
-- [Delete the default key](https://helm.sh/docs/chart_template_guide/values_files/#deleting-a-default-key)  `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` with `null`.
+- [Delete the default key](https://helm.sh/docs/chart_template_guide/values_files/#deleting-a-default-key) `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` with `null`.
 - Disable if used:
   - also `podSecurityContext` in all subcharts.
   - the privileged [sysctlImage](https://github.com/bitnami/charts/tree/main/bitnami/elasticsearch#default-kernel-settings) in elasticsearch subchart.
@@ -130,10 +130,10 @@ minio:
 
 redis:
   master:
-   podSecurityContext:
-     enabled: false
-   containerSecurityContext:
-     enabled: false
+    podSecurityContext:
+      enabled: false
+    containerSecurityContext:
+      enabled: false
   replica:
     podSecurityContext:
       enabled: false
@@ -155,6 +155,12 @@ zammadConfig:
 ```
 
 ## Upgrading
+
+### From Chart Version 12.x to 13.0.0
+
+- All subcharts received updates to the latest major version. Please refer to their upgrading instructions.
+- Note especially [bitnami/postgresql#upgrading](https://artifacthub.io/packages/helm/bitnami/postgresql#upgrading),
+  because the upgrade to PostgeSQL 17 will require manual action to upgrade the cluster data to the new version.
 
 ### From Chart Version 11.x to 12.0.0
 
@@ -229,13 +235,13 @@ securityContext:
 On the containerlevel the following settings are used fo all zammad containers now (some init containers may run as root though):
 
 ```yaml
-    securityContext:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      readOnlyRootFilesystem: true
-      privileged: false
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  privileged: false
 ```
 
 As `readOnlyRootFilesystem: true` is set for all Zammad containers, the Nginx container writes its PID and tmp files to `/tmp`.
@@ -254,11 +260,11 @@ We've also set the Elasticsearch master heapsize to "512m" by default.
 - Bitnami Elasticsearch chart is used now as Elastic does not support the old chart anymore in favour of ECK operator
   - reindexing of all data is needed so get sure "zammadConfig.elasticsearch.reindex" is set to "true"
 - Memchached was updated from 6.0.16 to 6.3.0
-- PostgreSql chart was updated from 10.16.2 to 12.1.0
+- PostgreSQL chart was updated from 10.16.2 to 12.1.0
   - this includes major version change of Postgres DB version too
   - backup / restore is needed to update
   - postgres password settings were changed
-  - see also upgrading [PostgreSql upgrading notes](https://github.com/bitnami/charts/tree/main/bitnami/postgresql#upgrading)
+  - see also upgrading [PostgreSQL upgrading notes](https://github.com/bitnami/charts/tree/main/bitnami/postgresql#upgrading)
 - Redis chart is updated from 16.8.7 to 17.3.7
   - see [Redis upgrading notes](https://github.com/bitnami/charts/tree/main/bitnami/redis#to-1700)
 - Zammad
@@ -298,16 +304,16 @@ This has changed:
   - import your filebackup here
 - all requirement charts has been updated to the latest versions
   - Elasticsearch
-    - docker image was changed to elastic/elasticsearch
+    - docker image was changed to `elastic/elasticsearch`
     - version was raised from 5.6 to 7.6
     - reindexing will be done automatically
   - Postgres
-    - bitnami/postgresql chart is used instead of stable/postgresql
+    - `bitnami/postgresql` chart is used instead of `stable/postgresql`
     - version was raised from 10.6.0 to 11.7.0
     - there is no automated upgrade path
     - you have to import a backup manually
   - Memcached
-    - bitnami/memcached chart is used instead of stable/memcached
+    - `bitnami/memcached` chart is used instead of `stable/memcached`
     - version was raised from 1.5.6 to 1.5.22
     - nothing to do here
 
@@ -327,14 +333,14 @@ kubectl -n zammad delete pvc data-zammad-postgresql-0 data-zammad-elasticsearch-
 helm upgrade --install zammad zammad/zammad --namespace=zammad --version=2.0.3
 ```
 
-- Import your file and SQL backups inside the Zammad & Postgresql containers
+- Import your file and SQL backups inside the Zammad & PostgreSQL containers
 
 ### From Zammad 2.6.x to 3.x
 
 As Helm 2.x was deprecated Helm 3.x is needed now to install Zammad Helm chart.
 Minimum Kubernetes version is 1.16.x now.
 
-As Porstgresql dependency Helm chart was updated to, have a look at the upgrading instructions to 9.0.0 and 10.0.0 of the Postgresql chart:
+As Porstgresql dependency Helm chart was updated to, have a look at the upgrading instructions to 9.0.0 and 10.0.0 of the PostgreSQL chart:
 
 - <https://artifacthub.io/packages/helm/bitnami/postgresql#to-9-0-0>
 - <https://artifacthub.io/packages/helm/bitnami/postgresql#to-10-0-0>
