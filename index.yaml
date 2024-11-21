@@ -2,6 +2,48 @@ apiVersion: v1
 entries:
   zammad:
   - apiVersion: v2
+    appVersion: 6.4.0-27
+    created: "2024-11-21T14:01:02.461782993Z"
+    dependencies:
+    - condition: zammadConfig.elasticsearch.enabled
+      name: elasticsearch
+      repository: https://charts.bitnami.com/bitnami
+      version: 21.3.25
+    - condition: zammadConfig.minio.enabled
+      name: minio
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.8.5
+    - condition: zammadConfig.memcached.enabled
+      name: memcached
+      repository: https://charts.bitnami.com/bitnami
+      version: 7.5.2
+    - condition: zammadConfig.postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.2.1
+    - condition: zammadConfig.redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 20.3.0
+    description: Zammad is a web based open source helpdesk/customer support system
+      with many features to manage customer communication via several channels like
+      telephone, facebook, twitter, chat and e-mails.
+    digest: 78213e31a41d81bae9182486d4d5d8569f1765e713de7659cffebf2079dcee03
+    home: https://zammad.org
+    icon: https://raw.githubusercontent.com/zammad/zammad-documentation/main/images/zammad_logo_600x520.png
+    maintainers:
+    - email: monotek23@gmail.com
+      name: monotek
+    - email: enjoy@zammad.com
+      name: mgruner
+    name: zammad
+    sources:
+    - https://github.com/zammad/zammad
+    - https://github.com/zammad/zammad-helm
+    urls:
+    - https://github.com/zammad/zammad-helm/releases/download/zammad-13.0.2/zammad-13.0.2.tgz
+    version: 13.0.2
+  - apiVersion: v2
     appVersion: 6.4.0-4
     created: "2024-11-11T07:27:17.258307501Z"
     dependencies:
@@ -4645,4 +4687,4 @@ entries:
     urls:
     - https://github.com/zammad/zammad-helm/releases/download/zammad-0.1.0/zammad-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-11T07:27:17.258648731Z"
+generated: "2024-11-21T14:01:02.462156576Z"
