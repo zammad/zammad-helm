@@ -12,10 +12,20 @@ data:
       namespace :helm do
         desc 'Runs a set of Helm tests'
         task test: :environment do |_task, args|
-          puts 'Checking if temporary file can be created...'
-          Tempfile.create do |f|
+
+          puts 'Checking if temporary file can be created…'
+          Tempfile.create do |_f|
             puts '  Temporary file was created successfully.'
           end
+
+          {{- if .Values.zammadConfig.storageVolume.enabled }}
+          puts 'Checking if storage file can be created…'
+          File.write('/opt/zammad/storage/test.txt', 'test content')
+          puts '  Storage file was created successfully.'
+          {{- else }}
+          puts 'Storage volume not enabled, not testing it…'
+          {{- end }}
+
         end
       end
     end
