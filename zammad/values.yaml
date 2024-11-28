@@ -327,7 +327,9 @@ zammadConfig:
             - ALL
         readOnlyRootFilesystem: true
         privileged: false
-    # volumePermissions will be used by all Zammad Pods
+    # VolumePermissions will be used by all Zammad Pods.
+    # We need it to drop global write permission that comes with EmptyDir, otherwise
+    #   Ruby's Tempfile.create raises an error.
     volumePermissions:
       enabled: true
       image:

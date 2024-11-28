@@ -13,10 +13,14 @@ data:
         desc 'Runs a set of Helm tests'
         task test: :environment do |_task, args|
 
-          puts 'Checking if temporary file can be created…'
+          puts 'Checking if a Ruby Tempfile can be created…'
           Tempfile.create do |_f|
-            puts '  Temporary file was created successfully.'
+            puts '  Tempfile file was created successfully.'
           end
+
+          puts 'Checking if file can be created directly in /opt/zammad/tmp…'
+          File.write('/opt/zammad/tmp/test.txt', 'test content')
+          puts '  File was created in /tmp successfully.'
 
           {{- if .Values.zammadConfig.storageVolume.enabled }}
           puts 'Checking if storage file can be created…'
@@ -42,7 +46,8 @@ spec:
     {{- include "zammad.podSpec.deployment" . | nindent 4 }}
     containers:
       - name: zammad-run-tests
-        {{- include "zammad.containerSpec" (merge (dict "containerConfig" dict) .) | nindent 8 }}
+        # Use securityContext etc. from railsserver to have identical setup.
+        {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.railsserver) .) | nindent 8 }}
         command: ['bundle']
         args: ['exec', 'rake', 'zammad:helm:test']
         env:
