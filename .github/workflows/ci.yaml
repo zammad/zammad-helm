@@ -15,7 +15,7 @@ jobs:
   super-linter:
     permissions:
       statuses: write
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
           VALIDATE_YAML_PRETTIER: false
 
   lint-chart:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,7 +58,7 @@ jobs:
         run: ct lint --config .github/ct.yaml
 
   kubeconform-chart:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - lint-chart
       - super-linter
@@ -87,7 +87,7 @@ jobs:
 
   install-chart:
     name: install-chart
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - kubeconform-chart
     strategy:
