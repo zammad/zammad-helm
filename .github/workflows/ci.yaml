@@ -8,7 +8,7 @@ on:
       - main
 
 env:
-  helm-version: "v3.16.2"
+  helm-version: "v3.17.0"
   kubeconform-version: "v0.6.7"
 
 jobs:
@@ -65,9 +65,9 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.29.10
-          - v1.30.6
-          - v1.31.2
+          - v1.30.9
+          - v1.31.5
+          - v1.32.1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -94,9 +94,9 @@ jobs:
       matrix:
         k8s:
           # Versions of kindest/node
-          - v1.29.8
-          - v1.30.4
-          - v1.31.1
+          - v1.30.8
+          - v1.31.4
+          - v1.32.0
     steps:
       - name: Checkout
         uses: actions/checkout@v4
