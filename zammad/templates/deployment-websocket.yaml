@@ -9,6 +9,8 @@ metadata:
     {{- include "zammad.annotations" . | nindent 4 }}
 spec:
   replicas: 1 # Not scalable, may only run once per cluster.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "zammad.selectorLabels" . | nindent 6 }}
