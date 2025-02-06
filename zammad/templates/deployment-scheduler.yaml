@@ -11,6 +11,8 @@ metadata:
     checkov.io/skip2: CKV_K8S_9=Readiness Probe Should be Configured - not possible with scheduler
 spec:
   replicas: 1 # Not scalable, may only run once per cluster.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "zammad.selectorLabels" . | nindent 6 }}
