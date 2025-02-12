@@ -41,8 +41,12 @@ data:
         bundle exec rails r "Setting.set(\"es_user\", \"${ELASTICSEARCH_USER}\")"
         bundle exec rails r "Setting.set(\"es_password\", \"${ELASTICSEARCH_PASSWORD}\")"
     fi
-    {{- if and .Values.zammadConfig.elasticsearch.reindex }}
-    bundle exec rake zammad:searchindex:rebuild
-    {{ end }}
+    rails r "
+    require 'rake'
+    Zammad::Application.load_tasks
+    if !SearchIndexBackend.index_exists?('Ticket') || {{ .Values.zammadConfig.elasticsearch.forceReinit }}
+        Rake::Task['zammad:searchindex:rebuild'].invoke
+    end
+    "
     echo "elasticsearch init complete :)"
 {{ end }}
