@@ -73,7 +73,7 @@ zammadConfig:
     initialisation: true
     pass: ""
     port: 9200
-    reindex: true
+    forceReinit: false
     schema: http
     user: ""
 

@@ -179,6 +179,10 @@ zammadConfig:
 
 ## Upgrading
 
+### From Chart Version 13.x to 14.0.0
+
+- The initcontainer `elasticsearch-init` only executes an ElasticSearch reindex if the index `Ticket` does not exist. The ElasticSearch reindex can also be forced with the new parameter `zammadConfig.elasticsearch.forceReinit`. The parameter `zammadConfig.elasticsearch.reindex` has therefore been removed.
+
 ### From Chart Version 12.x to 13.0.0
 
 - All subcharts received updates to the latest major version. Please refer to their upgrading instructions.
