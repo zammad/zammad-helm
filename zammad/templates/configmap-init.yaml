@@ -10,39 +10,43 @@ data:
   postgresql-init: |-
     #!/bin/bash
     set -e
+
     if ! (bundle exec rails r 'puts User.any?' 2> /dev/null | grep -q true); then
-        bundle exec rake db:migrate
-        bundle exec rake db:seed
+        bundle exec rake db:migrate db:seed
     else
         echo Executing migrations...
         bundle exec rake db:migrate
 
-        echo Synchronizing locales...
-        bundle exec rails r "Locale.sync"
-
-        echo Synchronizing translations...
-        bundle exec rails r "Translation.sync"
+        echo Synchronizing locales and translations...
+        bundle exec rails r "Locale.sync; Translation.sync"
     fi
+
     echo "postgresql init complete :)"
   zammad-init: |-
     #!/bin/bash
     set -e
+
     {{- with .Values.zammadConfig.initContainers.zammad.customInit }}
       {{- . | nindent 4 }}
     {{- end }}
+
     echo "zammad init complete :)"
 {{ if .Values.zammadConfig.elasticsearch.initialisation }}
   elasticsearch-init: |-
     #!/bin/bash
     set -e
-    bundle exec rails r 'Setting.set("es_url", "{{ .Values.zammadConfig.elasticsearch.schema }}://{{ if .Values.zammadConfig.elasticsearch.enabled }}{{ .Release.Name }}-elasticsearch{{ else }}{{ .Values.zammadConfig.elasticsearch.host }}{{ end }}:{{ .Values.zammadConfig.elasticsearch.port }}")'
+
+    ELASTICSEARCH_URL={{ .Values.zammadConfig.elasticsearch.schema }}://{{ if .Values.zammadConfig.elasticsearch.enabled }}{{ .Release.Name }}-elasticsearch{{ else }}{{ .Values.zammadConfig.elasticsearch.host }}{{ end }}:{{ .Values.zammadConfig.elasticsearch.port }}
+    bundle exec rails r "Setting.set('es_url', '${ELASTICSEARCH_URL}')"
+
     ELASTICSEARCH_USER=${ELASTICSEARCH_USER:-{{ .Values.zammadConfig.elasticsearch.user }}}
     if [ -n "${ELASTICSEARCH_USER}" ] && [ -n "${ELASTICSEARCH_PASSWORD}" ]; then
-        bundle exec rails r "Setting.set(\"es_user\", \"${ELASTICSEARCH_USER}\")"
-        bundle exec rails r "Setting.set(\"es_password\", \"${ELASTICSEARCH_PASSWORD}\")"
+        bundle exec rails r "Setting.set('es_user', '${ELASTICSEARCH_USER}'); Setting.set('es_password', '${ELASTICSEARCH_PASSWORD}')"
     fi
+
     {{- if and .Values.zammadConfig.elasticsearch.reindex }}
     bundle exec rake zammad:searchindex:rebuild
     {{ end }}
+
     echo "elasticsearch init complete :)"
 {{ end }}
