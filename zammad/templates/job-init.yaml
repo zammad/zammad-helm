@@ -39,7 +39,7 @@ spec:
       {{- toYaml . | nindent 6}}
       {{- end }}
       restartPolicy: OnFailure
-      containers:
+      initContainers:
         {{- with .Values.initContainers }}
         {{- toYaml . | nindent 8}}
         {{- end }}
@@ -103,6 +103,18 @@ spec:
               readOnly: true
               subPath: elasticsearch-init
         {{- end }}
+      containers:
+        - name: postgresql-init-post
+          {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.initContainers.postgresql) .) | nindent 10 }}
+          env:
+            {{- include "zammad.env" . | nindent 12 }}
+            {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+          volumeMounts:
+            {{- include "zammad.volumeMounts" . | nindent 12 }}
+            - name: {{ include "zammad.fullname" . }}-init
+              mountPath: /docker-entrypoint.sh
+              readOnly: true
+              subPath: postgresql-init-post
       volumes:
         {{- include "zammad.volumes" . | nindent 8 }}
         - name: {{ include "zammad.fullname" . }}-init
