@@ -109,18 +109,14 @@ zammadConfig:
     livenessProbe:
       tcpSocket:
         port: 8080
-      successThreshold: 1
       failureThreshold: 5
       timeoutSeconds: 5
-      periodSeconds: 10
     readinessProbe:
       httpGet:
         path: /
         port: 8080
-      successThreshold: 1
       failureThreshold: 5
       timeoutSeconds: 5
-      periodSeconds: 10
     resources: {}
       # requests:
       #   cpu: 50m
@@ -167,18 +163,14 @@ zammadConfig:
     livenessProbe:
       tcpSocket:
         port: 3000
-      successThreshold: 1
       failureThreshold: 5
       timeoutSeconds: 5
-      periodSeconds: 10
     readinessProbe:
       httpGet:
         path: /
         port: 3000
-      successThreshold: 1
       failureThreshold: 5
       timeoutSeconds: 5
-      periodSeconds: 10
     resources: {}
       # requests:
       #   cpu: 100m
@@ -273,15 +265,11 @@ zammadConfig:
     livenessProbe:
       tcpSocket:
         port: 6042
-      periodSeconds: 10
-      successThreshold: 1
       failureThreshold: 10
       timeoutSeconds: 5
     readinessProbe:
       tcpSocket:
         port: 6042
-      periodSeconds: 10
-      successThreshold: 1
       failureThreshold: 5
       timeoutSeconds: 5
     resources: {}
