@@ -22,6 +22,14 @@ data:
     fi
 
     echo "postgresql init complete :)"
+  postgresql-init-post: |-
+    #!/bin/bash
+    set -e
+
+    # Run a rails command to ensure the database is up and running.
+    bundle exec rails r "true"
+
+    echo "init sequence complete :)"
   zammad-init: |-
     #!/bin/bash
     set -e
