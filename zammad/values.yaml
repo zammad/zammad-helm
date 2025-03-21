@@ -101,10 +101,14 @@ zammadConfig:
     # Maximum upload size
     clientMaxBodySize: 50M
     knowledgeBaseUrl: ""
+    startupProbe:
+      tcpSocket:
+        port: 8080
+      failureThreshold: 10
+      periodSeconds: 4
     livenessProbe:
       tcpSocket:
         port: 8080
-      initialDelaySeconds: 30
       successThreshold: 1
       failureThreshold: 5
       timeoutSeconds: 5
@@ -155,10 +159,14 @@ zammadConfig:
 
   railsserver:
     replicas: 1
+    startupProbe:
+      tcpSocket:
+        port: 3000
+      failureThreshold: 10
+      periodSeconds: 4
     livenessProbe:
       tcpSocket:
         port: 3000
-      initialDelaySeconds: 30
       successThreshold: 1
       failureThreshold: 5
       timeoutSeconds: 5
@@ -167,7 +175,6 @@ zammadConfig:
       httpGet:
         path: /
         port: 3000
-      initialDelaySeconds: 30
       successThreshold: 1
       failureThreshold: 5
       timeoutSeconds: 5
@@ -258,10 +265,14 @@ zammadConfig:
     #   readOnly: true
 
   websocket:
+    startupProbe:
+      tcpSocket:
+        port: 6042
+      failureThreshold: 10
+      periodSeconds: 4
     livenessProbe:
       tcpSocket:
         port: 6042
-      initialDelaySeconds: 10
       periodSeconds: 10
       successThreshold: 1
       failureThreshold: 10
@@ -269,7 +280,6 @@ zammadConfig:
     readinessProbe:
       tcpSocket:
         port: 6042
-      initialDelaySeconds: 10
       periodSeconds: 10
       successThreshold: 1
       failureThreshold: 5
