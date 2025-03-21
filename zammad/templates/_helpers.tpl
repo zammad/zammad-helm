@@ -322,6 +322,10 @@ shared configuration for Zammad containers
 {{- define "zammad.containerSpec" -}}
 image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
 imagePullPolicy: {{ .Values.image.pullPolicy }}
+{{- with .containerConfig.startupProbe }}
+startupProbe:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
 {{- with .containerConfig.livenessProbe }}
 livenessProbe:
   {{- toYaml . | nindent 2 }}
