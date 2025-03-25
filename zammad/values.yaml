@@ -104,7 +104,7 @@ zammadConfig:
     startupProbe:
       tcpSocket:
         port: 8080
-      failureThreshold: 10
+      failureThreshold: 20
       periodSeconds: 4
     livenessProbe:
       tcpSocket:
@@ -158,7 +158,7 @@ zammadConfig:
     startupProbe:
       tcpSocket:
         port: 3000
-      failureThreshold: 10
+      failureThreshold: 20
       periodSeconds: 4
     livenessProbe:
       tcpSocket:
@@ -260,7 +260,7 @@ zammadConfig:
     startupProbe:
       tcpSocket:
         port: 6042
-      failureThreshold: 10
+      failureThreshold: 20
       periodSeconds: 4
     livenessProbe:
       tcpSocket:
