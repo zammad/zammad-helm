@@ -27,6 +27,18 @@ spec:
         {{- end }}
     spec:
       {{- include "zammad.podSpec.deployment" . | nindent 6 }}
+      {{- with .Values.zammadConfig.railsserver.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.zammadConfig.railsserver.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.zammadConfig.railsserver.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         {{- with .Values.zammadConfig.railsserver.sidecars }}
         {{- toYaml . | nindent 8}}
