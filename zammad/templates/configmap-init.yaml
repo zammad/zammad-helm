@@ -52,9 +52,18 @@ data:
         bundle exec rails r "Setting.set('es_user', '${ELASTICSEARCH_USER}'); Setting.set('es_password', '${ELASTICSEARCH_PASSWORD}')"
     fi
 
-    {{- if and .Values.zammadConfig.elasticsearch.reindex }}
+  {{ if .Values.zammadConfig.elasticsearch.reindex }}
     bundle exec rake zammad:searchindex:rebuild
-    {{ end }}
+  {{ else }}
+    echo "Checking if an elasticsearch index already exists…"
+    if bundle exec rails r "SearchIndexBackend.index_exists?('Ticket') || exit(1)"
+    then
+      echo "Elasticsearch index exists, no automatic reindexing is needed."
+    else
+      echo "Elasticsearch index does not exist yet, create it now…"
+      bundle exec rake zammad:searchindex:rebuild
+    fi
+  {{ end }}
 
     echo "elasticsearch init complete :)"
 {{ end }}
