@@ -56,6 +56,10 @@ data:
     bundle exec rake zammad:searchindex:rebuild
   {{ else }}
     echo "Checking if an elasticsearch index already exists…"
+
+    # Ensure ES connectivity, as SearchIndexBackend.index_exists? swallows internal errors.
+    bundle exec rails r "SearchIndexBackend.version"
+
     if bundle exec rails r "SearchIndexBackend.index_exists?('Ticket') || exit(1)"
     then
       echo "Elasticsearch index exists, no automatic reindexing is needed."
