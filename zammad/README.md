@@ -183,8 +183,8 @@ zammadConfig:
 
 - The default value of `zammadConfig.elasticsearch.reindex` changed from `true` to `false`. This means that
   with the default value, the chart will no longer reindex the elasticsearch content after every single
-  update, causing search results to be incomplete until the reindexing finished.
-- With the new default value of `false`, the Chart will still create an index on installation (if no index is present).
+  update (which caused search results to be incomplete until the reindexing finished).
+- With the new default value of `false`, the chart will still create an index on installation (if no index is present).
 
 ### From Chart Version 12.x to 13.0.0
 
