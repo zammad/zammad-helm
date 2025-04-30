@@ -43,23 +43,7 @@ spec:
         {{- with .Values.initContainers }}
         {{- toYaml . | nindent 8}}
         {{- end }}
-        {{- if .Values.zammadConfig.initContainers.volumePermissions.enabled }}
-        - name: zammad-volume-permissions
-          image: "{{ .Values.zammadConfig.initContainers.volumePermissions.image.repository }}:{{ .Values.zammadConfig.initContainers.volumePermissions.image.tag }}"
-          imagePullPolicy: {{ .Values.zammadConfig.initContainers.volumePermissions.image.pullPolicy }}
-          command:
-            {{- .Values.zammadConfig.initContainers.volumePermissions.command | toYaml | nindent 12 }}
-          {{- with .Values.zammadConfig.initContainers.volumePermissions.resources }}
-          resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.zammadConfig.initContainers.volumePermissions.securityContext }}
-          securityContext:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          volumeMounts:
-            {{- include "zammad.volumeMounts" . | nindent 12 }}
-        {{- end }}
+        {{- include "zammad.podSpec.initContainers" . | nindent 8 }}
         - name: postgresql-init
           {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.initContainers.postgresql) .) | nindent 10 }}
           env:

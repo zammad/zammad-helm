@@ -292,28 +292,35 @@ securityContext:
 {{- end -}}
 
 {{/*
+init containers for Zammad Pods
+*/}}
+{{- define "zammad.podSpec.initContainers" -}}
+{{- if .Values.zammadConfig.initContainers.volumePermissions.enabled }}
+- name: zammad-volume-permissions
+  image: "{{ .Values.zammadConfig.initContainers.volumePermissions.image.repository }}:{{ .Values.zammadConfig.initContainers.volumePermissions.image.tag }}"
+  imagePullPolicy: {{ .Values.zammadConfig.initContainers.volumePermissions.image.pullPolicy }}
+  command:
+    {{- .Values.zammadConfig.initContainers.volumePermissions.command | toYaml | nindent 4 }}
+  {{- with .Values.zammadConfig.initContainers.volumePermissions.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.zammadConfig.initContainers.volumePermissions.securityContext }}
+  securityContext:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  volumeMounts:
+    {{- include "zammad.volumeMounts" . | nindent 4 }}
+{{- end }}
+{{- end -}}
+
+{{/*
 shared configuration for Zammad Deployment Pods
 */}}
 {{- define "zammad.podSpec.deployment" -}}
 {{ include "zammad.podSpec" . }}
-{{- if .Values.zammadConfig.initContainers.volumePermissions.enabled }}
 initContainers:
-  - name: zammad-volume-permissions
-    image: "{{ .Values.zammadConfig.initContainers.volumePermissions.image.repository }}:{{ .Values.zammadConfig.initContainers.volumePermissions.image.tag }}"
-    imagePullPolicy: {{ .Values.zammadConfig.initContainers.volumePermissions.image.pullPolicy }}
-    command:
-      {{- .Values.zammadConfig.initContainers.volumePermissions.command | toYaml | nindent 6 }}
-    {{- with .Values.zammadConfig.initContainers.volumePermissions.resources }}
-    resources:
-      {{- toYaml . | nindent 6 }}
-    {{- end }}
-    {{- with .Values.zammadConfig.initContainers.volumePermissions.securityContext }}
-    securityContext:
-      {{- toYaml . | nindent 6 }}
-    {{- end }}
-    volumeMounts:
-      {{- include "zammad.volumeMounts" . | nindent 6 }}
-{{- end }}
+{{ include "zammad.podSpec.initContainers" . | nindent 2 }}
 {{- end -}}
 
 {{/*

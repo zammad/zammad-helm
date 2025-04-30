@@ -382,6 +382,17 @@ zammadConfig:
     podSpec: {}
     # my-podspec: "value"
 
+  cronJob:
+    reindex:
+      annotations: {}
+      # my-annotation: "value"
+      podLabels: {}
+        # my-label: "value"
+      podAnnotations: {}
+      # my-annotation: "value"
+      podSpec: {}
+      # my-podspec: "value"
+
 # additional environment vars added to all zammad services
 extraEnv: []
   # - name: FOO_BAR
