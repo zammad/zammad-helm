@@ -140,7 +140,7 @@ zammadConfig:
 
   postgresql:
     # enable/disable postgresql chart dependency
-    enabled: true
+    enabled: false
     # needs to be the same as the postgresql.auth.database
     db: zammad_production
     # host env var is only used when postgresql.enabled is false
