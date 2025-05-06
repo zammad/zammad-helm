@@ -384,6 +384,11 @@ zammadConfig:
 
   cronJob:
     reindex:
+      # By default, this cronjob never runs. It can be used to create maintenance jobs with
+      #   kubectl create job my-reindex-job --from=cronjob/zammad-cronjob-reindex
+      # You can change schedule and suspend to run it periodically.
+      schedule: "@weekly"
+      suspend: true
       annotations: {}
       # my-annotation: "value"
       podLabels: {}

@@ -6,17 +6,13 @@ metadata:
     {{- include "zammad.labels" . | nindent 4 }}
     app.kubernetes.io/component: zammad-cronjob-reindex
   annotations:
-    description: |-
-      This cronjob never runs. It can be used to create maintenance jobs with
-      kubectl create job my-reindex-job --from=cronjob/{{ include "zammad.fullname" . }}-cronjob-reindex
     {{- include "zammad.annotations" . | nindent 4 }}
   {{- with .Values.zammadConfig.cronJob.reindex.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  # Never run this cronjob.
-  suspend: true
-  schedule: "@weekly"
+  suspend: {{ .Values.zammadConfig.cronJob.reindex.suspend | toYaml }}
+  schedule: {{ .Values.zammadConfig.cronJob.reindex.schedule | toYaml }}
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 300
