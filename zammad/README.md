@@ -177,6 +177,25 @@ zammadConfig:
       argocd.argoproj.io/hook: Sync
 ```
 
+## Maintenance Tasks
+
+If you have to run any maintenance commands inside of the Zammad stack, you can do that by
+executing them inside of a running Zammad pod:
+
+```sh
+kubectl exec zammad-railsserver-NAME_OF_YOUR_RAILSSERVER_POD -c zammad-railsserver -- bash
+```
+
+For reindexing the elasticsearch data, e.g. after application updates, there is a slightly more convenient way
+available. You can create a job from a cronjob template for it:
+
+```sh
+kubectl create job my-reindex-job --from=cronjob/zammad-cronjob-reindex
+```
+
+This cronjob never runs by default, but you can channge `zammadConfig.cronJob.reindex.suspend`
+and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
+
 ## Upgrading
 
 ### From Chart Version 13.x to 14.0.0

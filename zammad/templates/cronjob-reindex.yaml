@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "zammad.fullname" . }}-cronjob-reindex
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zammad-cronjob-reindex
+  annotations:
+    {{- include "zammad.annotations" . | nindent 4 }}
+  {{- with .Values.zammadConfig.cronJob.reindex.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  suspend: {{ .Values.zammadConfig.cronJob.reindex.suspend | toYaml }}
+  schedule: {{ .Values.zammadConfig.cronJob.reindex.schedule | toYaml }}
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 300
+      template:
+        metadata:
+          annotations:
+            {{- include "zammad.podAnnotations" . | nindent 12 }}
+            {{- with .Values.zammadConfig.cronJob.reindex.podAnnotations }}
+            {{- toYaml . | nindent 12}}
+            {{- end }}
+          labels:
+            {{- include "zammad.podLabels" . | nindent 12 }}
+            app.kubernetes.io/component: zammad-init
+            {{- with .Values.zammadConfig.cronJob.reindex.podLabels }}
+            {{- toYaml . | nindent 12}}
+            {{- end }}
+        spec:
+          {{- include "zammad.podSpec" . | nindent 10 }}
+          {{- with .Values.zammadConfig.cronJob.reindex.podSpec }}
+          {{- toYaml . | nindent 10}}
+          {{- end }}
+          restartPolicy: Never
+          initContainers:
+            {{- include "zammad.podSpec.initContainers" . | nindent 12 }}
+          containers:
+            - name: reindex
+              {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.initContainers.postgresql) .) | nindent 14 }}
+              command:
+                - "bundle"
+                - "exec"
+                - "rake"
+                - "zammad:searchindex:rebuild"
+              env:
+                {{- include "zammad.env" . | nindent 16 }}
+              volumeMounts:
+                {{- include "zammad.volumeMounts" . | nindent 16 }}
+          volumes:
+            {{- include "zammad.volumes" . | nindent 12 }}
