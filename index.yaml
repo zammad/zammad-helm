@@ -3,6 +3,48 @@ entries:
   zammad:
   - apiVersion: v2
     appVersion: 6.5.0-75
+    created: "2025-05-27T08:51:36.929855697Z"
+    dependencies:
+    - condition: zammadConfig.elasticsearch.enabled
+      name: elasticsearch
+      repository: https://charts.bitnami.com/bitnami
+      version: 21.6.3
+    - condition: zammadConfig.minio.enabled
+      name: minio
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.10.5
+    - condition: zammadConfig.memcached.enabled
+      name: memcached
+      repository: https://charts.bitnami.com/bitnami
+      version: 7.8.3
+    - condition: zammadConfig.postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.7.4
+    - condition: zammadConfig.redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 20.13.4
+    description: Zammad is a web based open source helpdesk/customer support system
+      with many features to manage customer communication via several channels like
+      telephone, facebook, twitter, chat and e-mails.
+    digest: fc5543227ff9c06b05053e4db9e2b60f250ba515f1399e65cc2d36a2ffdabb6c
+    home: https://zammad.org
+    icon: https://raw.githubusercontent.com/zammad/zammad-documentation/main/images/zammad_logo_600x520.png
+    maintainers:
+    - email: monotek23@gmail.com
+      name: monotek
+    - email: enjoy@zammad.com
+      name: mgruner
+    name: zammad
+    sources:
+    - https://github.com/zammad/zammad
+    - https://github.com/zammad/zammad-helm
+    urls:
+    - https://github.com/zammad/zammad-helm/releases/download/zammad-14.1.3/zammad-14.1.3.tgz
+    version: 14.1.3
+  - apiVersion: v2
+    appVersion: 6.5.0-75
     created: "2025-05-22T07:24:46.340521144Z"
     dependencies:
     - condition: zammadConfig.elasticsearch.enabled
@@ -5527,4 +5569,4 @@ entries:
     urls:
     - https://github.com/zammad/zammad-helm/releases/download/zammad-0.1.0/zammad-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-22T07:24:46.341068006Z"
+generated: "2025-05-27T08:51:36.930305079Z"
