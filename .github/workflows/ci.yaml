@@ -8,8 +8,8 @@ on:
       - main
 
 env:
-  helm-version: "v3.17.0"
-  kubeconform-version: "v0.6.7"
+  helm-version: "v3.18.0"
+  kubeconform-version: "v0.7.0"
 
 jobs:
   super-linter:
@@ -65,9 +65,9 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.30.10
-          - v1.31.6
-          - v1.32.2
+          - v1.31.9
+          - v1.32.5
+          - v1.33.1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -94,9 +94,9 @@ jobs:
       matrix:
         k8s:
           # Versions of kindest/node
-          - v1.30.10
-          - v1.31.6
-          - v1.32.2
+          - v1.31.9
+          - v1.32.5
+          - v1.33.1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
