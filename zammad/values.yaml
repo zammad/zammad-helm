@@ -547,18 +547,24 @@ affinity: {}
   #           - key: "node-label"
   #             operator: In
   #             values:
-#               - "value"
+  #               - "value"
+
 commonAnnotations: {}
-# my-annotation: "value"
+  # my-annotation: "value"
+
 commonLabels: {}
   # my-label: "value"
+
 # Common pod nodeSelector for all Zammad components. Values in .Zammad.*.nodeSelector will override this.
 nodeSelector: {}
-# node-label: "value"
+  # node-label: "value"
+
 podAnnotations: {}
-# my-annotation: "value"
+  # my-annotation: "value"
+
 podLabels: {}
-    # my-label: "value"
+  # my-label: "value"
+
 # Common pod tolerations for all Zammad components. Values in .Zammad.*.tolerations will override this.
 tolerations: []
   # - key: "key"
