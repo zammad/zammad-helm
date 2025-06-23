@@ -239,7 +239,7 @@ zammadConfig:
       # my-label: "value"
     podAnnotations: {}
       # my-annotation: "value"
-    topologySpreadConstraints: []  # TopologySpreadConstraints for pod placement
+    topologySpreadConstraints: []
       # - maxSkew: 1
       #   topologyKey: "kubernetes.io/hostname"
       #   whenUnsatisfiable: ScheduleAnyway
