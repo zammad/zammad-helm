@@ -16,6 +16,7 @@ spec:
   selector:
     matchLabels:
       {{- include "zammad.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: zammad-scheduler
   template:
     metadata:
       annotations:
