@@ -38,6 +38,18 @@ spec:
       {{- with .Values.zammadConfig.initJob.podSpec }}
       {{- toYaml . | nindent 6}}
       {{- end }}
+      {{- with .Values.zammadConfig.initJob.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.zammadConfig.initJob.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.zammadConfig.initJob.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       restartPolicy: OnFailure
       initContainers:
         {{- with .Values.initContainers }}
