@@ -39,6 +39,10 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.zammadConfig.railsserver.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         {{- with .Values.zammadConfig.railsserver.sidecars }}
         {{- toYaml . | nindent 8}}

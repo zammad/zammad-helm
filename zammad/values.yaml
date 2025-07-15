@@ -161,6 +161,13 @@ zammadConfig:
       #         labelSelector:
       #           matchLabels:
       #             app.kubernetes.io/component: zammad-nginx
+    topologySpreadConstraints: []
+      # - maxSkew: 1
+      #   topologyKey: "kubernetes.io/hostname"
+      #   whenUnsatisfiable: ScheduleAnyway
+      #   labelSelector:
+      #     matchLabels:
+      #      app.kubernetes.io/name: zammad
 
   postgresql:
     # enable/disable postgresql chart dependency
@@ -243,6 +250,13 @@ zammadConfig:
       #   operator: "Equal"
       #   value: "value"
       #   effect: "NoSchedule"
+    topologySpreadConstraints: []
+      # - maxSkew: 1
+      #   topologyKey: "kubernetes.io/hostname"
+      #   whenUnsatisfiable: ScheduleAnyway
+      #   labelSelector:
+      #     matchLabels:
+      #      app.kubernetes.io/name: zammad
 
   redis:
     # enable/disable redis chart dependency
@@ -289,6 +303,13 @@ zammadConfig:
       #   operator: "Equal"
       #   value: "value"
       #   effect: "NoSchedule"
+    topologySpreadConstraints: []
+      # - maxSkew: 1
+      #   topologyKey: "kubernetes.io/hostname"
+      #   whenUnsatisfiable: ScheduleAnyway
+      #   labelSelector:
+      #     matchLabels:
+      #      app.kubernetes.io/name: zammad
 
   storageVolume:
     # Enable this for 'File' based storage in Zammad. You must provide an externally managed 'extistingClaim'
@@ -372,6 +393,13 @@ zammadConfig:
       #   operator: "Equal"
       #   value: "value"
       #   effect: "NoSchedule"
+    topologySpreadConstraints: []
+      # - maxSkew: 1
+      #   topologyKey: "kubernetes.io/hostname"
+      #   whenUnsatisfiable: ScheduleAnyway
+      #   labelSelector:
+      #     matchLabels:
+      #      app.kubernetes.io/name: zammad
 
   initContainers:
     elasticsearch:
@@ -478,6 +506,13 @@ zammadConfig:
       #   value: "value"
       #   effect: "NoSchedule"
 
+    topologySpreadConstraints: []
+      # - maxSkew: 1
+      #   topologyKey: "kubernetes.io/hostname"
+      #   whenUnsatisfiable: ScheduleAnyway
+      #   labelSelector:
+      #     matchLabels:
+      #      app.kubernetes.io/name: zammad
 
   cronJob:
     reindex:
@@ -571,6 +606,14 @@ tolerations: []
   #   operator: "Equal"
   #   value: "value"
   #   effect: "NoSchedule"
+
+topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: "kubernetes.io/hostname"
+  #   whenUnsatisfiable: ScheduleAnyway
+  #   labelSelector:
+  #     matchLabels:
+  #      app.kubernetes.io/name: zammad
 
 # service account configurations
 serviceAccount:
