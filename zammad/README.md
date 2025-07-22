@@ -201,7 +201,7 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 ### From Chart Version 14.x to 15.0.0
 
 - The selector matchLabels of all deployments changed which are unfortunately immutable. This means each deployment needs to  
-  be deleted before upgrading the helm chart. To preserver high availability the `cascade=orphan` option can be used  
+  be deleted before upgrading the helm chart. To preserve high availability the `cascade=orphan` option can be used  
   (e.g. `kubectl/oc delete deployment --selector app.kubernetes.io/name=zammad --cascade=orphan`).
 
 ### From Chart Version 13.x to 14.0.0
