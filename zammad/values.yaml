@@ -439,7 +439,7 @@ zammadConfig:
       enabled: true
       image:
         repository: alpine
-        tag: "3.22.0"
+        tag: "3.22.1"
         pullPolicy: IfNotPresent
       command:
         - /bin/sh
