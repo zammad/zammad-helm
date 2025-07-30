@@ -23,7 +23,7 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: zammadConfig.minio.enabled
   - name: memcached
-    version: 7.9.4
+    version: 7.9.3
     repository: https://charts.bitnami.com/bitnami
     condition: zammadConfig.memcached.enabled
   - name: postgresql
