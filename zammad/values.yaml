@@ -649,6 +649,13 @@ initContainers: []
 
 # Settings for the elasticsearch subchart
 elasticsearch:
+  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
+  image:
+    repository: bitnamilegacy/elasticsearch
+  global:
+    security:
+      allowInsecureImages: true
+
   clusterName: zammad
   coordinating:
     replicaCount: 0
@@ -677,6 +684,13 @@ elasticsearch:
 
 # settings for the memcached subchart
 memcached:
+  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
+  image:
+    repository: bitnamilegacy/memcached
+  global:
+    security:
+      allowInsecureImages: true
+
   replicaCount: 1
   resources: {}
     # requests:
@@ -688,6 +702,13 @@ memcached:
 
 # settings for the minio subchart
 minio:
+  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
+  image:
+    repository: bitnamilegacy/minio
+  global:
+    security:
+      allowInsecureImages: true
+
   auth:
     rootUser: zammadadmin
     rootPassword: zammadadmin
@@ -704,6 +725,13 @@ minio:
 
 # settings for the postgres subchart
 postgresql:
+  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
+  image:
+    repository: bitnamilegacy/postgresql
+  global:
+    security:
+      allowInsecureImages: true
+
   auth:
     username: "zammad"
     replicationUsername: repl_user
@@ -735,6 +763,13 @@ postgresql:
 
 # settings for the redis subchart
 redis:
+  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
+  image:
+    repository: bitnamilegacy/redis
+  global:
+    security:
+      allowInsecureImages: true
+
   architecture: standalone
   auth:
     password: zammad
