@@ -657,6 +657,7 @@ elasticsearch:
   global:
     security:
       allowInsecureImages: true
+
   clusterName: zammad
   coordinating:
     replicaCount: 0
