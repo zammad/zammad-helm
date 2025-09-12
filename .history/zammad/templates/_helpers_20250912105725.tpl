@@ -273,9 +273,6 @@ imagePullSecrets:
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ include "zammad.serviceAccountName" . }}
 {{- end }}
-{{- if .Values.priorityClassName }}
-priorityClassName: {{ .Values.priorityClassName }}
-{{- end }}
 {{- with .Values.nodeSelector }}
 nodeSelector:
   {{- toYaml . | nindent 2 }}
