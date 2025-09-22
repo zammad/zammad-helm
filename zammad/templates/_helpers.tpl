@@ -324,7 +324,7 @@ initContainers:
 {{- end -}}
 
 {{/* 
-shared priority class configuration
+priority class configuration for Zammad pods
 */}}
 {{- define "zammad.podSpec.priorityClass" -}}
 {{- if .priorityClassName }}
