@@ -273,9 +273,6 @@ imagePullSecrets:
 {{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ include "zammad.serviceAccountName" . }}
 {{- end }}
-{{- if .Values.priorityClassName }}
-priorityClassName: {{ .Values.priorityClassName }}
-{{- end }}
 {{- with .Values.nodeSelector }}
 nodeSelector:
   {{- toYaml . | nindent 2 }}
@@ -324,6 +321,15 @@ shared configuration for Zammad Deployment Pods
 {{ include "zammad.podSpec" . }}
 initContainers:
 {{ include "zammad.podSpec.initContainers" . | nindent 2 }}
+{{- end -}}
+
+{{/* 
+priority class configuration for Zammad pods
+*/}}
+{{- define "zammad.podSpec.priorityClass" -}}
+{{- if .priorityClassName }}
+priorityClassName: {{ .priorityClassName }}
+{{- end}}
 {{- end -}}
 
 {{/*
