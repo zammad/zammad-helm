@@ -30,6 +30,7 @@ spec:
             {{- toYaml . | nindent 12}}
             {{- end }}
         spec:
+          {{- include "zammad.podSpec.priorityClass" .Values.zammadConfig.cronJob | nindent 10 }}
           {{- include "zammad.podSpec" . | nindent 10 }}
           {{- with .Values.zammadConfig.cronJob.reindex.podSpec }}
           {{- toYaml . | nindent 10}}

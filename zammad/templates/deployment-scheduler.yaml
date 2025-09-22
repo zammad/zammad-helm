@@ -31,6 +31,7 @@ spec:
         {{- toYaml . | nindent 8}}
         {{- end }}
     spec:
+      {{- include "zammad.podSpec.priorityClass" .Values.zammadConfig.scheduler | nindent 6 }}
       {{- include "zammad.podSpec.deployment" . | nindent 6 }}
       {{- with .Values.zammadConfig.scheduler.nodeSelector }}
       nodeSelector:
