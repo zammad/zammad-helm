@@ -688,7 +688,9 @@ elasticsearch:
 memcached:
   # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
   image:
-    repository: bitnamilegacy/memcached
+    repository: bitnamisecure/memcached
+    # version: 1.6.39
+    tag: latest@sha256:0eeb6604ad4258924850a38dfcd56697351086ede82e9c7668451c50569548b2
   global:
     security:
       allowInsecureImages: true
@@ -729,7 +731,9 @@ minio:
 postgresql:
   # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
   image:
-    repository: bitnamilegacy/postgresql
+    repository: bitnamisecure/postgresql
+    # version: 18.0
+    tag: latest@sha256:e419a8dc57d7e455e181682a51337cef6f828754656ea1d5cebaf8a225f15b55
   global:
     security:
       allowInsecureImages: true
@@ -767,7 +771,9 @@ postgresql:
 redis:
   # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
   image:
-    repository: bitnamilegacy/redis
+    repository: bitnamisecure/redis
+    # version: 8.2.2
+    tag: latest@sha256:9a5f3428a3bfcd97eb8647af7f4d0e4c6179f6f9decbd13ed66df832a72233f5
   global:
     security:
       allowInsecureImages: true
