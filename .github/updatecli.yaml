@@ -6,10 +6,10 @@ sources:
     spec:
       image: "zammad/zammad-docker-compose"
       architecture: "linux/amd64"
-      tagfilter: "^6\\.5\\.1$"
-      # tagfilter: "^6\\.5\\.1-\\d{1}"
-      # tagfilter: "^6\\.5\\.1-\\d{2}"
-      # tagfilter: "^6\\.5\\.1-\\d{3}"
+      tagfilter: "^6\\.5\\.2$"
+      # tagfilter: "^6\\.5\\.2-\\d{1}"
+      # tagfilter: "^6\\.5\\.2-\\d{2}"
+      # tagfilter: "^6\\.5\\.2-\\d{3}"
   alpine:
     kind: dockerimage
     spec:
@@ -18,41 +18,41 @@ sources:
       versionfilter:
         pattern: '3.x.x'
         kind: semver
-  elasticsearch:
-    kind: helmchart
-    spec:
-      url: https://charts.bitnami.com/bitnami
-      name: elasticsearch
-      versionfilter:
-        pattern: "21.x.x"
-  minio:
-    kind: helmchart
-    spec:
-      url: https://charts.bitnami.com/bitnami
-      name: minio
-      versionfilter:
-        pattern: "14.x.x"
-  memcached:
-    kind: helmchart
-    spec:
-      url: https://charts.bitnami.com/bitnami
-      name: memcached
-      versionfilter:
-        pattern: "7.x.x"
-  postgresql:
-    kind: helmchart
-    spec:
-      url: https://charts.bitnami.com/bitnami
-      name: postgresql
-      versionfilter:
-        pattern: "16.x.x"
-  redis:
-    kind: helmchart
-    spec:
-      url: https://charts.bitnami.com/bitnami
-      name: redis
-      versionfilter:
-        pattern: "20.x.x"
+  # elasticsearch:
+  #   kind: helmchart
+  #   spec:
+  #     url: https://charts.bitnami.com/bitnami
+  #     name: elasticsearch
+  #     versionfilter:
+  #       pattern: "21.x.x"
+  # minio:
+  #   kind: helmchart
+  #   spec:
+  #     url: https://charts.bitnami.com/bitnami
+  #     name: minio
+  #     versionfilter:
+  #       pattern: "14.x.x"
+  # memcached:
+  #   kind: helmchart
+  #   spec:
+  #     url: https://charts.bitnami.com/bitnami
+  #     name: memcached
+  #     versionfilter:
+  #       pattern: "7.x.x"
+  # postgresql:
+  #   kind: helmchart
+  #   spec:
+  #     url: https://charts.bitnami.com/bitnami
+  #     name: postgresql
+  #     versionfilter:
+  #       pattern: "16.x.x"
+  # redis:
+  #   kind: helmchart
+  #   spec:
+  #     url: https://charts.bitnami.com/bitnami
+  #     name: redis
+  #     versionfilter:
+  #       pattern: "20.x.x"
 
 conditions: {}
 
@@ -72,43 +72,43 @@ targets:
       file: zammad/values.yaml
       matchpattern: '        tag: "\d+\.\d+\.\d+"'
       replacepattern: '        tag: "{{ source `alpine` }}"'
-  elasticsearch:
-    kind: helmchart
-    sourceid: elasticsearch
-    spec:
-      name: "zammad"
-      file: "Chart.yaml"
-      key: "$.dependencies[0].version"
-      versionincrement: patch
-  minio:
-    kind: helmchart
-    sourceid: minio
-    spec:
-      name: "zammad"
-      file: "Chart.yaml"
-      key: "$.dependencies[1].version"
-      versionincrement: patch
-  memcached:
-    kind: helmchart
-    sourceid: memcached
-    spec:
-      name: "zammad"
-      file: "Chart.yaml"
-      key: "$.dependencies[2].version"
-      versionincrement: patch
-  postgresql:
-    kind: helmchart
-    sourceid: postgresql
-    spec:
-      name: "zammad"
-      file: "Chart.yaml"
-      key: "$.dependencies[3].version"
-      versionincrement: patch
-  redis:
-    kind: helmchart
-    sourceid: redis
-    spec:
-      name: "zammad"
-      file: "Chart.yaml"
-      key: "$.dependencies[4].version"
-      versionincrement: patch
+  # elasticsearch:
+  #   kind: helmchart
+  #   sourceid: elasticsearch
+  #   spec:
+  #     name: "zammad"
+  #     file: "Chart.yaml"
+  #     key: "$.dependencies[0].version"
+  #     versionincrement: patch
+  # minio:
+  #   kind: helmchart
+  #   sourceid: minio
+  #   spec:
+  #     name: "zammad"
+  #     file: "Chart.yaml"
+  #     key: "$.dependencies[1].version"
+  #     versionincrement: patch
+  # memcached:
+  #   kind: helmchart
+  #   sourceid: memcached
+  #   spec:
+  #     name: "zammad"
+  #     file: "Chart.yaml"
+  #     key: "$.dependencies[2].version"
+  #     versionincrement: patch
+  # postgresql:
+  #   kind: helmchart
+  #   sourceid: postgresql
+  #   spec:
+  #     name: "zammad"
+  #     file: "Chart.yaml"
+  #     key: "$.dependencies[3].version"
+  #     versionincrement: patch
+  # redis:
+  #   kind: helmchart
+  #   sourceid: redis
+  #   spec:
+  #     name: "zammad"
+  #     file: "Chart.yaml"
+  #     key: "$.dependencies[4].version"
+  #     versionincrement: patch
