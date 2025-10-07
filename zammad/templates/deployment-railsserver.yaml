@@ -27,6 +27,7 @@ spec:
         {{- toYaml . | nindent 8}}
         {{- end }}
     spec:
+      {{- include "zammad.podSpec.priorityClass" .Values.zammadConfig.railsserver | nindent 6 }}
       {{- include "zammad.podSpec.deployment" . | nindent 6 }}
       {{- with .Values.zammadConfig.railsserver.nodeSelector }}
       nodeSelector:
