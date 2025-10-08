@@ -139,6 +139,17 @@ redis secret name
 {{- end -}}
 
 {{/*
+redis sentinel secret name
+*/}}
+{{- define "zammad.redisSentinelSecretName" -}}
+{{- if .Values.secrets.redis.sentinel.useExisting -}}
+{{ .Values.secrets.redis.sentinel.secretName }}
+{{- else -}}
+{{ include "zammad.fullname" . }}-{{ .Values.secrets.redis.sentinel.secretName }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 S3 access URL
 */}}
 {{- define "zammad.env.S3_URL" -}}
@@ -176,22 +187,53 @@ S3 access URL
 {{- end -}}
 
 {{/*
-environment variables for the Zammad Rails stack
+Redis Variables
 */}}
-{{- define "zammad.env" -}}
-{{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting -}}
+{{- define "zammad.env.redisVariables" -}}
+{{- if .Values.zammadConfig.redis.sentinel.username }}
+- name: REDIS_USERNAME
+  value: "{{ .Values.zammadConfig.redis.username }}"
+{{- end }}
+{{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
 - name: REDIS_PASSWORD
   valueFrom:
     secretKeyRef:
       name: {{ include "zammad.redisSecretName" . }}
       key: {{ .Values.secrets.redis.secretKey }}
 {{- end }}
+# sentinel
+{{- if .Values.zammadConfig.redis.sentinel.enabled }}
+- name: REDIS_SENTINELS
+  value: "{{ join "," .Values.zammadConfig.redis.sentinel.sentinels }}"
+- name: REDIS_SENTINEL_NAME
+  value: "{{ .Values.zammadConfig.redis.sentinel.masterName | default "mymaster" }}"
+{{- if .Values.zammadConfig.redis.sentinel.username }}
+- name: REDIS_SENTINEL_USERNAME
+  value: "{{ .Values.zammadConfig.redis.sentinel.username }}"
+{{- end }}
+{{- if or .Values.zammadConfig.redis.sentinel.pass .Values.secrets.redis.useExisting }}
+- name: REDIS_SENTINEL_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "zammad.redisSentinelSecretName" . }}
+      key: {{ .Values.secrets.redis.sentinel.secretKey }}
+{{- end }}
+{{- else }}
+# standalone
+- name: REDIS_URL
+  value: "redis://$(REDIS_USERNAME):$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+{{- end }}
+{{- end }}
+
+{{/*
+environment variables for the Zammad Rails stack
+*/}}
+{{- define "zammad.env" -}}
+{{ include "zammad.env.redisVariables" . }}
 - name: MEMCACHE_SERVERS
   value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
 - name: RAILS_TRUSTED_PROXIES
   value: "{{ .Values.zammadConfig.railsserver.trustedProxies }}"
-- name: REDIS_URL
-  value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
 - name: POSTGRESQL_PASS
   valueFrom:
     secretKeyRef:
