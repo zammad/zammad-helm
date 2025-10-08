@@ -709,6 +709,7 @@ minio:
   # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
   image:
     repository: bitnamilegacy/minio
+    tag: 2025.7.23-debian-12-r5
   global:
     security:
       allowInsecureImages: true
