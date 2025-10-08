@@ -55,6 +55,10 @@ secrets:
     useExisting: false
     secretKey: redis-password
     secretName: redis-pass
+    sentinel:
+      useExisting: false
+      secretKey: redis-sentinel-password
+      secretName: redis-sentinel-pass
   s3:
     useExisting: false
     secretKey: s3-url
@@ -277,7 +281,16 @@ zammadConfig:
     host: "zammad-redis-master"
     # needs to be the same as the redis.auth.password
     pass: zammad
+    username: # leave empty if no username is required
     port: 6379
+
+    sentinel:
+      enabled: false  # set to true to enable Redis Sentinel
+      sentinels:
+      - zammad-redis
+      masterName: mymaster
+      pass: zammad
+      username: # leave empty if no username is required
 
   scheduler:
     resources: {}
@@ -821,20 +834,21 @@ redis:
   metrics:
     image:
       repository: bitnamilegacy/redis-exporter
-  sentinel:
-    image:
-      repository: bitnamilegacy/redis-sentinel
   kubectl:
     image:
       repository: bitnamilegacy/kubectl
   sysctl:
     image:
       repository: bitnamilegacy/os-shell
+  sentinel:
+    image:
+      repository: bitnamilegacy/redis-sentinel
+    enabled: false # set to true to enable Redis Sentinel
   global:
     security:
       allowInsecureImages: true
 
-  architecture: standalone
+  architecture: standalone  # set to 'replication' to use Redis Sentinel
   auth:
     password: zammad
     # To avoid passwords in your values.yaml, you can comment out the line above
