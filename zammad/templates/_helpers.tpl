@@ -204,7 +204,11 @@ Redis Variables
 # sentinel
 {{- if .Values.zammadConfig.redis.sentinel.enabled }}
 - name: REDIS_SENTINELS
+{{- if .Values.zammadConfig.redis.enabled }}
+  value: "{{ .Release.Name }}-redis"
+{{- else }}
   value: "{{ join "," .Values.zammadConfig.redis.sentinel.sentinels }}"
+{{- end }}
 - name: REDIS_SENTINEL_NAME
   value: "{{ .Values.zammadConfig.redis.sentinel.masterName | default "mymaster" }}"
 {{- if .Values.zammadConfig.redis.sentinel.username }}
@@ -221,7 +225,7 @@ Redis Variables
 {{- else }}
 # standalone
 - name: REDIS_URL
-  value: "redis://{{ if .Values.zammadConfig.redis.username }}$(REDIS_USERNAME){{ end }}:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+  value: "redis://{{ .Values.zammadConfig.redis.username }}:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
 {{- end }}
 {{- end }}
 

@@ -278,21 +278,21 @@ zammadConfig:
   redis:
     # enable/disable redis chart dependency
     enabled: true
-    host: "zammad-redis-master"
-    # needs to be the same as the redis.auth.password
-    pass: zammad
+    host: zammad-redis-master
+    port: 6379
     # leave empty if no username is required
     username:
-    port: 6379
+    # needs to be the same as the redis.auth.password
+    pass: zammad
 
     sentinel:
       enabled: false  # set to true to enable Redis Sentinel
       sentinels:
-      - zammad-redis
+      - zammad-redis:26379
       masterName: mymaster
-      pass: zammad
       # leave empty if no username is required
       username:
+      pass: zammad
 
   scheduler:
     resources: {}
