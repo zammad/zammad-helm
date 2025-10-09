@@ -15,6 +15,10 @@ secrets:
     useExisting: true
     secretKey: redis-password
     secretName: redis-existing-secret
+    sentinel:
+      useExisting: true
+      secretKey: redis-password
+      secretName: redis-existing-secret
 
 autoWizard:
   enabled: true
@@ -30,6 +34,7 @@ minio:
   auth:
     existingSecret: minio-existing-secret
 
+# Use existing Redis secrets and run in Redis Sentinel mode.
 redis:
   auth:
     existingSecret: redis-existing-secret
