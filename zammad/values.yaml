@@ -706,27 +706,33 @@ memcached:
 
 # settings for the minio subchart
 minio:
-  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
-  image:
-    repository: bitnamilegacy/minio
-    tag: 2025.7.23-debian-12-r5
-  global:
-    security:
-      allowInsecureImages: true
-
+  # Use existing secret for credentials details (auth.rootUser and
+  # auth.rootPassword will be ignored and picked up from this secret).
+  # The secret has to contain the keys root-user and root-password)
+  # existingSecret: minio-credentials
   auth:
     rootUser: zammadadmin
     rootPassword: zammadadmin
 
-    # Use existing secret for credentials details (auth.rootUser and
-    # auth.rootPassword will be ignored and picked up from this secret).
-    # The secret has to contain the keys root-user and root-password)
-    # existingSecret: minio-credentials
+  clientImage:
+    repository: bitnamilegacy/minio-client
+
+  console:
+    image:
+      repository: bitnamilegacy/minio-object-browser
 
   defaultBuckets: zammad
 
   # You can use this to enable the web UI for debugging.
   disableWebUI: true
+
+  global:
+    security:
+      allowInsecureImages: true
+
+  image:
+    repository: bitnamilegacy/minio
+
 
 # settings for the postgres subchart
 postgresql:
