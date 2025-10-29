@@ -184,7 +184,7 @@ environment variables for the Zammad Rails stack
 - name: RAILS_TRUSTED_PROXIES
   value: "{{ .Values.zammadConfig.railsserver.trustedProxies }}"
 - name: REDIS_URL
-  value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+  value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
 - name: POSTGRESQL_PASS
   valueFrom:
     secretKeyRef:
