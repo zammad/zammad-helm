@@ -168,6 +168,7 @@ zammadConfig:
       #   labelSelector:
       #     matchLabels:
       #      app.kubernetes.io/name: zammad
+    priorityClassName: ""
 
   postgresql:
     # enable/disable postgresql chart dependency
@@ -257,6 +258,7 @@ zammadConfig:
       #   labelSelector:
       #     matchLabels:
       #      app.kubernetes.io/name: zammad
+    priorityClassName: ""
 
   redis:
     # enable/disable redis chart dependency
@@ -310,6 +312,7 @@ zammadConfig:
       #   labelSelector:
       #     matchLabels:
       #      app.kubernetes.io/name: zammad
+    priorityClassName: ""
 
   storageVolume:
     # Enable this for 'File' based storage in Zammad. You must provide an externally managed 'extistingClaim'
@@ -400,6 +403,7 @@ zammadConfig:
       #   labelSelector:
       #     matchLabels:
       #      app.kubernetes.io/name: zammad
+    priorityClassName: ""
 
   initContainers:
     elasticsearch:
@@ -513,8 +517,11 @@ zammadConfig:
       #   labelSelector:
       #     matchLabels:
       #      app.kubernetes.io/name: zammad
+    
+    priorityClassName: ""
 
   cronJob:
+    priorityClassName: ""
     reindex:
       # By default, this cronjob never runs. It can be used to create maintenance jobs with
       #   kubectl create job my-reindex-job --from=cronjob/zammad-cronjob-reindex
