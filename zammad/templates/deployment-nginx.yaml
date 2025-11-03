@@ -16,6 +16,7 @@ spec:
   template:
     metadata:
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-nginx.yaml") . | sha256sum }}
         {{- include "zammad.podAnnotations" . | nindent 8 }}
         {{- with .Values.zammadConfig.nginx.podAnnotations }}
         {{- toYaml . | nindent 8}}

@@ -443,7 +443,7 @@ zammadConfig:
       enabled: true
       image:
         repository: alpine
-        tag: "3.22.1"
+        tag: "3.22.2"
         pullPolicy: IfNotPresent
       command:
         - /bin/sh
@@ -661,6 +661,12 @@ elasticsearch:
     repository: bitnamilegacy/elasticsearch
   sysctlImage:
     repository: bitnamilegacy/os-shell
+  volumePermissions:
+    image:
+      repository: bitnamilegacy/os-shell
+  metrics:
+    image:
+      repository: bitnamilegacy/elasticsearch-exporter
   global:
     security:
       allowInsecureImages: true
@@ -696,6 +702,12 @@ memcached:
   # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
   image:
     repository: bitnamilegacy/memcached
+  volumePermissions:
+    image:
+      repository: bitnamilegacy/os-shell
+  metrics:
+    image:
+      repository: bitnamilegacy/memcached-exporter
   global:
     security:
       allowInsecureImages: true
@@ -714,9 +726,18 @@ minio:
   # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
   image:
     repository: bitnamilegacy/minio
+  clientImage:
+    repository: bitnamilegacy/minio-client
   global:
     security:
       allowInsecureImages: true
+  defaultInitContainers:
+    volumePermissions:
+      image:
+        repository: bitnamilegacy/os-shell
+  console:
+    image:
+      repository: bitnamilegacy/minio-object-browser
 
   auth:
     rootUser: zammadadmin
@@ -737,6 +758,12 @@ postgresql:
   # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
   image:
     repository: bitnamilegacy/postgresql
+  volumePermissions:
+    image:
+      repository: bitnamilegacy/os-shell
+  metrics:
+    image:
+      repository: bitnamilegacy/postgres-exporter
   global:
     security:
       allowInsecureImages: true
@@ -775,6 +802,21 @@ redis:
   # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
   image:
     repository: bitnamilegacy/redis
+  volumePermissions:
+    image:
+      repository: bitnamilegacy/os-shell
+  metrics:
+    image:
+      repository: bitnamilegacy/redis-exporter
+  sentinel:
+    image:
+      repository: bitnamilegacy/redis-sentinel
+  kubectl:
+    image:
+      repository: bitnamilegacy/kubectl
+  sysctl:
+    image:
+      repository: bitnamilegacy/os-shell
   global:
     security:
       allowInsecureImages: true
