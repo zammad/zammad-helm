@@ -45,7 +45,7 @@ spec:
             - "exec"
             - "script/websocket-server.rb"
             - "-b"
-            - "0.0.0.0"
+            - "{{ .Values.zammadConfig.websocket.listenAddress }}"
             - "-p"
             - "6042"
             - "start"
