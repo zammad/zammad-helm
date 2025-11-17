@@ -193,7 +193,7 @@ available. You can create a job from a cronjob template for it:
 kubectl create job my-reindex-job --from=cronjob/zammad-cronjob-reindex
 ```
 
-This cronjob never runs by default, but you can channge `zammadConfig.cronJob.reindex.suspend`
+This cronjob never runs by default, but you can change `zammadConfig.cronJob.reindex.suspend`
 and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 
 ## Upgrading
