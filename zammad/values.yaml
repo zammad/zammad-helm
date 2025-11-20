@@ -53,6 +53,10 @@ secrets:
     useExisting: false
     secretKey: redis-password
     secretName: redis-pass
+  s3:
+    useExisting: false
+    secretKey: s3-url
+    secretName: s3-url
 
 securityContext:
   fsGroup: 1000

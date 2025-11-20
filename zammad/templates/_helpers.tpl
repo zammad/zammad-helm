@@ -165,6 +165,13 @@ S3 access URL
   value: "http://{{ .Values.minio.auth.rootUser }}:{{ .Values.minio.auth.rootPassword }}@{{ include "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
 {{- end -}}
 {{- end -}}
+{{- if .Values.secrets.s3.useExisting -}}
+- name: S3_URL
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.secrets.s3.secretName }}
+      key: {{ .Values.secrets.s3.secretKey }}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
