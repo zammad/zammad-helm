@@ -330,6 +330,15 @@ initContainers:
 {{ include "zammad.podSpec.initContainers" . | nindent 2 }}
 {{- end -}}
 
+{{/* 
+priority class configuration for Zammad pods
+*/}}
+{{- define "zammad.podSpec.priorityClass" -}}
+{{- if .priorityClassName }}
+priorityClassName: {{ .priorityClassName }}
+{{- end}}
+{{- end -}}
+
 {{/*
 shared configuration for Zammad containers
 */}}
