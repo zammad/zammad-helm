@@ -23,7 +23,12 @@ data:
     }
 
     server {
+        {{- if .Values.zammadConfig.nginx.listenIpv4 }}
         listen 8080;
+        {{- end }}
+        {{- if .Values.zammadConfig.nginx.listenIpv6 }}
+        listen [::]:8080;
+        {{- end }}
 
         server_name _;
 

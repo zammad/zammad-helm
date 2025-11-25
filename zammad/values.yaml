@@ -105,6 +105,8 @@ zammadConfig:
     # Maximum upload size
     clientMaxBodySize: 50M
     knowledgeBaseUrl: ""
+    listenIpv4: true
+    listenIpv6: true
     startupProbe:
       tcpSocket:
         port: 8080
@@ -223,6 +225,7 @@ zammadConfig:
     # can be used to add additional containers / sidecars
     sidecars: []
     trustedProxies: "['127.0.0.1', '::1']"
+    listenAddress: "[::]"
     webConcurrency: 0
     # tmpdir will be used by all Zammad/Rails containers
     tmpdir: "/opt/zammad/tmp"
@@ -375,6 +378,7 @@ zammadConfig:
           - ALL
       readOnlyRootFilesystem: true
       privileged: false
+    listenAddress: "::"
     # can be used to add additional containers / sidecars
     sidecars: []
     podLabels: {}

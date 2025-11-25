@@ -55,7 +55,7 @@ spec:
             - "exec"
             - "puma"
             - "-b"
-            - "tcp://[::]:3000"
+            - "tcp://{{ .Values.zammadConfig.railsserver.listenAddress }}:3000"
             - "-w"
             - "{{ .Values.zammadConfig.railsserver.webConcurrency }}"
             - "-e"
