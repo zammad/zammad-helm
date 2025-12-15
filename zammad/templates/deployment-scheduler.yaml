@@ -62,6 +62,9 @@ spec:
           env:
             {{- include "zammad.env" . | nindent 12 }}
             {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+            {{- with .Values.zammadConfig.scheduler.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           volumeMounts:
             {{- include "zammad.volumeMounts" . | nindent 12 }}
       volumes:

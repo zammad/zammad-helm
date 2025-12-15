@@ -141,6 +141,8 @@ zammadConfig:
       privileged: false
     # can be used to add additional containers / sidecars
     sidecars: []
+    # additional environment vars (values should be unique between deployment and global extraEnv)
+    extraEnv: []
     podLabels: {}
       # my-label: "value"
     podAnnotations: {}
@@ -229,6 +231,8 @@ zammadConfig:
     trustedProxies: "['127.0.0.1', '::1']"
     listenAddress: "[::]"
     webConcurrency: 0
+    # additional environment vars (values should be unique between deployment and global extraEnv)
+    extraEnv: []
     # tmpdir will be used by all Zammad/Rails containers
     tmpdir: "/opt/zammad/tmp"
     podLabels: {}
@@ -292,6 +296,8 @@ zammadConfig:
       privileged: false
     # can be used to add additional containers / sidecars
     sidecars: []
+    # additional environment vars (values should be unique between deployment and global extraEnv)
+    extraEnv: []
     podLabels: {}
       # my-label: "value"
     podAnnotations: {}
@@ -383,6 +389,8 @@ zammadConfig:
     listenAddress: "::"
     # can be used to add additional containers / sidecars
     sidecars: []
+    # additional environment vars (values should be unique between deployment and global extraEnv)
+    extraEnv: []
     podLabels: {}
       # my-label: "value"
     podAnnotations: {}
@@ -540,7 +548,7 @@ zammadConfig:
       podSpec: {}
       # my-podspec: "value"
 
-# additional environment vars added to all zammad services
+# additional environment vars added to all zammad services (values should be unique between deployment and global extraEnv)
 extraEnv: []
   # - name: FOO_BAR
   #   value: "foobar"
