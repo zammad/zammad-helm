@@ -32,6 +32,8 @@ ingress:
     # - secretName: chart-example-tls
     #   hosts:
     #     - chart-example.local
+  labels: {}
+
 
 # Please note that passwords for PostgreSQL, Redis and S3 may not
 #   contain special characters which would require URL encoding.
