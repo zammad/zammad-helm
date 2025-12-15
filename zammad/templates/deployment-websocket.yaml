@@ -52,6 +52,9 @@ spec:
           env:
             {{- include "zammad.env" . | nindent 12 }}
             {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+            {{- with .Values.zammadConfig.websocket.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           ports:
             - name: websocket
               containerPort: 6042
