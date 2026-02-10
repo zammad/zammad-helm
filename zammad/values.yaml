@@ -500,7 +500,7 @@ zammadConfig:
   initJob:
     randomName: true
     # specify how long after finish pods are deleted
-    ttlSecondsAfterFinished: 3600
+    ttlSecondsAfterFinished: 300
     annotations: {}
     # my-annotation: "value"
     podLabels: {}
