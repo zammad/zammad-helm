@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "zammad.fullname" . }}-nginx
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
   annotations:
