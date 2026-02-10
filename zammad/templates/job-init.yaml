@@ -7,6 +7,7 @@ metadata:
   {{- else }}
   name: {{ include "zammad.fullname" . }}-init
   {{- end}}
+  namespace: {{ .Release.Namespace }}
   # Helm post-install/post-upgrade hooks cannot be used here, because
   #   helm's --wait flag causes a deadlock: the job waits for all resources to be ready,
   #   but the pods need the job to work properly.

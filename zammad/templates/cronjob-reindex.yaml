@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ include "zammad.fullname" . }}-cronjob-reindex
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "zammad.labels" . | nindent 4 }}
     app.kubernetes.io/component: zammad-cronjob-reindex
