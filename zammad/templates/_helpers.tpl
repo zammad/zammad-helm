@@ -244,13 +244,13 @@ environment variables for the Zammad Rails stack
   value: {{ .Values.zammadConfig.postgresql.port }}
 - name: POSTGRESQL_USER
   value: {{ .Values.zammadConfig.postgresql.user }}
-- name: POSTGRESQL_OPTIONS
-  value: {{ .Values.zammadConfig.postgresql.options }}
 - name: POSTGRESQL_PASS
   valueFrom:
     secretKeyRef:
       name: {{ include "zammad.postgresqlSecretName" . }}
       key: {{ .Values.secrets.postgresql.secretKey }}
+- name: POSTGRESQL_OPTIONS
+  value: {{ .Values.zammadConfig.postgresql.options }}
 {{ include "zammad.env.S3_URL" . }}
 - name: TMP # All zammad containers need the possibility to create temporary files, e.g. for file uploads or image resizing.
   value: {{ .Values.zammadConfig.railsserver.tmpdir }}
