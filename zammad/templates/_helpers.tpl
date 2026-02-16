@@ -238,13 +238,19 @@ environment variables for the Zammad Rails stack
   value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
 - name: RAILS_TRUSTED_PROXIES
   value: "{{ .Values.zammadConfig.railsserver.trustedProxies }}"
+- name: POSTGRESQL_HOST
+  value: {{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}
+- name: POSTGRESQL_PORT
+  value: {{ .Values.zammadConfig.postgresql.port }}
+- name: POSTGRESQL_USER
+  value: {{ .Values.zammadConfig.postgresql.user }}
+- name: POSTGRESQL_OPTIONS
+  value: {{ .Values.zammadConfig.postgresql.options }}
 - name: POSTGRESQL_PASS
   valueFrom:
     secretKeyRef:
       name: {{ include "zammad.postgresqlSecretName" . }}
       key: {{ .Values.secrets.postgresql.secretKey }}
-- name: DATABASE_URL
-  value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}?{{ .Values.zammadConfig.postgresql.options }}"
 {{ include "zammad.env.S3_URL" . }}
 - name: TMP # All zammad containers need the possibility to create temporary files, e.g. for file uploads or image resizing.
   value: {{ .Values.zammadConfig.railsserver.tmpdir }}
