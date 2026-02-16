@@ -249,6 +249,8 @@ environment variables for the Zammad Rails stack
     secretKeyRef:
       name: {{ include "zammad.postgresqlSecretName" . }}
       key: {{ .Values.secrets.postgresql.secretKey }}
+- name: POSTGRESQL_DB
+  value: {{ .Values.zammadConfig.postgresql.db }}
 - name: POSTGRESQL_OPTIONS
   value: {{ .Values.zammadConfig.postgresql.options }}
 {{ include "zammad.env.S3_URL" . }}
