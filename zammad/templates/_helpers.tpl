@@ -241,7 +241,7 @@ environment variables for the Zammad Rails stack
 - name: POSTGRESQL_HOST
   value: {{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}
 - name: POSTGRESQL_PORT
-  value: {{ .Values.zammadConfig.postgresql.port }}
+  value: {{ .Values.zammadConfig.postgresql.port | toString | toYaml }}
 - name: POSTGRESQL_USER
   value: {{ .Values.zammadConfig.postgresql.user }}
 - name: POSTGRESQL_PASS
