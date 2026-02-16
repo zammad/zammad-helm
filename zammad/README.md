@@ -93,10 +93,10 @@ Note that this `PVC` must provide `ReadWriteMany` access to work properly for th
 #### How to migrate from `File` to `S3` storage
 
 - In the admin panel, go to "System -> Storage" and select "Simple Storage (S3)" as the new storage provider.
-- Migrate existing `File` store content by running `kubectl exec zammad-0 -c zammad-railsserver -- rails r "Store::File.move('File', 'S3')"`. Example:
+- Migrate existing `File` store content by running `kubectl exec zammad-0 -c zammad-railsserver -- bundle exec rails r "Store::File.move('File', 'S3')"`. Example:
 
 ```log
-kubectl exec zammad-0 -c zammad-railsserver -- rails r "Store::File.move('File', 'S3')"
+kubectl exec zammad-0 -c zammad-railsserver -- bundle exec rails r "Store::File.move('File', 'S3')"
 I, [2024-01-24T11:06:13.501572 #168]  INFO -- : ActionCable is using the redis instance at redis://:zammad@zammad-redis-master:6379.
 I, [2024-01-24T11:06:13.506180#168-5980]  INFO -- : Using memcached as Rails cache store.
 I, [2024-01-24T11:06:13.506246#168-5980]  INFO -- : Using the Redis back end for Zammad's web socket session store.
