@@ -193,15 +193,15 @@ available. You can create a job from a cronjob template for it:
 kubectl create job my-reindex-job --from=cronjob/zammad-cronjob-reindex
 ```
 
-This cronjob never runs by default, but you can channge `zammadConfig.cronJob.reindex.suspend`
+This cronjob never runs by default, but you can change `zammadConfig.cronJob.reindex.suspend`
 and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 
 ## Upgrading
 
 ### From Chart Version 14.x to 15.0.0
 
-- The selector matchLabels of all deployments changed which are unfortunately immutable. This means each deployment needs to  
-  be deleted before upgrading the helm chart. To preserve high availability the `cascade=orphan` option can be used  
+- The selector matchLabels of all deployments changed which are unfortunately immutable. This means each deployment needs to
+  be deleted before upgrading the helm chart. To preserve high availability the `cascade=orphan` option can be used
   (e.g. `kubectl/oc delete deployment --selector app.kubernetes.io/name=zammad --cascade=orphan`).
 
 ### From Chart Version 13.x to 14.0.0
