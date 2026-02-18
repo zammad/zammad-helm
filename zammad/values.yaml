@@ -827,7 +827,7 @@ redis:
     # existingSecret: redis-pass
     # existingSecretPasswordKey: redis-password
   resources: {}
-  # limits: q q
+  # limits:
   #   cpu: 250m
   #   memory: 256Mi
   # requests:
