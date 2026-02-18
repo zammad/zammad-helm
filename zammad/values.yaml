@@ -727,19 +727,6 @@ elasticsearch:
 
 # settings for the memcached subchart
 memcached:
-  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
-  image:
-    repository: bitnamilegacy/memcached
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
-  metrics:
-    image:
-      repository: bitnamilegacy/memcached-exporter
-  global:
-    security:
-      allowInsecureImages: true
-
   replicaCount: 1
   resources: {}
     # requests:
@@ -827,31 +814,10 @@ postgresql:
 
 # settings for the redis subchart
 redis:
-  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
-  image:
-    repository: bitnamilegacy/redis
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
-  metrics:
-    image:
-      repository: bitnamilegacy/redis-exporter
-  kubectl:
-    image:
-      repository: bitnamilegacy/kubectl
-  sysctl:
-    image:
-      repository: bitnamilegacy/os-shell
   sentinel:
-    image:
-      repository: bitnamilegacy/redis-sentinel
     # set to true to enable Redis Sentinel
     enabled: false
-  global:
-    security:
-      allowInsecureImages: true
-
-  architecture: standalone  # set to 'replication' to use Redis Sentinel
+  architecture: standalone
   auth:
     password: zammad
     # To avoid passwords in your values.yaml, you can comment out the line above
@@ -860,11 +826,10 @@ redis:
     #
     # existingSecret: redis-pass
     # existingSecretPasswordKey: redis-password
-  master:
-    resources: {}
-    # limits:
-    #   cpu: 250m
-    #   memory: 256Mi
-    # requests:
-    #   cpu: 250m
-    #   memory: 256Mi
+  resources: {}
+  # limits:
+  #   cpu: 250m
+  #   memory: 256Mi
+  # requests:
+  #   cpu: 250m
+  #   memory: 256Mi

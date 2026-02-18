@@ -198,6 +198,15 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 
 ## Upgrading
 
+### From Chart Version 15.x to 16.0.0
+
+- The bitnami memcached subchart was replaced with [cloudpirates-memcached/memcached](https://artifacthub.io/packages/helm/cloudpirates-memcached/memcached).
+  This should be a seamless update.
+- The bitnami redis subchart was replaced with [cloudpirates-redis/redis](https://artifacthub.io/packages/helm/cloudpirates-redis/redis).
+  Please check your values for this subchart, as there have been minor changes here (resources configuration is now on the top level rather than in `master`).
+  The name of the primary redis service has changed from `{{ .Release.Name }}-redis-master` to `{{ .Release.Name }}-redis`.
+  A data migration is not required here.
+
 ### From Chart Version 14.x to 15.0.0
 
 - The selector matchLabels of all deployments changed which are unfortunately immutable. This means each deployment needs to
