@@ -32,13 +32,13 @@ sources:
   #     name: minio
   #     versionfilter:
   #       pattern: "14.x.x"
-  # memcached:
-  #   kind: helmchart
-  #   spec:
-  #     url: https://charts.bitnami.com/bitnami
-  #     name: memcached
-  #     versionfilter:
-  #       pattern: "7.x.x"
+  memcached:
+    kind: helmchart
+    spec:
+      url: oci://ghcr.io/cloudpirates-io/helm-charts
+      name: memcached
+      versionfilter:
+        pattern: "0.x.x"
   # postgresql:
   #   kind: helmchart
   #   spec:
@@ -46,13 +46,13 @@ sources:
   #     name: postgresql
   #     versionfilter:
   #       pattern: "16.x.x"
-  # redis:
-  #   kind: helmchart
-  #   spec:
-  #     url: https://charts.bitnami.com/bitnami
-  #     name: redis
-  #     versionfilter:
-  #       pattern: "20.x.x"
+  redis:
+    kind: helmchart
+    spec:
+      url: oci://ghcr.io/cloudpirates-io/helm-charts
+      name: redis
+      versionfilter:
+        pattern: "0.x.x"
 
 conditions: {}
 
@@ -88,14 +88,14 @@ targets:
   #     file: "Chart.yaml"
   #     key: "$.dependencies[1].version"
   #     versionincrement: patch
-  # memcached:
-  #   kind: helmchart
-  #   sourceid: memcached
-  #   spec:
-  #     name: "zammad"
-  #     file: "Chart.yaml"
-  #     key: "$.dependencies[2].version"
-  #     versionincrement: patch
+  memcached:
+    kind: helmchart
+    sourceid: memcached
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.dependencies[2].version"
+      versionincrement: patch
   # postgresql:
   #   kind: helmchart
   #   sourceid: postgresql
@@ -104,11 +104,11 @@ targets:
   #     file: "Chart.yaml"
   #     key: "$.dependencies[3].version"
   #     versionincrement: patch
-  # redis:
-  #   kind: helmchart
-  #   sourceid: redis
-  #   spec:
-  #     name: "zammad"
-  #     file: "Chart.yaml"
-  #     key: "$.dependencies[4].version"
-  #     versionincrement: patch
+  redis:
+    kind: helmchart
+    sourceid: redis
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.dependencies[4].version"
+      versionincrement: patch

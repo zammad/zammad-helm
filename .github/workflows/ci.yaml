@@ -4,8 +4,6 @@ permissions: read-all
 
 on:
   pull_request:
-    branches:
-      - main
 
 env:
   helm-version: "v3.19.4"
