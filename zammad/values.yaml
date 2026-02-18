@@ -826,11 +826,10 @@ redis:
     #
     # existingSecret: redis-pass
     # existingSecretPasswordKey: redis-password
-  master:
-    resources: {}
-    # limits:
-    #   cpu: 250m
-    #   memory: 256Mi
-    # requests:
-    #   cpu: 250m
-    #   memory: 256Mi
+  resources: {}
+  # limits: q q
+  #   cpu: 250m
+  #   memory: 256Mi
+  # requests:
+  #   cpu: 250m
+  #   memory: 256Mi
