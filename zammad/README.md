@@ -203,9 +203,9 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 - The bitnami memcached subchart was replaced with [cloudpirates-memcached/memcached](https://artifacthub.io/packages/helm/cloudpirates-memcached/memcached).
   This should be a seamless update.
 - The bitnami redis subchart was replaced with [cloudpirates-redis/redis](https://artifacthub.io/packages/helm/cloudpirates-redis/redis).
-  Please check your values for this subchart, as there have been minor changes here (resources configuration is now on the top level rather than in `master`).
-  The name of the primary redis service has changed from `{{ .Release.Name }}-redis-master` to `{{ .Release.Name }}-redis`.
-  A data migration is not required here.
+   - Please check your values for this subchart, as there have been minor changes here (resources configuration is now on the top level rather than in `master`).
+   - The name of the primary redis service has changed from `{{ .Release.Name }}-redis-master` to `{{ .Release.Name }}-redis`.
+   - The new subchart creates its own `PersistentVolumeClaim`. As Zammad does not store permantent data in Redis, there is no data migration required here. Feel free to clean up the unused `PersistentVolumeClaim` from the previous subchart at your convenience (it has `master` in its name, e.g. `redis-data-zammad-redis-master-0`).
 
 ### From Chart Version 14.x to 15.0.0
 
