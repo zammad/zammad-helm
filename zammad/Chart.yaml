@@ -1,7 +1,7 @@
 apiVersion: v2
 name: zammad
 version: 16.0.0
-appVersion: develop
+appVersion: 7.0.0
 description: Zammad is a web based open source helpdesk/customer support system with many features to manage customer communication via several channels like telephone, facebook, twitter, chat and e-mails.
 home: https://zammad.org
 icon: https://raw.githubusercontent.com/zammad/zammad-documentation/main/images/zammad_logo_600x520.png
@@ -23,7 +23,7 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: zammadConfig.minio.enabled
   - name: memcached
-    version: 0.10.0
+    version: 0.10.1
     repository: oci://ghcr.io/cloudpirates-io/helm-charts
     condition: zammadConfig.memcached.enabled
   - name: postgresql
@@ -31,6 +31,6 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: zammadConfig.postgresql.enabled
   - name: redis
-    version: 0.25.1
+    version: 0.25.6
     repository: oci://ghcr.io/cloudpirates-io/helm-charts
     condition: zammadConfig.redis.enabled
