@@ -139,6 +139,17 @@ redis secret name
 {{- end -}}
 
 {{/*
+redis sentinel secret name
+*/}}
+{{- define "zammad.redisSentinelSecretName" -}}
+{{- if .Values.secrets.redis.sentinel.useExisting -}}
+{{ .Values.secrets.redis.sentinel.secretName }}
+{{- else -}}
+{{ include "zammad.fullname" . }}-{{ .Values.secrets.redis.sentinel.secretName }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 S3 access URL
 */}}
 {{- define "zammad.env.S3_URL" -}}
@@ -176,29 +187,72 @@ S3 access URL
 {{- end -}}
 
 {{/*
-environment variables for the Zammad Rails stack
+Redis Variables
 */}}
-{{- define "zammad.env" -}}
-{{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting -}}
+{{- define "zammad.env.redisVariables" -}}
+{{- if .Values.zammadConfig.redis.sentinel.username }}
+- name: REDIS_USERNAME
+  value: "{{ .Values.zammadConfig.redis.username }}"
+{{- end }}
+{{- if or .Values.zammadConfig.redis.pass .Values.secrets.redis.useExisting }}
 - name: REDIS_PASSWORD
   valueFrom:
     secretKeyRef:
       name: {{ include "zammad.redisSecretName" . }}
       key: {{ .Values.secrets.redis.secretKey }}
 {{- end }}
+# sentinel
+{{- if .Values.zammadConfig.redis.sentinel.enabled }}
+- name: REDIS_SENTINELS
+{{- if .Values.zammadConfig.redis.enabled }}
+  value: "{{ .Release.Name }}-redis"
+{{- else }}
+  value: "{{ join "," .Values.zammadConfig.redis.sentinel.sentinels }}"
+{{- end }}
+- name: REDIS_SENTINEL_NAME
+  value: "{{ .Values.zammadConfig.redis.sentinel.masterName | default "mymaster" }}"
+{{- if .Values.zammadConfig.redis.sentinel.username }}
+- name: REDIS_SENTINEL_USERNAME
+  value: "{{ .Values.zammadConfig.redis.sentinel.username }}"
+{{- end }}
+{{- if or .Values.zammadConfig.redis.sentinel.pass .Values.secrets.redis.useExisting }}
+- name: REDIS_SENTINEL_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "zammad.redisSentinelSecretName" . }}
+      key: {{ .Values.secrets.redis.sentinel.secretKey }}
+{{- end }}
+{{- else }}
+# standalone
+- name: REDIS_URL
+  value: "redis://{{ .Values.zammadConfig.redis.username }}:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+{{- end }}
+{{- end }}
+
+{{/*
+environment variables for the Zammad Rails stack
+*/}}
+{{- define "zammad.env" -}}
+{{ include "zammad.env.redisVariables" . }}
 - name: MEMCACHE_SERVERS
   value: "{{ if .Values.zammadConfig.memcached.enabled }}{{ .Release.Name }}-memcached{{ else }}{{ .Values.zammadConfig.memcached.host }}{{ end }}:{{ .Values.zammadConfig.memcached.port }}"
 - name: RAILS_TRUSTED_PROXIES
   value: "{{ .Values.zammadConfig.railsserver.trustedProxies }}"
-- name: REDIS_URL
-  value: "redis://:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis-master{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+- name: POSTGRESQL_HOST
+  value: {{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}
+- name: POSTGRESQL_PORT
+  value: {{ .Values.zammadConfig.postgresql.port | toString | toYaml }}
+- name: POSTGRESQL_USER
+  value: {{ .Values.zammadConfig.postgresql.user }}
 - name: POSTGRESQL_PASS
   valueFrom:
     secretKeyRef:
       name: {{ include "zammad.postgresqlSecretName" . }}
       key: {{ .Values.secrets.postgresql.secretKey }}
-- name: DATABASE_URL
-  value: "postgres://{{ .Values.zammadConfig.postgresql.user }}:$(POSTGRESQL_PASS)@{{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}:{{ .Values.zammadConfig.postgresql.port }}/{{ .Values.zammadConfig.postgresql.db }}?{{ .Values.zammadConfig.postgresql.options }}"
+- name: POSTGRESQL_DB
+  value: {{ .Values.zammadConfig.postgresql.db }}
+- name: POSTGRESQL_OPTIONS
+  value: {{ .Values.zammadConfig.postgresql.options }}
 {{ include "zammad.env.S3_URL" . }}
 - name: TMP # All zammad containers need the possibility to create temporary files, e.g. for file uploads or image resizing.
   value: {{ .Values.zammadConfig.railsserver.tmpdir }}

@@ -15,6 +15,10 @@ secrets:
     useExisting: true
     secretKey: redis-password
     secretName: redis-existing-secret
+    sentinel:
+      useExisting: true
+      secretKey: redis-password
+      secretName: redis-existing-secret
 
 autoWizard:
   enabled: true
@@ -30,10 +34,14 @@ minio:
   auth:
     existingSecret: minio-existing-secret
 
+# Use existing Redis secrets and run in Redis Sentinel mode.
 redis:
   auth:
     existingSecret: redis-existing-secret
     existingSecretPasswordKey: redis-password
+  sentinel:
+    enabled: true
+  architecture: replication
 
 zammadConfig:
   storageVolume:
@@ -60,6 +68,9 @@ zammadConfig:
       my-railsserver-pod-label: my-railsserver-pod-label-value
     podAnnotations:
       my-railsserver-pod-annotation: my-railsserver-pod-annotation-value
+  redis:
+    sentinel:
+      enabled: true
   scheduler:
     podLabels:
       my-scheduler-pod-label: my-scheduler-pod-label-value
