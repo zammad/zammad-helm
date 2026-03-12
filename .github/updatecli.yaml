@@ -1,13 +1,16 @@
+---
 name: "Update Zammad version and dependency charts (patch and minor only)"
 
 sources:
   zammad:
+    name: zammad
     kind: dockerimage
     spec:
       image: "zammad/zammad-docker-compose"
       architecture: "linux/amd64"
       tagfilter: "^7\\.0\\.\\d-\\d{4}"
   alpine:
+    name: alpine
     kind: dockerimage
     spec:
       image: "alpine"
@@ -16,6 +19,7 @@ sources:
         pattern: '3.x.x'
         kind: semver
   # elasticsearch:
+  #   name: elasticsearch
   #   kind: helmchart
   #   spec:
   #     url: https://charts.bitnami.com/bitnami
@@ -23,6 +27,7 @@ sources:
   #     versionfilter:
   #       pattern: "21.x.x"
   # minio:
+  #   name: minio
   #   kind: helmchart
   #   spec:
   #     url: https://charts.bitnami.com/bitnami
@@ -30,6 +35,7 @@ sources:
   #     versionfilter:
   #       pattern: "14.x.x"
   memcached:
+    name: memcached
     kind: helmchart
     spec:
       url: oci://ghcr.io/cloudpirates-io/helm-charts
@@ -37,6 +43,7 @@ sources:
       versionfilter:
         pattern: "0.x.x"
   # postgresql:
+  #   name: postgresql
   #   kind: helmchart
   #   spec:
   #     url: https://charts.bitnami.com/bitnami
@@ -44,6 +51,7 @@ sources:
   #     versionfilter:
   #       pattern: "16.x.x"
   redis:
+    name: redis
     kind: helmchart
     spec:
       url: oci://ghcr.io/cloudpirates-io/helm-charts
@@ -55,57 +63,109 @@ conditions: {}
 
 targets:
   zammad:
+    name: zammad
     kind: helmchart
     sourceid: zammad
+    # {{ if .github.enabled }}
+    scmid: zammad-helm
+    # {{ end }}
     spec:
       name: "zammad"
       file: "Chart.yaml"
       key: "$.appVersion"
       versionincrement: patch
   alpine:
+    name: alpine
     kind: file
     sourceid: alpine
+    # {{ if .github.enabled }}
+    scmid: zammad-helm
+    # {{ end }}
     spec:
       file: zammad/values.yaml
       matchpattern: '        tag: "\d+\.\d+\.\d+"'
       replacepattern: '        tag: "{{ source `alpine` }}"'
   # elasticsearch:
+  #   name: elasticsearch
   #   kind: helmchart
   #   sourceid: elasticsearch
+  #   # {{ if .github.enabled }}
+  #   scmid: zammad-helm
+  #   # {{ end }}
   #   spec:
   #     name: "zammad"
   #     file: "Chart.yaml"
   #     key: "$.dependencies[0].version"
   #     versionincrement: patch
   # minio:
+  #   name: minio
   #   kind: helmchart
   #   sourceid: minio
+  #   # {{ if .github.enabled }}
+  #   scmid: zammad-helm
+  #   # {{ end }}
   #   spec:
   #     name: "zammad"
   #     file: "Chart.yaml"
   #     key: "$.dependencies[1].version"
   #     versionincrement: patch
   memcached:
+    name: memcached
     kind: helmchart
     sourceid: memcached
+    # {{ if .github.enabled }}
+    scmid: zammad-helm
+    # {{ end }}
     spec:
       name: "zammad"
       file: "Chart.yaml"
       key: "$.dependencies[2].version"
       versionincrement: patch
   # postgresql:
+  #   name: postgresql
   #   kind: helmchart
   #   sourceid: postgresql
+  #   # {{ if .github.enabled }}
+  #   scmid: zammad-helm
+  #   # {{ end }}
   #   spec:
   #     name: "zammad"
   #     file: "Chart.yaml"
   #     key: "$.dependencies[3].version"
   #     versionincrement: patch
   redis:
+    name: redis
     kind: helmchart
     sourceid: redis
+    # {{ if .github.enabled }}
+    scmid: zammad-helm
+    # {{ end }}
     spec:
       name: "zammad"
       file: "Chart.yaml"
       key: "$.dependencies[4].version"
       versionincrement: patch
+
+# {{ if .github.enabled }}
+scms:
+  zammad-helm:
+    kind: "github"
+    spec:
+      owner: "zammad"
+      repository: "zammad-helm"
+      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+      branch: "main"
+
+actions:
+  github:
+    kind: github/pullrequest
+    scmid: zammad-helm
+    spec:
+      automerge: false
+      title: "Patch-level image updates"
+      assignees:
+        - mgruner
+      labels:
+        - "dependencies"
+# {{ end }}
