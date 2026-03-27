@@ -16,6 +16,7 @@ image:
 service:
   type: ClusterIP
   port: 8080
+  appProtocol: kubernetes.io/ws
 
 ingress:
   enabled: false
