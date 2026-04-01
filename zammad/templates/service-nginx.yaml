@@ -14,6 +14,7 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+      appProtocol: {{ .Values.service.appProtocol }}
   selector:
     {{- include "zammad.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: zammad-nginx
