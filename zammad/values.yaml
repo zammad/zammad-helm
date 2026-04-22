@@ -35,6 +35,50 @@ ingress:
     #     - chart-example.local
   labels: {}
 
+# -- Expose the service via gateway-api HTTPRoute
+# Requires Gateway API resources and suitable controller installed within the cluster
+# (see: https://gateway-api.sigs.k8s.io/guides/)
+httpRoute:
+  enabled: false
+  annotations: {}
+  parentRefs:
+  # When .Values.listenerSet.enabled is true, the listenerSet is used as the parent
+  # - name: gateway
+  #   sectionName: http
+  #   namespace: default
+  # Hostnames matching HTTP header.
+  hostnames:
+  - chart-example.local
+  # List of rules and filters applied.
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+
+# -- Expose the service via gateway-api ListenerSet
+# Requires Gateway API resources and suitable controller installed within the cluster
+# (see: https://gateway-api.sigs.k8s.io/guides/)
+listenerSet:
+  enabled: false
+  annotations: {}
+  parentRef:
+    # name: gateway
+    # namespace: default
+  # Hostnames matching HTTP header.
+  listeners:
+    - name: http
+      hostname: chart-example.local
+      port: 80
+      protocol: HTTP
+    # - name: https
+    #   hostname: chart-example.local
+    #   port: 443
+    #   protocol: HTTPS
+    #   tls:
+    #     mode: Terminate
+    #     certificateRefs:
+    #       - name: chart-example-tls
 
 # Please note that passwords for PostgreSQL, Redis and S3 may not
 #   contain special characters which would require URL encoding.
