@@ -285,6 +285,8 @@ zammadConfig:
     username:
     # needs to be the same as the redis.auth.password
     pass: zammad
+    # set to true to use rediss:// schema (TLS)
+    tls: false
 
     sentinel:
       enabled: false  # set to true to enable Redis Sentinel

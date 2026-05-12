@@ -225,7 +225,7 @@ Redis Variables
 {{- else }}
 # standalone
 - name: REDIS_URL
-  value: "redis://{{ .Values.zammadConfig.redis.username }}:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+  value: "redis{{ if .Values.zammadConfig.redis.tls }}s{{ end }}://{{ .Values.zammadConfig.redis.username }}:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
 {{- end }}
 {{- end }}
 
