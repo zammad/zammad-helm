@@ -68,7 +68,7 @@ secrets:
 securityContext:
   fsGroup: 1000
   # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#configure-volume-permission-and-ownership-change-policy-for-pods
-  fsGroupChangePolicy: Always
+  fsGroupChangePolicy: OnRootMismatch
   runAsUser: 1000
   runAsNonRoot: true
   runAsGroup: 1000
