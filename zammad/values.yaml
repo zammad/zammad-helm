@@ -75,6 +75,14 @@ securityContext:
   seccompProfile:
     type: RuntimeDefault
 
+podDisruptionBudget:
+  enabled: false
+  # Specify either minAvailable or maxUnavailable, not both.
+  # Note: scheduler and websocket are not horizontally scalable (always 1 replica).
+  # Use maxUnavailable: 1 to avoid blocking node drains on those components.
+  minAvailable: ""
+  maxUnavailable: ""
+
 zammadConfig:
   elasticsearch:
     # enable/disable elasticsearch chart dependency

@@ -1,0 +1,27 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+{{- $components := list "nginx" "railsserver" "scheduler" "websocket" }}
+{{- range $component := $components }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "zammad.fullname" $ }}-{{ $component }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "zammad.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: zammad-{{ $component }}
+  annotations:
+    {{- include "zammad.annotations" $ | nindent 4 }}
+spec:
+  {{- with $.Values.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ . }}
+  {{- end }}
+  {{- with $.Values.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ . }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "zammad.selectorLabels" $ | nindent 6 }}
+      app.kubernetes.io/component: zammad-{{ $component }}
+{{- end }}
+{{- end }}
