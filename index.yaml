@@ -3,6 +3,48 @@ entries:
   zammad:
   - apiVersion: v2
     appVersion: 7.0.1-0040
+    created: "2026-05-20T06:03:15.265467174Z"
+    dependencies:
+    - condition: zammadConfig.elasticsearch.enabled
+      name: elasticsearch
+      repository: https://charts.bitnami.com/bitnami
+      version: 21.6.3
+    - condition: zammadConfig.minio.enabled
+      name: minio
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.10.5
+    - condition: zammadConfig.memcached.enabled
+      name: memcached
+      repository: oci://ghcr.io/cloudpirates-io/helm-charts
+      version: 0.13.2
+    - condition: zammadConfig.postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.7.21
+    - condition: zammadConfig.redis.enabled
+      name: redis
+      repository: oci://ghcr.io/cloudpirates-io/helm-charts
+      version: 0.27.9
+    description: Zammad is a web based open source helpdesk/customer support system
+      with many features to manage customer communication via several channels like
+      telephone, facebook, twitter, chat and e-mails.
+    digest: 2180a110957b955d719d0dc4dbbda9bcc572d6f8828e40b3b496214220ae7a22
+    home: https://zammad.org
+    icon: https://raw.githubusercontent.com/zammad/zammad-documentation/main/images/zammad_logo_600x520.png
+    maintainers:
+    - email: monotek23@gmail.com
+      name: monotek
+    - email: enjoy@zammad.com
+      name: mgruner
+    name: zammad
+    sources:
+    - https://github.com/zammad/zammad
+    - https://github.com/zammad/zammad-helm
+    urls:
+    - https://github.com/zammad/zammad-helm/releases/download/zammad-16.2.0/zammad-16.2.0.tgz
+    version: 16.2.0
+  - apiVersion: v2
+    appVersion: 7.0.1-0040
     created: "2026-05-19T05:13:43.225464121Z"
     dependencies:
     - condition: zammadConfig.elasticsearch.enabled
@@ -7291,4 +7333,4 @@ entries:
     urls:
     - https://github.com/zammad/zammad-helm/releases/download/zammad-0.1.0/zammad-0.1.0.tgz
     version: 0.1.0
-generated: "2026-05-19T05:13:43.225909905Z"
+generated: "2026-05-20T06:03:15.265931043Z"
