@@ -100,3 +100,7 @@ podLabels:
 
 podAnnotations:
   my-pod-annotation: my-pod-annotation-value
+
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: 1
