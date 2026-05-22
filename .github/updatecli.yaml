@@ -58,6 +58,20 @@ sources:
       name: redis
       versionfilter:
         pattern: "0.x.x"
+  helm-version:
+    name: helm-version
+    kind: gittag
+    spec:
+      url: https://github.com/helm/helm.git
+      versionfilter:
+        kind: semver
+  kubeconform-version:
+    name: kubeconform-version
+    kind: gittag
+    spec:
+      url: https://github.com/yannh/kubeconform.git
+      versionfilter:
+        kind: semver
 
 conditions: {}
 
@@ -145,7 +159,36 @@ targets:
       file: "Chart.yaml"
       key: "$.dependencies[4].version"
       versionincrement: patch
-
+  helm-version-ci:
+    name: helm-version-ci
+    kind: yaml
+    sourceid: helm-version
+    # {{ if .github.enabled }}
+    scmid: zammad-helm
+    # {{ end }}
+    spec:
+      file: .github/workflows/ci.yaml
+      key: "$.env.helm-version"
+  helm-version-release:
+    name: helm-version-release
+    kind: yaml
+    sourceid: helm-version
+    # {{ if .github.enabled }}
+    scmid: zammad-helm
+    # {{ end }}
+    spec:
+      file: .github/workflows/release.yaml
+      key: "$.env.helm-version"
+  kubeconform-version-ci:
+    name: kubeconform-version
+    kind: yaml
+    sourceid: kubeconform-version
+    # {{ if .github.enabled }}
+    scmid: zammad-helm
+    # {{ end }}
+    spec:
+      file: .github/workflows/ci.yaml
+      key: "$.env.kubeconform-version"
 # {{ if .github.enabled }}
 scms:
   zammad-helm:

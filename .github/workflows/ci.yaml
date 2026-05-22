@@ -4,9 +4,8 @@ permissions: read-all
 
 on:
   pull_request:
-
 env:
-  helm-version: "v3.19.4"
+  helm-version: v4.2.0
   kubeconform-version: "v0.7.0"
 
 jobs:
@@ -63,9 +62,9 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.33.7
-          - v1.34.3
-          - v1.35.0
+          - v1.34.8
+          - v1.35.5
+          - v1.36.1
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -94,7 +93,7 @@ jobs:
           # Versions of kindest/node
           - v1.33.7
           - v1.34.3
-          - v1.35.0
+          - v1.35.1
     steps:
       - name: Checkout
         uses: actions/checkout@v6
