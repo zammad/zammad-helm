@@ -6,7 +6,7 @@ on:
   pull_request:
 env:
   helm-version: v4.2.0
-  kubeconform-version: v0.7.0
+  kubeconform-version: v0.8.0
 
 jobs:
   super-linter:
