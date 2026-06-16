@@ -5,7 +5,7 @@ permissions: read-all
 on:
   pull_request:
 env:
-  helm-version: v4.2.0
+  helm-version: v4.2.1
   kubeconform-version: v0.8.0
 
 jobs:
