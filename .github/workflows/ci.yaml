@@ -139,9 +139,16 @@ jobs:
             while true; do
               while read -r pod; do
                 if [[ -n "$pod" && -z "${following[$pod]:-}" ]]; then
-                  following[$pod]=1
-                  echo "=== Streaming logs: $pod ==="
-                  kubectl logs --namespace zammad "$pod" --all-containers --follow --timestamps 2>/dev/null &
+                  # Only start following once the pod has a running/terminal container;
+                  # if still Pending/Init, skip and retry next poll cycle.
+                  phase=$(kubectl get pod --namespace zammad "$pod" \
+                    -o jsonpath='{.status.phase}' 2>/dev/null)
+                  if [[ "$phase" == "Running" || "$phase" == "Succeeded" || "$phase" == "Failed" ]]; then
+                    following[$pod]=1
+                    echo "=== Streaming logs: $pod (phase: $phase) ==="
+                    kubectl logs --namespace zammad "$pod" --all-containers \
+                      --follow --timestamps 2>/dev/null &
+                  fi
                 fi
               done < <(kubectl get pods --namespace zammad --output name 2>/dev/null \
                 | sed 's|pod/||' | grep -E 'helm-test|test-connection' || true)
