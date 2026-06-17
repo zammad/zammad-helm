@@ -131,25 +131,21 @@ jobs:
 
       - name: Run chart-testing (install)
         run: |
-          # Every 30 s dump recent logs from any helm-test/test-connection pods
-          # (including init containers). Uses a short --since window so each dump
-          # only shows new lines. Plain echo + kubectl flushes immediately even
-          # when stdout is a pipe, avoiding the buffering problem of --follow.
-          (
-            set +eo pipefail
-            while true; do
-              sleep 30
-              while IFS= read -r pod; do
-                [[ -z "$pod" ]] && continue
-                echo "--- $(date -u +%H:%M:%SZ) $pod ---"
-                kubectl logs --namespace zammad "$pod" --all-containers \
-                  --timestamps --prefix --since=35s 2>&1
-              done < <(kubectl get pods --namespace zammad --no-headers 2>/dev/null \
-                | awk '{print $1}' | grep -E 'helm-test|test-connection')
-            done
-          ) &
-          _LOG_WATCHER=$!
-          ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s'
-          _EXIT=$?
-          kill $_LOG_WATCHER 2>/dev/null || true
-          exit $_EXIT
+          # ct runs in the background; kubectl logs --follow runs in the foreground.
+          # Only foreground stdout is shown live by GitHub Actions, so this is the
+          # only reliable way to stream test pod output in real-time.
+          ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s' &
+          _CT_PID=$!
+          while kill -0 "$_CT_PID" 2>/dev/null; do
+            if _POD=$(kubectl get pods --namespace zammad --output name 2>/dev/null \
+                | grep 'helm-test' | sed 's|pod/||' | head -1) && [[ -n "$_POD" ]]; then
+              echo "=== Following logs: $_POD ==="
+              kubectl logs --namespace zammad "$_POD" --all-containers \
+                --follow --timestamps 2>/dev/null || true
+              echo "=== Log follow ended: $_POD ==="
+              sleep 2
+            else
+              sleep 5
+            fi
+          done
+          wait "$_CT_PID"
