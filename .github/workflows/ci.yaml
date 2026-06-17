@@ -130,4 +130,26 @@ jobs:
         run: kubectl create --namespace zammad --filename zammad/ci/full-objects.yaml
 
       - name: Run chart-testing (install)
-        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s'
+        run: |
+          # Stream test pod logs in the background to diagnose slow runs.
+          # The watcher polls every 5s for new helm-test/test-connection pods and
+          # attaches kubectl logs --follow to each one the first time it appears.
+          (
+            declare -A following
+            while true; do
+              while read -r pod; do
+                if [[ -n "$pod" && -z "${following[$pod]:-}" ]]; then
+                  following[$pod]=1
+                  echo "=== Streaming logs: $pod ==="
+                  kubectl logs --namespace zammad "$pod" --all-containers --follow --timestamps 2>/dev/null &
+                fi
+              done < <(kubectl get pods --namespace zammad --output name 2>/dev/null \
+                | sed 's|pod/||' | grep -E 'helm-test|test-connection' || true)
+              sleep 5
+            done
+          ) &
+          _LOG_WATCHER=$!
+          ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s'
+          _EXIT=$?
+          kill $_LOG_WATCHER 2>/dev/null || true
+          exit $_EXIT
