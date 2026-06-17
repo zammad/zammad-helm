@@ -136,15 +136,16 @@ jobs:
           # only shows new lines. Plain echo + kubectl flushes immediately even
           # when stdout is a pipe, avoiding the buffering problem of --follow.
           (
+            set +eo pipefail
             while true; do
               sleep 30
               while IFS= read -r pod; do
                 [[ -z "$pod" ]] && continue
                 echo "--- $(date -u +%H:%M:%SZ) $pod ---"
                 kubectl logs --namespace zammad "$pod" --all-containers \
-                  --timestamps --prefix --since=35s 2>&1 || true
+                  --timestamps --prefix --since=35s 2>&1
               done < <(kubectl get pods --namespace zammad --no-headers 2>/dev/null \
-                | awk '{print $1}' | grep -E 'helm-test|test-connection' || true)
+                | awk '{print $1}' | grep -E 'helm-test|test-connection')
             done
           ) &
           _LOG_WATCHER=$!
