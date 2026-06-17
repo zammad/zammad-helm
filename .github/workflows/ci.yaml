@@ -131,28 +131,20 @@ jobs:
 
       - name: Run chart-testing (install)
         run: |
-          # Stream test pod logs in the background to diagnose slow runs.
-          # The watcher polls every 5s for new helm-test/test-connection pods and
-          # attaches kubectl logs --follow to each one the first time it appears.
+          # Every 30 s dump recent logs from any helm-test/test-connection pods
+          # (including init containers). Uses a short --since window so each dump
+          # only shows new lines. Plain echo + kubectl flushes immediately even
+          # when stdout is a pipe, avoiding the buffering problem of --follow.
           (
-            declare -A following
             while true; do
-              while read -r pod; do
-                if [[ -n "$pod" && -z "${following[$pod]:-}" ]]; then
-                  # Only start following once the pod has a running/terminal container;
-                  # if still Pending/Init, skip and retry next poll cycle.
-                  phase=$(kubectl get pod --namespace zammad "$pod" \
-                    -o jsonpath='{.status.phase}' 2>/dev/null)
-                  if [[ "$phase" == "Running" || "$phase" == "Succeeded" || "$phase" == "Failed" ]]; then
-                    following[$pod]=1
-                    echo "=== Streaming logs: $pod (phase: $phase) ==="
-                    kubectl logs --namespace zammad "$pod" --all-containers \
-                      --follow --timestamps 2>/dev/null &
-                  fi
-                fi
-              done < <(kubectl get pods --namespace zammad --output name 2>/dev/null \
-                | sed 's|pod/||' | grep -E 'helm-test|test-connection' || true)
-              sleep 5
+              sleep 30
+              while IFS= read -r pod; do
+                [[ -z "$pod" ]] && continue
+                echo "--- $(date -u +%H:%M:%SZ) $pod ---"
+                kubectl logs --namespace zammad "$pod" --all-containers \
+                  --timestamps --prefix --since=35s 2>&1 || true
+              done < <(kubectl get pods --namespace zammad --no-headers 2>/dev/null \
+                | awk '{print $1}' | grep -E 'helm-test|test-connection' || true)
             done
           ) &
           _LOG_WATCHER=$!
