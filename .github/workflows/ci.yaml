@@ -136,9 +136,11 @@ jobs:
           echo "ct started, PID=$_CT_PID"
           set +eo pipefail
           while kill -0 "$_CT_PID" 2>/dev/null; do
-            echo "=== heartbeat $(date -u +%H:%M:%SZ), pods: $(kubectl get pods --namespace zammad --no-headers 2>/dev/null | wc -l | tr -d ' ') ==="
-            kubectl get pods --namespace zammad --no-headers 2>/dev/null | grep -E 'helm-test|test-connection' | awk '{print $1, $3}' || true
-            for pod in $(kubectl get pods --namespace zammad --output name 2>/dev/null | grep -E 'helm-test|test-connection' | sed 's|pod/||'); do
+            echo "=== heartbeat $(date -u +%H:%M:%SZ) ==="
+            kubectl get pods --namespace zammad --no-headers 2>/dev/null \
+              | awk '{print $1, $3, $4}' || true
+            for pod in $(kubectl get pods --namespace zammad --output name 2>/dev/null \
+                | grep -E 'helm-test|test-connection' | sed 's|pod/||'); do
               echo "--- logs $pod (last 35s) ---"
               kubectl logs --namespace zammad "$pod" --all-containers --timestamps --since=35s 2>&1 || true
             done
