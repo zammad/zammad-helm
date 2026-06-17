@@ -34,8 +34,8 @@ data:
       end
     end
 ---
-apiVersion: v1
-kind: Pod
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: "{{ include "zammad.fullname" . }}-run-helm-test-rake-task"
   labels:
@@ -43,24 +43,31 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
-    {{- include "zammad.podSpec.deployment" . | nindent 4 }}
-    containers:
-      - name: zammad-run-tests
-        # Use securityContext etc. from railsserver to have identical setup.
-        {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.railsserver) .) | nindent 8 }}
-        command: ['bundle']
-        args: ['exec', 'rake', 'zammad:helm:test']
-        env:
-          {{- include "zammad.env" . | nindent 12 }}
-          {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
-        volumeMounts:
-          {{- include "zammad.volumeMounts" . | nindent 10 }}
+  activeDeadlineSeconds: 30
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        {{- include "zammad.labels" . | nindent 8 }}
+    spec:
+        {{- include "zammad.podSpec.deployment" . | nindent 8 }}
+        containers:
+          - name: zammad-run-tests
+            # Use securityContext etc. from railsserver to have identical setup.
+            {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.railsserver) .) | nindent 12 }}
+            command: ['bundle']
+            args: ['exec', 'rake', 'zammad:helm:test']
+            env:
+              {{- include "zammad.env" . | nindent 16 }}
+              {{- include "zammad.env.failOnPendingMigrations" . | nindent 16 }}
+            volumeMounts:
+              {{- include "zammad.volumeMounts" . | nindent 14 }}
+              - name: helm-rake-test-volume
+                mountPath: /opt/zammad/lib/tasks/helm
+                readOnly: true
+        volumes:
+          {{- include "zammad.volumes" . | nindent 10 }}
           - name: helm-rake-test-volume
-            mountPath: /opt/zammad/lib/tasks/helm
-            readOnly: true
-    volumes:
-      {{- include "zammad.volumes" . | nindent 6 }}
-      - name: helm-rake-test-volume
-        configMap:
-          name: "{{ include "zammad.fullname" . }}-helm-test-rake-task"
-    restartPolicy: Never
+            configMap:
+              name: "{{ include "zammad.fullname" . }}-helm-test-rake-task"
+        restartPolicy: Never
