@@ -204,11 +204,7 @@ Redis Variables
 # sentinel
 {{- if .Values.zammadConfig.redis.sentinel.enabled }}
 - name: REDIS_SENTINELS
-{{- if .Values.zammadConfig.redis.enabled }}
-  value: "{{ .Release.Name }}-redis"
-{{- else }}
   value: "{{ join "," .Values.zammadConfig.redis.sentinel.sentinels }}"
-{{- end }}
 - name: REDIS_SENTINEL_NAME
   value: "{{ .Values.zammadConfig.redis.sentinel.masterName | default "mymaster" }}"
 {{- if .Values.zammadConfig.redis.sentinel.username }}
