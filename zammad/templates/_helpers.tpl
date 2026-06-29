@@ -106,13 +106,48 @@ autowizard secret name
 {{- end -}}
 
 {{/*
+elasticsearch service host (in-cluster ECK service or external host)
+*/}}
+{{- define "zammad.elasticsearchHost" -}}
+{{- if .Values.zammadConfig.elasticsearch.enabled -}}
+{{ .Release.Name }}-elasticsearch-es-http
+{{- else -}}
+{{ .Values.zammadConfig.elasticsearch.host }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+elasticsearch user (ECK creates the "elastic" superuser for the in-cluster service)
+*/}}
+{{- define "zammad.elasticsearchUser" -}}
+{{- if .Values.zammadConfig.elasticsearch.enabled -}}
+elastic
+{{- else -}}
+{{ .Values.zammadConfig.elasticsearch.user }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 elasticsearch secret name
 */}}
 {{- define "zammad.elasticsearchSecretName" -}}
-{{- if .Values.secrets.elasticsearch.useExisting -}}
+{{- if .Values.zammadConfig.elasticsearch.enabled -}}
+{{ .Release.Name }}-elasticsearch-es-elastic-user
+{{- else if .Values.secrets.elasticsearch.useExisting -}}
 {{ .Values.secrets.elasticsearch.secretName }}
 {{- else -}}
 {{ include "zammad.fullname" . }}-{{ .Values.secrets.elasticsearch.secretName }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+elasticsearch secret key (ECK stores the password under the user name "elastic")
+*/}}
+{{- define "zammad.elasticsearchSecretKey" -}}
+{{- if .Values.zammadConfig.elasticsearch.enabled -}}
+elastic
+{{- else -}}
+{{ .Values.secrets.elasticsearch.secretKey }}
 {{- end -}}
 {{- end -}}
 
