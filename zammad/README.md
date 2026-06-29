@@ -41,9 +41,24 @@ Be aware that the Zammad Helm chart version is different from the actual Zammad 
 
 ## Prerequisites
 
-- Kubernetes 1.19+
+- Kubernetes 1.21+
 - Helm 3.2.0+
 - Cluster with at least 4GB of free RAM
+- The [ECK operator](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-install-helm.html)
+  must be installed in the cluster when using the bundled Elasticsearch
+  (`zammadConfig.elasticsearch.enabled: true`, the default). The bundled
+  Elasticsearch is deployed via the official `eck-elasticsearch` chart, which
+  creates an `Elasticsearch` custom resource that is reconciled by the operator.
+  This is **not** required when connecting to an external Elasticsearch service.
+
+  Install the operator once per cluster:
+
+  ```console
+  helm repo add elastic https://helm.elastic.co
+  helm repo update
+  helm install elastic-operator elastic/eck-operator \
+    --namespace elastic-system --create-namespace
+  ```
 
 ## Installing the Chart
 
@@ -114,7 +129,11 @@ To deploy on OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://c
 - [Delete the default key](https://helm.sh/docs/chart_template_guide/values_files/#deleting-a-default-key) `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` with `null`.
 - Disable if used:
   - also `podSecurityContext` in all subcharts.
-  - the privileged [sysctlImage](https://github.com/bitnami/charts/tree/main/bitnami/elasticsearch#default-kernel-settings) in elasticsearch subchart.
+
+The bundled Elasticsearch uses `node.store.allow_mmap: false` by default (see
+`elasticsearch.nodeSets[].config`), so no privileged sysctl init container is
+required. If you raise `vm.max_map_count` for production instead, do so on the
+node level rather than via a privileged init container.
 
 ```yaml
 securityContext: null
@@ -129,15 +148,6 @@ zammadConfig:
   tmpDirVolume:
     emptyDir:
       medium: memory
-
-elasticsearch:
-  sysctlImage:
-    enabled: false
-  master:
-    podSecurityContext:
-      enabled: false
-    containerSecurityContext:
-      enabled: false
 
 memcached:
   podSecurityContext:
@@ -197,6 +207,32 @@ This cronjob never runs by default, but you can change `zammadConfig.cronJob.rei
 and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 
 ## Upgrading
+
+### From Chart Version 16.x to 17.0.0
+
+- The bundled Elasticsearch was migrated from the `bitnami/elasticsearch` subchart to the
+  official [`eck-elasticsearch`](https://artifacthub.io/packages/helm/elastic/eck-elasticsearch)
+  chart, which is managed by the [ECK operator](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-overview.html).
+  This is the deployment method officially supported by Elastic.
+- **The ECK operator (and its CRDs) must now be installed in the cluster** before upgrading
+  when `zammadConfig.elasticsearch.enabled` is `true` (the default). See [Prerequisites](#prerequisites).
+- The `elasticsearch.*` values changed completely. The previous bitnami values (`master`, `data`,
+  `ingest`, `coordinating`, `sysctlImage`, `image`, `global.security.allowInsecureImages`, …) no
+  longer apply. Review the new `elasticsearch.*` block in `values.yaml` (`version`, `nodeSets`,
+  `http`, …).
+- Authentication is now mandatory: ECK creates a superuser `elastic` and stores its password in
+  the auto-generated secret `{{ .Release.Name }}-elasticsearch-es-elastic-user`. The chart wires
+  this up automatically, so `secrets.elasticsearch.*` is only relevant for an **external**
+  Elasticsearch now.
+- The in-cluster service name changed from `{{ .Release.Name }}-elasticsearch` to
+  `{{ .Release.Name }}-elasticsearch-es-http`.
+- TLS on the HTTP layer is disabled by default (`elasticsearch.http.tls.selfSignedCertificate.disabled: true`)
+  to keep the plain-`http` connection behaviour. Set it to `false` and `zammadConfig.elasticsearch.schema: https`
+  to use the operator-managed self-signed certificate.
+- The StatefulSet and its `PersistentVolumeClaim`s are recreated under new names. As the search
+  index can be rebuilt from PostgreSQL, the recommended path is to delete the old bitnami
+  Elasticsearch PVCs and let the index be recreated. To force a full rebuild after the upgrade,
+  set `zammadConfig.elasticsearch.reindex: true` for the upgrade run.
 
 ### From Chart Version 15.x to 16.0.0
 

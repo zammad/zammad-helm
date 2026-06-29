@@ -45,10 +45,10 @@ data:
     #!/bin/bash
     set -e
 
-    ELASTICSEARCH_URL={{ .Values.zammadConfig.elasticsearch.schema }}://{{ if .Values.zammadConfig.elasticsearch.enabled }}{{ .Release.Name }}-elasticsearch{{ else }}{{ .Values.zammadConfig.elasticsearch.host }}{{ end }}:{{ .Values.zammadConfig.elasticsearch.port }}
+    ELASTICSEARCH_URL={{ .Values.zammadConfig.elasticsearch.schema }}://{{ include "zammad.elasticsearchHost" . }}:{{ .Values.zammadConfig.elasticsearch.port }}
     bundle exec rails r "Setting.set('es_url', '${ELASTICSEARCH_URL}')"
 
-    ELASTICSEARCH_USER=${ELASTICSEARCH_USER:-{{ .Values.zammadConfig.elasticsearch.user }}}
+    ELASTICSEARCH_USER=${ELASTICSEARCH_USER:-{{ include "zammad.elasticsearchUser" . }}}
     if [ -n "${ELASTICSEARCH_USER}" ] && [ -n "${ELASTICSEARCH_PASSWORD}" ]; then
         bundle exec rails r "Setting.set('es_user', '${ELASTICSEARCH_USER}'); Setting.set('es_password', '${ELASTICSEARCH_PASSWORD}')"
     fi
