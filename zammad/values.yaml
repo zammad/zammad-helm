@@ -87,8 +87,10 @@ zammadConfig:
   elasticsearch:
     # enable/disable the bundled elasticsearch (ECK) chart dependency
     enabled: true
-    # host is only used when zammadConfig.elasticsearch.enabled is false
-    # (i.e. when connecting to an external Elasticsearch service)
+    # host, user and pass are only used when zammadConfig.elasticsearch.enabled is
+    # false (i.e. when connecting to an external Elasticsearch service). For the
+    # bundled ECK Elasticsearch, the host, the "elastic" user and the operator-
+    # generated password are resolved automatically and these values are ignored.
     host: external-elasticsearch-host
     initialisation: true
     pass: ""
@@ -720,8 +722,8 @@ elasticsearch:
       count: 1
       config:
         # Single-node default deployment without raising vm.max_map_count.
-        # For production, raise the kernel setting vm.max_map_count to 1048576 via
-        # an initContainer and remove this line instead. See:
+        # For production, raise the kernel setting vm.max_map_count to 1048576 at
+        # the node level and remove this line instead. See:
         # https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-virtual-memory.html
         node.store.allow_mmap: false
       volumeClaimTemplates:
