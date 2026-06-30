@@ -90,12 +90,12 @@ spec:
           env:
             {{- include "zammad.env" . | nindent 12 }}
             {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
-          {{- if or .Values.zammadConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
+          {{- if or .Values.zammadConfig.elasticsearch.enabled .Values.zammadConfig.elasticsearch.pass .Values.secrets.elasticsearch.useExisting }}
             - name: ELASTICSEARCH_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "zammad.elasticsearchSecretName" . }}
-                  key: {{ .Values.secrets.elasticsearch.secretKey }}
+                  key: {{ include "zammad.elasticsearchSecretKey" . }}
           {{- end }}
           volumeMounts:
             {{- include "zammad.volumeMounts" . | nindent 12 }}
