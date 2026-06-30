@@ -24,7 +24,7 @@ autoWizard:
   enabled: true
 
 elasticsearch:
-  nameOverride: my-local-elasticsearch
+  nameOverride: my-local-es
 
 ingress:
   enabled: true
