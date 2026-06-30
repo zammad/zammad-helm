@@ -106,11 +106,30 @@ autowizard secret name
 {{- end -}}
 
 {{/*
+Name of the ECK Elasticsearch resource. Mirrors the eck-elasticsearch chart's
+"elasticsearch.fullname" logic so that ECK-derived names (services, secrets)
+stay correct even if elasticsearch.nameOverride/fullnameOverride are changed.
+*/}}
+{{- define "zammad.elasticsearchName" -}}
+{{- $es := .Values.elasticsearch | default dict -}}
+{{- if $es.fullnameOverride -}}
+{{- $es.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default "eck-elasticsearch" $es.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 elasticsearch service host (in-cluster ECK service or external host)
 */}}
 {{- define "zammad.elasticsearchHost" -}}
 {{- if .Values.zammadConfig.elasticsearch.enabled -}}
-{{ .Release.Name }}-elasticsearch-es-http
+{{ include "zammad.elasticsearchName" . }}-es-http
 {{- else -}}
 {{ .Values.zammadConfig.elasticsearch.host }}
 {{- end -}}
@@ -132,7 +151,7 @@ elasticsearch secret name
 */}}
 {{- define "zammad.elasticsearchSecretName" -}}
 {{- if .Values.zammadConfig.elasticsearch.enabled -}}
-{{ .Release.Name }}-elasticsearch-es-elastic-user
+{{ include "zammad.elasticsearchName" . }}-es-elastic-user
 {{- else if .Values.secrets.elasticsearch.useExisting -}}
 {{ .Values.secrets.elasticsearch.secretName }}
 {{- else -}}
