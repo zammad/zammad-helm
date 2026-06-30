@@ -23,10 +23,8 @@ secrets:
 autoWizard:
   enabled: true
 
-# The bundled Elasticsearch is managed by the ECK operator and uses its own
-# auto-generated credentials secret, so no existingSecret config is needed here.
-# (The secrets.elasticsearch.* existing-secret path only applies to an external
-# Elasticsearch, i.e. when zammadConfig.elasticsearch.enabled is false.)
+elasticsearch:
+  nameOverride: my-local-elasticsearch
 
 ingress:
   enabled: true

@@ -707,8 +707,7 @@ initContainers: []
 # (user "elastic"). The Zammad templates pick these up automatically.
 elasticsearch:
   nameOverride: elasticsearch
-  # Elasticsearch version. Kept in sync with the version Zammad is tested against.
-  version: 8.18.0
+  version: 9.4.2
   http:
     tls:
       selfSignedCertificate:
