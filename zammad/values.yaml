@@ -781,47 +781,34 @@ minio:
 
 # settings for the postgres subchart
 postgresql:
-  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
-  image:
-    repository: bitnamilegacy/postgresql
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
-  metrics:
-    image:
-      repository: bitnamilegacy/postgres-exporter
-  global:
-    security:
-      allowInsecureImages: true
+  # The subchart is named "postgres", so its service would default to "zammad-postgres".
+  # We override the fullname to keep the service named "zammad-postgresql", matching the
+  # zammadConfig.postgresql.host default and staying compatible with existing installations.
+  fullnameOverride: zammad-postgresql
 
   auth:
+    # Creates this user as a superuser and a database with the name from auth.database.
+    # These must match zammadConfig.postgresql.user/pass/db.
     username: "zammad"
-    replicationUsername: repl_user
+    password: "zammad"
     database: "zammad_production"
 
-    # Passwords
-    postgresPassword: "zammad"
-    password: "zammad"
-    replicationPassword: "zammad"
-
-    # To avoid passwords in your values.yaml, you can comment out the 3 lines above
+    # To avoid passwords in your values.yaml, you can comment out the password above
     # and use an existing Kubernetes secret. Remove the comments on the lines below
-    # and adjust them accordingly
+    # and adjust them accordingly. The secret must contain the key referenced by
+    # secretKeys.adminPasswordKey (default: postgres-password).
     #
     # existingSecret: postgresql-pass
     # secretKeys:
-    #   adminPasswordKey: postgresql-admin-password
-    #   userPasswordKey: postgresql-pass
-    #   replicationPasswordKey: postgresql-replication-password
-    #
-  primary:
-    resources: {}
-      # requests:
-      #   cpu: 250m
-      #   memory: 256Mi
-      # limits:
-      #   cpu: 500m
-      #   memory: 512Mi
+    #   adminPasswordKey: postgresql-pass
+
+  resources: {}
+    # requests:
+    #   cpu: 250m
+    #   memory: 256Mi
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
 
 # settings for the redis subchart
 redis:
