@@ -200,7 +200,7 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 
 ### From Chart Version 16.x to 17.0.0
 
-- The bitnami postgresql subchart was replaced with [cloudpirates-postgres/postgres](https://artifacthub.io/packages/helm/cloudpirates-postgres/postgres).
+- The bitnami PostgreSQL subchart was replaced with [cloudpirates-postgres/postgres](https://artifacthub.io/packages/helm/cloudpirates-postgres/postgres).
   This is a **breaking change that requires a manual, one-time data migration**, because the new subchart uses a
   different data directory layout and image, and PostgreSQL data volumes cannot be reused across these charts as-is.
 - Please check your values for this subchart, as the structure changed:
