@@ -208,7 +208,7 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
     the `bitnamilegacy` image workarounds and `global.security.allowInsecureImages`) are gone.
   - The password is now configured via `postgresql.auth.password` (or an existing secret referenced by
     `postgresql.auth.existingSecret` with the key from `postgresql.auth.secretKeys.adminPasswordKey`, default `postgres-password`).
-  - The service name is kept as `{{ .Release.Name }}-postgresql` via `postgresql.fullnameOverride`, so
+  - The service name is kept as `{{ .Release.Name }}-postgresql` via `postgresql.nameOverride`, so
     `zammadConfig.postgresql.host` does not need to change.
   - The new subchart uses the official `postgres` image and defaults to the latest major version. Since the migration
     below is a logical dump/restore, the database is upgraded to that major version in the process.

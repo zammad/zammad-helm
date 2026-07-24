@@ -781,10 +781,10 @@ minio:
 
 # settings for the postgres subchart
 postgresql:
-  # The subchart is named "postgres", so its service would default to "zammad-postgres".
-  # We override the fullname to keep the service named "zammad-postgresql", matching the
-  # zammadConfig.postgresql.host default and staying compatible with existing installations.
-  fullnameOverride: zammad-postgresql
+  # The subchart is named "postgres", so its resources would default to "<release>-postgres".
+  # Zammad connects to "{{ .Release.Name }}-postgresql", so we override the name (not the
+  # fullname) to get "<release>-postgresql" while still respecting the release name.
+  nameOverride: postgresql
 
   auth:
     # Creates this user as a superuser and a database with the name from auth.database.
