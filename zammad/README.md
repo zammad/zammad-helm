@@ -204,47 +204,49 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
   This is a **breaking change that requires a manual, one-time data migration**, because the new subchart uses a
   different data directory layout and image, and PostgreSQL data volumes cannot be reused across these charts as-is.
 - Please check your values for this subchart, as the structure changed:
+  - The values key for the subchart changed from `postgresql:` to `postgres:` (the subchart is now used under its
+    own name, consistent with the `redis` and `memcached` subcharts).
   - The bitnami-specific keys (`auth.postgresPassword`, `auth.replicationUsername`, `auth.replicationPassword`,
     the `bitnamilegacy` image workarounds and `global.security.allowInsecureImages`) are gone.
-  - The password is now configured via `postgresql.auth.password` (or an existing secret referenced by
-    `postgresql.auth.existingSecret` with the key from `postgresql.auth.secretKeys.adminPasswordKey`, default `postgres-password`).
-  - The service name is kept as `{{ .Release.Name }}-postgresql` via `postgresql.nameOverride`, so
-    `zammadConfig.postgresql.host` does not need to change.
+  - The password is now configured via `postgres.auth.password` (or an existing secret referenced by
+    `postgres.auth.existingSecret` with the key from `postgres.auth.secretKeys.adminPasswordKey`, default `postgres-password`).
+  - The DB service is now named `{{ .Release.Name }}-postgres` (was `{{ .Release.Name }}-postgresql`). This is handled
+    internally; `zammadConfig.postgresql.*` (host/port/user/pass/db) is unchanged.
+  - Because the new resources use a different name, the new `PersistentVolumeClaim`
+    (`data-{{ .Release.Name }}-postgres-0`) does **not** collide with the old one
+    (`data-{{ .Release.Name }}-postgresql-0`). The old volume is left untouched during the upgrade and serves as a
+    rollback safety net; you can remove it once the migration is verified.
   - The new subchart uses the official `postgres` image and defaults to the latest major version. Since the migration
     below is a logical dump/restore, the database is upgraded to that major version in the process.
 
 #### Data migration
 
-The new subchart creates a fresh, empty PostgreSQL cluster. Migrate your existing data with a logical dump/restore
-(adjust namespace, release name and credentials to your setup):
+The new subchart provisions a fresh, empty PostgreSQL cluster on its own volume, so the migration is a
+non-destructive logical dump/restore (adjust namespace, release name and credentials to your setup):
 
 ```bash
-# 1. Take a logical backup from the still-running OLD (bitnami) instance
+# 1. Stop Zammad so there are no more writes to the database
+kubectl scale -n <namespace> deploy -l app.kubernetes.io/name=zammad --replicas=0
+
+# 2. Take a logical backup from the still-running OLD (bitnami) instance
 kubectl exec -n <namespace> zammad-postgresql-0 -- \
   env PGPASSWORD=<password> pg_dump -Fc -U zammad -d zammad_production \
   > zammad_production.dump
 
-# 2. Stop Zammad so there are no more writes to the database
-kubectl scale -n <namespace> deploy -l app.kubernetes.io/name=zammad --replicas=0
-
-# 3. Scale down the old PostgreSQL StatefulSet so the PVC can be removed
-#    (a bound PVC cannot be deleted while a pod still uses it).
-kubectl scale -n <namespace> statefulset zammad-postgresql --replicas=0
-
-# 4. Remove the old PVC so the new subchart provisions a clean volume.
-#    Make sure the dump from step 1 is stored safely first!
-kubectl delete pvc -n <namespace> data-zammad-postgresql-0
-
-# 5. Upgrade to the new chart version (creates the new, empty cluster)
+# 3. Upgrade to the new chart version. This removes the old StatefulSet but keeps its PVC,
+#    and brings up a new, empty cluster on the new PVC (data-<release>-postgres-0).
 helm upgrade zammad . -n <namespace> -f my-values.yaml
 
-# 6. Restore the dump into the new (empty) cluster
-kubectl cp zammad_production.dump <namespace>/zammad-postgresql-0:/tmp/z.dump
-kubectl exec -n <namespace> zammad-postgresql-0 -- \
+# 4. Restore the dump into the new (empty) cluster
+kubectl cp zammad_production.dump <namespace>/zammad-postgres-0:/tmp/z.dump
+kubectl exec -n <namespace> zammad-postgres-0 -- \
   env PGPASSWORD=<password> pg_restore -U zammad -d zammad_production --no-owner /tmp/z.dump
 
-# 7. Start Zammad again
+# 5. Start Zammad again
 kubectl scale -n <namespace> deploy -l app.kubernetes.io/name=zammad --replicas=1
+
+# 6. Once you have verified everything works, clean up the old volume at your convenience
+kubectl delete pvc -n <namespace> data-zammad-postgresql-0
 ```
 
 ### From Chart Version 15.x to 16.0.0

@@ -780,12 +780,7 @@ minio:
   disableWebUI: true
 
 # settings for the postgres subchart
-postgresql:
-  # The subchart is named "postgres", so its resources would default to "<release>-postgres".
-  # Zammad connects to "{{ .Release.Name }}-postgresql", so we override the name (not the
-  # fullname) to get "<release>-postgresql" while still respecting the release name.
-  nameOverride: postgresql
-
+postgres:
   auth:
     # Creates this user as a superuser and a database with the name from auth.database.
     # These must match zammadConfig.postgresql.user/pass/db.

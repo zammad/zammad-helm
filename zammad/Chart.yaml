@@ -27,7 +27,6 @@ dependencies:
     repository: oci://ghcr.io/cloudpirates-io/helm-charts
     condition: zammadConfig.memcached.enabled
   - name: postgres
-    alias: postgresql
     version: 0.19.11
     repository: oci://ghcr.io/cloudpirates-io/helm-charts
     condition: zammadConfig.postgresql.enabled
