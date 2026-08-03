@@ -222,7 +222,12 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 #### Data migration
 
 The new subchart provisions a fresh, empty PostgreSQL cluster on its own volume, so the migration is a
-non-destructive logical dump/restore (adjust namespace, release name and credentials to your setup):
+non-destructive logical dump/restore (adjust namespace, release name and credentials to your setup).
+
+The upgrade is done in two phases: the dump has to be restored *before* the Zammad init job runs against the
+new database, because on an empty database the init job would set up a new, empty Zammad system
+(`rake db:migrate db:seed`). Restoring first also means the init job then takes its regular
+"existing installation" code path in phase two.
 
 ```bash
 # 1. Stop Zammad so there are no more writes to the database
@@ -233,17 +238,20 @@ kubectl exec -n <namespace> zammad-postgresql-0 -- \
   env PGPASSWORD=<password> pg_dump -Fc -U zammad -d zammad_production \
   > zammad_production.dump
 
-# 3. Upgrade to the new chart version. This removes the old StatefulSet but keeps its PVC,
-#    and brings up a new, empty cluster on the new PVC (data-<release>-postgres-0).
-helm upgrade zammad . -n <namespace> -f my-values.yaml
+# 3. Phase one: upgrade with the init job disabled, so only the new, empty PostgreSQL cluster
+#    comes up (on its own PVC data-<release>-postgres-0; the old PVC is left untouched).
+#    The Zammad pods will not become ready yet - that is expected at this point.
+helm upgrade zammad . -n <namespace> -f my-values.yaml \
+  --set zammadConfig.initJob.enabled=false
 
-# 4. Restore the dump into the new (empty) cluster
+# 4. Restore the dump into the new (still empty) database
 kubectl cp zammad_production.dump <namespace>/zammad-postgres-0:/tmp/z.dump
 kubectl exec -n <namespace> zammad-postgres-0 -- \
   env PGPASSWORD=<password> pg_restore -U zammad -d zammad_production --no-owner /tmp/z.dump
 
-# 5. Start Zammad again
-kubectl scale -n <namespace> deploy -l app.kubernetes.io/name=zammad --replicas=1
+# 5. Phase two: upgrade again with your regular values. The init job now finds the restored
+#    data and only migrates it, and Zammad is scaled back up to your configured replicas.
+helm upgrade zammad . -n <namespace> -f my-values.yaml
 
 # 6. Once you have verified everything works, clean up the old volume at your convenience
 kubectl delete pvc -n <namespace> data-zammad-postgresql-0

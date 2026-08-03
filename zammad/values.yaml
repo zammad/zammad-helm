@@ -524,6 +524,11 @@ zammadConfig:
         #  bundle exec rails runner '…'
 
   initJob:
+    # Runs the database/Elasticsearch initialisation on every install and upgrade.
+    # Only disable this temporarily for maintenance tasks that must not have the database
+    #   initialised, e.g. while restoring a dump (see the PostgreSQL migration notes in the README).
+    #   Zammad will not work correctly if this is left disabled permanently.
+    enabled: true
     randomName: true
     # specify how long after finish pods are deleted
     ttlSecondsAfterFinished: 300

@@ -1,3 +1,4 @@
+{{- if .Values.zammadConfig.initJob.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -122,3 +123,4 @@ spec:
           configMap:
             name: {{ include "zammad.fullname" . }}-init
             defaultMode: 0755
+{{- end }}
