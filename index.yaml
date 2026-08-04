@@ -2,6 +2,48 @@ apiVersion: v1
 entries:
   zammad:
   - apiVersion: v2
+    appVersion: 7.1.1-0045
+    created: "2026-08-04T05:22:22.508766213Z"
+    dependencies:
+    - condition: zammadConfig.elasticsearch.enabled
+      name: elasticsearch
+      repository: https://charts.bitnami.com/bitnami
+      version: 21.6.3
+    - condition: zammadConfig.minio.enabled
+      name: minio
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.10.5
+    - condition: zammadConfig.memcached.enabled
+      name: memcached
+      repository: oci://ghcr.io/cloudpirates-io/helm-charts
+      version: 0.14.3
+    - condition: zammadConfig.postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.7.21
+    - condition: zammadConfig.redis.enabled
+      name: redis
+      repository: oci://ghcr.io/cloudpirates-io/helm-charts
+      version: 0.33.6
+    description: Zammad is a web based open source helpdesk/customer support system
+      with many features to manage customer communication via several channels like
+      telephone, facebook, twitter, chat and e-mails.
+    digest: 3e4469437ff574a71e7fe2930b85b3bbbb75df33350c4fab1f781c924dcda5c3
+    home: https://zammad.org
+    icon: https://raw.githubusercontent.com/zammad/zammad-documentation/main/images/zammad_logo_600x520.png
+    maintainers:
+    - email: monotek23@gmail.com
+      name: monotek
+    - email: enjoy@zammad.com
+      name: mgruner
+    name: zammad
+    sources:
+    - https://github.com/zammad/zammad
+    - https://github.com/zammad/zammad-helm
+    urls:
+    - https://github.com/zammad/zammad-helm/releases/download/zammad-16.4.8/zammad-16.4.8.tgz
+    version: 16.4.8
+  - apiVersion: v2
     appVersion: 7.1.1-0037
     created: "2026-07-28T05:35:58.309114233Z"
     dependencies:
@@ -7921,4 +7963,4 @@ entries:
     urls:
     - https://github.com/zammad/zammad-helm/releases/download/zammad-0.1.0/zammad-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-28T05:35:58.309684708Z"
+generated: "2026-08-04T05:22:22.50927695Z"
