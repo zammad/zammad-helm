@@ -218,15 +218,21 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
     rollback safety net; you can remove it once the migration is verified.
   - The new subchart uses the official `postgres` image and defaults to the latest major version. Since the migration
     below is a logical dump/restore, the database is upgraded to that major version in the process.
+- New settings (not breaking, needed by the migration procedure below):
+  - `zammadConfig.initJob.enabled` can be set to `false` to temporarily skip the initialisation job.
+  - `zammadConfig.scheduler.replicas` and `zammadConfig.websocket.replicas` can now be set to `0` to disable
+    those components. They may only run once per cluster, so any value above `1` is capped to `1`.
 
 #### Data migration
 
 The new subchart provisions a fresh, empty PostgreSQL cluster on its own volume, so the migration is a
 non-destructive logical dump/restore (adjust namespace, release name and credentials to your setup).
 
-The upgrade is done in two phases: the dump has to be restored *before* the Zammad init job runs against the
-new database, because on an empty database the init job would set up a new, empty Zammad system
-(`rake db:migrate db:seed`). Restoring first also means the init job then takes its regular
+The upgrade is done in two phases: the dump has to be restored *before* any Zammad component connects to the
+new database. On an empty database the init job would set up a new, empty Zammad system
+(`rake db:migrate db:seed`), and the application pods would make Rails create its bookkeeping tables
+(`schema_migrations`, `ar_internal_metadata`) - both would make the restore fail with
+"relation already exists". Restoring first also means the init job then takes its regular
 "existing installation" code path in phase two.
 
 ```bash
@@ -238,16 +244,23 @@ kubectl exec -n <namespace> zammad-postgresql-0 -- \
   env PGPASSWORD=<password> pg_dump -Fc -U zammad -d zammad_production \
   > zammad_production.dump
 
-# 3. Phase one: upgrade with the init job disabled, so only the new, empty PostgreSQL cluster
-#    comes up (on its own PVC data-<release>-postgres-0; the old PVC is left untouched).
-#    The Zammad pods will not become ready yet - that is expected at this point.
+# 3. Phase one: upgrade with the init job and all Zammad components disabled, so that only the new,
+#    empty PostgreSQL cluster comes up (on its own PVC data-<release>-postgres-0; the old PVC is
+#    left untouched). Nothing may connect to the new database before the restore.
 helm upgrade zammad . -n <namespace> -f my-values.yaml \
-  --set zammadConfig.initJob.enabled=false
+  --set zammadConfig.initJob.enabled=false \
+  --set zammadConfig.nginx.replicas=0 \
+  --set zammadConfig.railsserver.replicas=0 \
+  --set zammadConfig.scheduler.replicas=0 \
+  --set zammadConfig.websocket.replicas=0
 
-# 4. Restore the dump into the new (still empty) database
-kubectl cp zammad_production.dump <namespace>/zammad-postgres-0:/tmp/z.dump
-kubectl exec -n <namespace> zammad-postgres-0 -- \
-  env PGPASSWORD=<password> pg_restore -U zammad -d zammad_production --no-owner /tmp/z.dump
+# 4. Restore the dump into the new database. It is streamed via stdin, so it needs no disk space
+#    inside the container. Use 'kubectl exec -i' without '-t': a TTY would corrupt the binary
+#    stream. '--clean --if-exists' makes the step repeatable if a previous attempt failed.
+kubectl exec -i -n <namespace> zammad-postgres-0 -- \
+  env PGPASSWORD=<password> pg_restore -U zammad -d zammad_production \
+  --no-owner --clean --if-exists \
+  < zammad_production.dump
 
 # 5. Phase two: upgrade again with your regular values. The init job now finds the restored
 #    data and only migrates it, and Zammad is scaled back up to your configured replicas.
