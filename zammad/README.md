@@ -42,7 +42,7 @@ Be aware that the Zammad Helm chart version is different from the actual Zammad 
 ## Prerequisites
 
 - Kubernetes 1.19+
-- Helm 3.2.0+
+- Helm 3.8.0+
 - Cluster with at least 4GB of free RAM
 
 ## Installing the Chart
@@ -242,7 +242,7 @@ kubectl exec -n <namespace> <release_name>-postgresql-0 -- \
 #    left untouched). Nothing may connect to the new database before the restore.
 #    Otherwise, a new database would be set up and the Rails bookkeeping tables
 #    `schema_migrations`, `ar_internal_metadata` would be created by the Pods.
-helm upgrade zammad . -n <namespace> -f my-values.yaml \
+helm upgrade <release_name> . -n <namespace> -f my-values.yaml \
   --set zammadConfig.initJob.enabled=false \
   --set zammadConfig.nginx.replicas=0 \
   --set zammadConfig.railsserver.replicas=0 \
@@ -257,8 +257,10 @@ kubectl exec -i -n <namespace> <release_name>-postgres-0 -- \
   < zammad_production.dump
 
 # 5. Phase two: upgrade again with your regular values. The init job now finds the restored
-#    data and only migrates it, and Zammad is scaled back up to your configured replicas.
-helm upgrade zammad . -n <namespace> -f my-values.yaml
+#    data and only migrates it, and Zammad is scaled back up to your configured replicas (via --reset-values).
+#    Note that this will delete all other values specified via --set before, which are not present in the values file.
+#    To avoid this behaviour, you can omit --reset-values and specify the keys from above manually.
+helm upgrade <release_name> . -n <namespace> -f my-values.yaml --reset-values
 
 # 6. Once you have verified everything works, clean up the old volume at your convenience
 kubectl delete pvc -n <namespace> data-<release_name>-postgresql-0
