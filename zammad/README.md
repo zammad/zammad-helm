@@ -228,25 +228,20 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 The new subchart provisions a fresh, empty PostgreSQL cluster on its own volume, so the migration is a
 non-destructive logical dump/restore (adjust namespace, release name and credentials to your setup).
 
-The upgrade is done in two phases: the dump has to be restored *before* any Zammad component connects to the
-new database. On an empty database the init job would set up a new, empty Zammad system
-(`rake db:migrate db:seed`), and the application pods would make Rails create its bookkeeping tables
-(`schema_migrations`, `ar_internal_metadata`) - both would make the restore fail with
-"relation already exists". Restoring first also means the init job then takes its regular
-"existing installation" code path in phase two.
-
 ```bash
 # 1. Stop Zammad so there are no more writes to the database
 kubectl scale -n <namespace> deploy -l app.kubernetes.io/name=zammad --replicas=0
 
 # 2. Take a logical backup from the still-running OLD (bitnami) instance
-kubectl exec -n <namespace> zammad-postgresql-0 -- \
+kubectl exec -n <namespace> <release_name>-postgresql-0 -- \
   env PGPASSWORD=<password> pg_dump -Fc -U zammad -d zammad_production \
   > zammad_production.dump
 
 # 3. Phase one: upgrade with the init job and all Zammad components disabled, so that only the new,
 #    empty PostgreSQL cluster comes up (on its own PVC data-<release>-postgres-0; the old PVC is
 #    left untouched). Nothing may connect to the new database before the restore.
+#    Otherwise, a new database would be set up and the Rails bookkeeping tables
+#    `schema_migrations`, `ar_internal_metadata` would be created by the Pods.
 helm upgrade zammad . -n <namespace> -f my-values.yaml \
   --set zammadConfig.initJob.enabled=false \
   --set zammadConfig.nginx.replicas=0 \
@@ -257,9 +252,8 @@ helm upgrade zammad . -n <namespace> -f my-values.yaml \
 # 4. Restore the dump into the new database. It is streamed via stdin, so it needs no disk space
 #    inside the container. Use 'kubectl exec -i' without '-t': a TTY would corrupt the binary
 #    stream. '--clean --if-exists' makes the step repeatable if a previous attempt failed.
-kubectl exec -i -n <namespace> zammad-postgres-0 -- \
-  env PGPASSWORD=<password> pg_restore -U zammad -d zammad_production \
-  --no-owner --clean --if-exists \
+kubectl exec -i -n <namespace> <release_name>-postgres-0 -- \
+  env PGPASSWORD=<password> pg_restore -U zammad -d zammad_production --no-owner --clean --if-exists \
   < zammad_production.dump
 
 # 5. Phase two: upgrade again with your regular values. The init job now finds the restored
@@ -267,7 +261,7 @@ kubectl exec -i -n <namespace> zammad-postgres-0 -- \
 helm upgrade zammad . -n <namespace> -f my-values.yaml
 
 # 6. Once you have verified everything works, clean up the old volume at your convenience
-kubectl delete pvc -n <namespace> data-zammad-postgresql-0
+kubectl delete pvc -n <namespace> data-<release_name>-postgresql-0
 ```
 
 ### From Chart Version 15.x to 16.0.0
