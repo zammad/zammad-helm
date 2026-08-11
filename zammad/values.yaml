@@ -826,8 +826,8 @@ postgres:
   #   database: zammad_production  # must match zammadConfig.postgresql.db
   #   password: zammad         # must match zammadConfig.postgresql.pass
   #
-  # Note that customUser only takes effect on the initial creation of the database, and that
-  #   restoring a dump then has to be done with the superuser credentials.
+  # Note that customUser only takes effect on the initial creation of the database. Restore dumps as
+  #   the Zammad user rather than the superuser, so that it owns the restored tables.
 
   resources: {}
     # requests:
