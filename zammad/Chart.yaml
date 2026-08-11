@@ -23,7 +23,7 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: zammadConfig.minio.enabled
   - name: memcached
-    version: 0.14.3
+    version: 0.14.5
     repository: oci://ghcr.io/cloudpirates-io/helm-charts
     condition: zammadConfig.memcached.enabled
   - name: postgresql
