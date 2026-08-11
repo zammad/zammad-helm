@@ -235,8 +235,11 @@ The new subchart provisions a fresh, empty PostgreSQL cluster on its own volume,
 non-destructive logical dump/restore (adjust namespace, release name and credentials to your setup).
 
 ```bash
-# 1. Stop Zammad so there are no more writes to the database
+# 1. Stop Zammad so there are no more writes to the database. If you have enabled the reindex
+#    cronjob, suspend it as well - it runs Zammad too and would otherwise still access the database.
 kubectl scale -n <namespace> deploy -l app.kubernetes.io/name=zammad --replicas=0
+kubectl patch -n <namespace> -p '{"spec":{"suspend":true}}' \
+  "$(kubectl get cronjob -n <namespace> -l app.kubernetes.io/component=zammad-cronjob-reindex -o name)"
 
 # 2. Take a logical backup from the still-running OLD (bitnami) instance
 kubectl exec -n <namespace> <release_name>-postgresql-0 -- \
@@ -253,7 +256,8 @@ helm upgrade <release_name> . -n <namespace> -f my-values.yaml \
   --set zammadConfig.nginx.replicas=0 \
   --set zammadConfig.railsserver.replicas=0 \
   --set zammadConfig.scheduler.replicas=0 \
-  --set zammadConfig.websocket.replicas=0
+  --set zammadConfig.websocket.replicas=0 \
+  --set zammadConfig.cronJob.reindex.suspend=true
 
 # 4. Restore the dump into the new database. It is streamed via stdin, so it needs no disk space
 #    inside the container. Use 'kubectl exec -i' without '-t': a TTY would corrupt the binary
