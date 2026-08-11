@@ -195,14 +195,15 @@ zammadConfig:
   postgresql:
     # enable/disable postgresql chart dependency
     enabled: true
-    # needs to be the same as the postgresql.auth.database
+    # needs to be the same as the postgres.auth.database
     db: zammad_production
-    # host env var is only used when postgresql.enabled is false
+    # Host of an external PostgreSQL server, only used when enabled is false.
+    #   When the subchart is enabled, the host is derived from the release name instead.
     host: zammad-postgresql
-    # needs to be the same as the postgresql.auth.password
+    # needs to be the same as the postgres.auth.password
     pass: "zammad"
     port: 5432
-    # needs to be the same as the postgresql.auth.username
+    # needs to be the same as the postgres.auth.username
     user: zammad
     # additional connection options
     options: "pool=50"
@@ -801,8 +802,11 @@ postgres:
 
     # To avoid passwords in your values.yaml, you can comment out the password above
     # and use an existing Kubernetes secret. Remove the comments on the lines below
-    # and adjust them accordingly. The secret must contain the key referenced by
-    # secretKeys.adminPasswordKey (default: postgres-password).
+    # and adjust them accordingly.
+    # The subchart reads the password from the key named in secretKeys.adminPasswordKey,
+    # which defaults to 'postgres-password'. The example below overrides it to match the
+    # secret that Zammad itself uses (see secrets.postgresql above), so that a single
+    # secret can serve both. Set secrets.postgresql.useExisting to true in that case.
     #
     # existingSecret: postgresql-pass
     # secretKeys:
