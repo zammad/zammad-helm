@@ -812,6 +812,23 @@ postgres:
     # secretKeys:
     #   adminPasswordKey: postgresql-pass
 
+  # The user from auth.username above is created via the official image's POSTGRES_USER, which is
+  #   always a superuser. Zammad does not need those privileges (it only requires the plpgsql
+  #   extension, which is present by default). To run Zammad unprivileged instead, point auth.* at
+  #   separate superuser credentials and create Zammad's user through the subchart's customUser:
+  #
+  # auth:
+  #   username: postgres
+  #   database: postgres
+  #   password: "a-superuser-password"
+  # customUser:
+  #   name: zammad             # must match zammadConfig.postgresql.user
+  #   database: zammad_production  # must match zammadConfig.postgresql.db
+  #   password: zammad         # must match zammadConfig.postgresql.pass
+  #
+  # Note that customUser only takes effect on the initial creation of the database, and that
+  #   restoring a dump then has to be done with the superuser credentials.
+
   resources: {}
     # requests:
     #   cpu: 250m

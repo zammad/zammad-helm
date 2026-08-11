@@ -218,6 +218,12 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
     rollback safety net; you can remove it once the migration is verified.
   - The new subchart uses the official `postgres` image and defaults to the latest major version. Since the migration
     below is a logical dump/restore, the database is upgraded to that major version in the process.
+  - Zammad's database user is now a PostgreSQL superuser. With the bitnami subchart, `zammad` was an unprivileged
+    user owning the database, next to a separate `postgres` superuser. The new subchart creates the user from
+    `postgres.auth.username` via the official image's `POSTGRES_USER`, which is always a superuser. Zammad does not
+    need those privileges. As the PostgreSQL instance is dedicated to Zammad the impact is limited, but if you
+    prefer to keep the application unprivileged, the subchart's `customUser` block can be used instead - see the
+    commented example in [values.yaml](./values.yaml).
 - New settings (not breaking, needed by the migration procedure below):
   - `zammadConfig.initJob.enabled` can be set to `false` to temporarily skip the initialisation job.
   - `zammadConfig.scheduler.replicas` and `zammadConfig.websocket.replicas` can now be set to `0` to disable
