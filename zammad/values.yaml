@@ -44,6 +44,9 @@ secrets:
     useExisting: false
     secretKey: autowizard
     secretName: autowizard
+  # These values are only used when zammadConfig.elasticsearch.enabled is false
+  # (i.e. for an external Elasticsearch service). For the bundled ECK Elasticsearch,
+  # the operator-generated secret is used automatically and these values are ignored.
   elasticsearch:
     useExisting: false
     secretKey: password
@@ -722,9 +725,13 @@ initContainers: []
 # results in the in-cluster service "<release name>-elasticsearch-es-http" and the
 # auto-generated superuser secret "<release name>-elasticsearch-es-elastic-user"
 # (user "elastic"). The Zammad templates pick these up automatically.
+#
+# The Elasticsearch version is not pinned here on purpose: it comes from the subchart's
+# default, so it is carried along with the subchart version. Set "version" here if you
+# need to pin a specific Elasticsearch version (it must be supported by the installed
+# ECK operator).
 elasticsearch:
   nameOverride: elasticsearch
-  version: 9.4.2
   http:
     tls:
       selfSignedCertificate:

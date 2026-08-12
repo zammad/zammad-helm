@@ -221,8 +221,7 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
   when `zammadConfig.elasticsearch.enabled` is `true` (the default). See [Prerequisites](#prerequisites).
 - The `elasticsearch.*` values changed completely. The previous bitnami values (`master`, `data`,
   `ingest`, `coordinating`, `sysctlImage`, `image`, `global.security.allowInsecureImages`, …) no
-  longer apply. Review the new `elasticsearch.*` block in `values.yaml` (`version`, `nodeSets`,
-  `http`, …).
+  longer apply. Review the new `elasticsearch.*` block in `values.yaml` (`nodeSets`, `http`, …).
 - Authentication is now mandatory: ECK creates a superuser `elastic` and stores its password in
   the auto-generated secret `{{ .Release.Name }}-elasticsearch-es-elastic-user`. The chart wires
   this up automatically, so `secrets.elasticsearch.*` is only relevant for an **external**

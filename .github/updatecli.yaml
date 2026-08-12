@@ -18,14 +18,21 @@ sources:
       versionfilter:
         pattern: '3.x.x'
         kind: semver
-  # elasticsearch:
-  #   name: elasticsearch
-  #   kind: helmchart
-  #   spec:
-  #     url: https://charts.bitnami.com/bitnami
-  #     name: elasticsearch
-  #     versionfilter:
-  #       pattern: "21.x.x"
+  elasticsearch:
+    name: elasticsearch
+    kind: helmchart
+    spec:
+      url: https://helm.elastic.co
+      name: eck-elasticsearch
+      # Patch level only: this subchart provides the Elasticsearch version (which we do not
+      #   pin, see values.yaml) and it may change the Elasticsearch minor or major version in
+      #   a chart minor release, as the chart itself stays on 0.x. Chart patches only ever
+      #   carry Elasticsearch patch updates.
+      #   To perform a minor update, raise the pattern below and check that the ECK operator
+      #   installed in the cluster (a prerequisite outside of this chart, see README) supports
+      #   the resulting Elasticsearch version.
+      versionfilter:
+        pattern: "0.19.x"
   # minio:
   #   name: minio
   #   kind: helmchart
@@ -102,18 +109,18 @@ targets:
       file: zammad/values.yaml
       matchpattern: '        tag: "\d+\.\d+\.\d+"'
       replacepattern: '        tag: "{{ source `alpine` }}"'
-  # elasticsearch:
-  #   name: elasticsearch
-  #   kind: helmchart
-  #   sourceid: elasticsearch
-  #   # {{ if .github.enabled }}
-  #   scmid: zammad-helm
-  #   # {{ end }}
-  #   spec:
-  #     name: "zammad"
-  #     file: "Chart.yaml"
-  #     key: "$.dependencies[0].version"
-  #     versionincrement: patch
+  elasticsearch:
+    name: elasticsearch
+    kind: helmchart
+    sourceid: elasticsearch
+    # {{ if .github.enabled }}
+    scmid: zammad-helm
+    # {{ end }}
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.dependencies[0].version"
+      versionincrement: patch
   # minio:
   #   name: minio
   #   kind: helmchart
