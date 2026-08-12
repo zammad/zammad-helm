@@ -32,7 +32,7 @@ sources:
       #   installed in the cluster (a prerequisite outside of this chart, see README) supports
       #   the resulting Elasticsearch version.
       versionfilter:
-        pattern: "0.19.x"
+        pattern: "0.20.x"
   # minio:
   #   name: minio
   #   kind: helmchart

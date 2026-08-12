@@ -21,7 +21,7 @@ dependencies:
   - name: eck-elasticsearch
     alias: elasticsearch
     repository: https://helm.elastic.co
-    version: 0.19.1
+    version: 0.20.0
     condition: zammadConfig.elasticsearch.enabled
   - name: minio
     version: 14.10.5
