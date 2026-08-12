@@ -42,7 +42,7 @@ Be aware that the Zammad Helm chart version is different from the actual Zammad 
 ## Prerequisites
 
 - Kubernetes 1.19+
-- Helm 3.2.0+
+- Helm 3.8.0+
 - Cluster with at least 4GB of free RAM
 
 ## Installing the Chart
@@ -197,6 +197,84 @@ This cronjob never runs by default, but you can change `zammadConfig.cronJob.rei
 and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 
 ## Upgrading
+
+### From Chart Version 16.x to 17.0.0
+
+- The bitnami PostgreSQL subchart was replaced with [cloudpirates-postgres/postgres](https://artifacthub.io/packages/helm/cloudpirates-postgres/postgres).
+  This is a **breaking change that requires a manual, one-time data migration**, because the new subchart uses a
+  different data directory layout and image, and PostgreSQL data volumes cannot be reused across these charts as-is.
+- Please check your values for this subchart, as the structure changed:
+  - The values key for the subchart changed from `postgresql:` to `postgres:` (the subchart is now used under its
+    own name, consistent with the `redis` and `memcached` subcharts).
+  - The bitnami-specific keys (`auth.postgresPassword`, `auth.replicationUsername`, `auth.replicationPassword`,
+    the `bitnamilegacy` image workarounds and `global.security.allowInsecureImages`) are gone.
+  - The password is now configured via `postgres.auth.password` (or an existing secret referenced by
+    `postgres.auth.existingSecret` with the key from `postgres.auth.secretKeys.adminPasswordKey`, default `postgres-password`).
+  - The DB service is now named `{{ .Release.Name }}-postgres` (was `{{ .Release.Name }}-postgresql`). This is handled
+    internally; `zammadConfig.postgresql.*` (host/port/user/pass/db) is unchanged.
+  - Because the new resources use a different name, the new `PersistentVolumeClaim`
+    (`data-{{ .Release.Name }}-postgres-0`) does **not** collide with the old one
+    (`data-{{ .Release.Name }}-postgresql-0`). The old volume is left untouched during the upgrade and serves as a
+    rollback safety net; you can remove it once the migration is verified.
+  - The new subchart uses the official `postgres` image and defaults to the latest major version. Since the migration
+    below is a logical dump/restore, the database is upgraded to that major version in the process.
+  - Zammad's database user is now a PostgreSQL superuser. With the bitnami subchart, `zammad` was an unprivileged
+    user owning the database, next to a separate `postgres` superuser. The new subchart creates the user from
+    `postgres.auth.username` via the official image's `POSTGRES_USER`, which is always a superuser. Zammad does not
+    need those privileges. As the PostgreSQL instance is dedicated to Zammad the impact is limited, but if you
+    prefer to keep the application unprivileged, the subchart's `customUser` block can be used instead - see the
+    commented example in [values.yaml](./values.yaml).
+- New settings (not breaking, needed by the migration procedure below):
+  - `zammadConfig.initJob.enabled` can be set to `false` to temporarily skip the initialisation job.
+  - `zammadConfig.scheduler.replicas` and `zammadConfig.websocket.replicas` can now be set to `0` to disable
+    those components. They may only run once per cluster, so any value above `1` is capped to `1`.
+
+#### Data migration
+
+The new subchart provisions a fresh, empty PostgreSQL cluster on its own volume, so the migration is a
+non-destructive logical dump/restore (adjust namespace, release name and credentials to your setup).
+
+```bash
+# 1. Stop Zammad so there are no more writes to the database. If you have enabled the reindex
+#    cronjob, suspend it as well - it runs Zammad too and would otherwise still access the database.
+kubectl scale -n <namespace> deploy -l app.kubernetes.io/name=zammad --replicas=0
+kubectl patch -n <namespace> -p '{"spec":{"suspend":true}}' \
+  "$(kubectl get cronjob -n <namespace> -l app.kubernetes.io/component=zammad-cronjob-reindex -o name)"
+
+# 2. Take a logical backup from the still-running OLD (bitnami) instance
+kubectl exec -n <namespace> <release_name>-postgresql-0 -- \
+  env PGPASSWORD=<password> pg_dump -Fc -U zammad -d zammad_production \
+  > zammad_production.dump
+
+# 3. Phase one: upgrade with the init job and all Zammad components disabled, so that only the new,
+#    empty PostgreSQL cluster comes up (on its own PVC data-<release>-postgres-0; the old PVC is
+#    left untouched). Nothing may connect to the new database before the restore.
+#    Otherwise, a new database would be set up and the Rails bookkeeping tables
+#    `schema_migrations`, `ar_internal_metadata` would be created by the Pods.
+helm upgrade <release_name> . -n <namespace> -f my-values.yaml \
+  --set zammadConfig.initJob.enabled=false \
+  --set zammadConfig.nginx.replicas=0 \
+  --set zammadConfig.railsserver.replicas=0 \
+  --set zammadConfig.scheduler.replicas=0 \
+  --set zammadConfig.websocket.replicas=0 \
+  --set zammadConfig.cronJob.reindex.suspend=true
+
+# 4. Restore the dump into the new database. It is streamed via stdin, so it needs no disk space
+#    inside the container. Use 'kubectl exec -i' without '-t': a TTY would corrupt the binary
+#    stream. '--clean --if-exists' makes the step repeatable if a previous attempt failed.
+kubectl exec -i -n <namespace> <release_name>-postgres-0 -- \
+  env PGPASSWORD=<password> pg_restore -U zammad -d zammad_production --no-owner --clean --if-exists \
+  < zammad_production.dump
+
+# 5. Phase two: upgrade again with your regular values. The init job now finds the restored
+#    data and only migrates it, and Zammad is scaled back up to your configured replicas (via --reset-values).
+#    Note that this will delete all other values specified via --set before, which are not present in the values file.
+#    To avoid this behaviour, you can omit --reset-values and specify the keys from above manually.
+helm upgrade <release_name> . -n <namespace> -f my-values.yaml --reset-values
+
+# 6. Once you have verified everything works, clean up the old volume at your convenience
+kubectl delete pvc -n <namespace> data-<release_name>-postgresql-0
+```
 
 ### From Chart Version 15.x to 16.0.0
 

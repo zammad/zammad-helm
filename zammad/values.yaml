@@ -195,14 +195,15 @@ zammadConfig:
   postgresql:
     # enable/disable postgresql chart dependency
     enabled: true
-    # needs to be the same as the postgresql.auth.database
+    # needs to be the same as the postgres.auth.database
     db: zammad_production
-    # host env var is only used when postgresql.enabled is false
+    # Host of an external PostgreSQL server, only used when enabled is false.
+    #   When the subchart is enabled, the host is derived from the release name instead.
     host: zammad-postgresql
-    # needs to be the same as the postgresql.auth.password
+    # needs to be the same as the postgres.auth.password
     pass: "zammad"
     port: 5432
-    # needs to be the same as the postgresql.auth.username
+    # needs to be the same as the postgres.auth.username
     user: zammad
     # additional connection options
     options: "pool=50"
@@ -306,6 +307,9 @@ zammadConfig:
       pass: zammad
 
   scheduler:
+    # This component may only run once per cluster, so only 0 (disabled) and 1 are supported.
+    #   Higher values are capped to 1.
+    replicas: 1
     resources: {}
       # requests:
       #   cpu: 100m
@@ -383,6 +387,9 @@ zammadConfig:
     #   readOnly: true
 
   websocket:
+    # This component may only run once per cluster, so only 0 (disabled) and 1 are supported.
+    #   Higher values are capped to 1.
+    replicas: 1
     startupProbe:
       tcpSocket:
         port: 6042
@@ -524,6 +531,11 @@ zammadConfig:
         #  bundle exec rails runner '…'
 
   initJob:
+    # Runs the database/Elasticsearch initialisation on every install and upgrade.
+    # Only disable this temporarily for maintenance tasks that must not have the database
+    #   initialised, e.g. while restoring a dump (see the PostgreSQL migration notes in the README).
+    #   Zammad will not work correctly if this is left disabled permanently.
+    enabled: true
     randomName: true
     # specify how long after finish pods are deleted
     ttlSecondsAfterFinished: 300
@@ -780,48 +792,50 @@ minio:
   disableWebUI: true
 
 # settings for the postgres subchart
-postgresql:
-  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
-  image:
-    repository: bitnamilegacy/postgresql
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
-  metrics:
-    image:
-      repository: bitnamilegacy/postgres-exporter
-  global:
-    security:
-      allowInsecureImages: true
-
+postgres:
   auth:
+    # Creates this user as a superuser and a database with the name from auth.database.
+    # These must match zammadConfig.postgresql.user/pass/db.
     username: "zammad"
-    replicationUsername: repl_user
+    password: "zammad"
     database: "zammad_production"
 
-    # Passwords
-    postgresPassword: "zammad"
-    password: "zammad"
-    replicationPassword: "zammad"
-
-    # To avoid passwords in your values.yaml, you can comment out the 3 lines above
+    # To avoid passwords in your values.yaml, you can comment out the password above
     # and use an existing Kubernetes secret. Remove the comments on the lines below
-    # and adjust them accordingly
+    # and adjust them accordingly.
+    # The subchart reads the password from the key named in secretKeys.adminPasswordKey,
+    # which defaults to 'postgres-password'. The example below overrides it to match the
+    # secret that Zammad itself uses (see secrets.postgresql above), so that a single
+    # secret can serve both. Set secrets.postgresql.useExisting to true in that case.
     #
     # existingSecret: postgresql-pass
     # secretKeys:
-    #   adminPasswordKey: postgresql-admin-password
-    #   userPasswordKey: postgresql-pass
-    #   replicationPasswordKey: postgresql-replication-password
-    #
-  primary:
-    resources: {}
-      # requests:
-      #   cpu: 250m
-      #   memory: 256Mi
-      # limits:
-      #   cpu: 500m
-      #   memory: 512Mi
+    #   adminPasswordKey: postgresql-pass
+
+  # The user from auth.username above is created via the official image's POSTGRES_USER, which is
+  #   always a superuser. Zammad does not need those privileges (it only requires the plpgsql
+  #   extension, which is present by default). To run Zammad unprivileged instead, point auth.* at
+  #   separate superuser credentials and create Zammad's user through the subchart's customUser:
+  #
+  # auth:
+  #   username: postgres
+  #   database: postgres
+  #   password: "a-superuser-password"
+  # customUser:
+  #   name: zammad             # must match zammadConfig.postgresql.user
+  #   database: zammad_production  # must match zammadConfig.postgresql.db
+  #   password: zammad         # must match zammadConfig.postgresql.pass
+  #
+  # Note that customUser only takes effect on the initial creation of the database. Restore dumps as
+  #   the Zammad user rather than the superuser, so that it owns the restored tables.
+
+  resources: {}
+    # requests:
+    #   cpu: 250m
+    #   memory: 256Mi
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
 
 # settings for the redis subchart
 redis:

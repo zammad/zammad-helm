@@ -239,7 +239,7 @@ environment variables for the Zammad Rails stack
 - name: RAILS_TRUSTED_PROXIES
   value: "{{ .Values.zammadConfig.railsserver.trustedProxies }}"
 - name: POSTGRESQL_HOST
-  value: {{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgresql{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}
+  value: {{ if .Values.zammadConfig.postgresql.enabled }}{{ .Release.Name }}-postgres{{ else }}{{ .Values.zammadConfig.postgresql.host }}{{ end }}
 - name: POSTGRESQL_PORT
   value: {{ .Values.zammadConfig.postgresql.port | toString | toYaml }}
 - name: POSTGRESQL_USER

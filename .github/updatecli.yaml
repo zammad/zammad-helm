@@ -42,14 +42,17 @@ sources:
       name: memcached
       versionfilter:
         pattern: "0.x.x"
-  # postgresql:
-  #   name: postgresql
-  #   kind: helmchart
-  #   spec:
-  #     url: https://charts.bitnami.com/bitnami
-  #     name: postgresql
-  #     versionfilter:
-  #       pattern: "16.x.x"
+  postgres:
+    name: postgres
+    kind: helmchart
+    spec:
+      url: oci://ghcr.io/cloudpirates-io/helm-charts
+      name: postgres
+      # Patch level only: this subchart may change the PostgreSQL major version in a minor release.
+      #   To perform such an update, migrate the data via dump/restore, or add a pgautoupgrade init
+      #   container as sketched in the subchart's values.yaml.
+      versionfilter:
+        pattern: "0.19.x"
   redis:
     name: redis
     kind: helmchart
@@ -135,18 +138,18 @@ targets:
       file: "Chart.yaml"
       key: "$.dependencies[2].version"
       versionincrement: patch
-  # postgresql:
-  #   name: postgresql
-  #   kind: helmchart
-  #   sourceid: postgresql
-  #   # {{ if .github.enabled }}
-  #   scmid: zammad-helm
-  #   # {{ end }}
-  #   spec:
-  #     name: "zammad"
-  #     file: "Chart.yaml"
-  #     key: "$.dependencies[3].version"
-  #     versionincrement: patch
+  postgres:
+    name: postgres
+    kind: helmchart
+    sourceid: postgres
+    # {{ if .github.enabled }}
+    scmid: zammad-helm
+    # {{ end }}
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.dependencies[3].version"
+      versionincrement: patch
   redis:
     name: redis
     kind: helmchart
