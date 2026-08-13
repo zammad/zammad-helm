@@ -44,12 +44,15 @@ Be aware that the Zammad Helm chart version is different from the actual Zammad 
 - Kubernetes 1.21+
 - Helm 3.8.0+
 - Cluster with at least 4GB of free RAM
-- The [ECK operator](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-install-helm.html)
-  must be installed in the cluster when using the bundled Elasticsearch
-  (`zammadConfig.elasticsearch.enabled: true`, the default). The bundled
-  Elasticsearch is deployed via the official `eck-elasticsearch` chart, which
-  creates an `Elasticsearch` custom resource that is reconciled by the operator.
-  This is **not** required when connecting to an external Elasticsearch service.
+- The [ECK operator](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-install-helm.html),
+  **version 3.5.0 or newer**, must be installed in the cluster when using the bundled
+  Elasticsearch (`zammadConfig.elasticsearch.enabled: true`, the default). The bundled
+  Elasticsearch is deployed via the official `eck-elasticsearch` chart (pinned to `0.20.0`
+  in `Chart.yaml`), which creates an `Elasticsearch` custom resource that is reconciled by
+  the operator. If your cluster already runs an
+  older ECK operator for other workloads, upgrade it first — an older operator's webhook may
+  reject the `Elasticsearch` resource this chart creates. This is **not** required when
+  connecting to an external Elasticsearch service.
 
   Install the operator once per cluster:
 
@@ -218,8 +221,9 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
   official [`eck-elasticsearch`](https://artifacthub.io/packages/helm/elastic/eck-elasticsearch)
   chart, which is managed by the [ECK operator](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-overview.html).
   This is the deployment method officially supported by Elastic.
-- **The ECK operator (and its CRDs) must now be installed in the cluster** before upgrading
-  when `zammadConfig.elasticsearch.enabled` is `true` (the default). See [Prerequisites](#prerequisites).
+- **The ECK operator (and its CRDs), version 3.5.0+, must now be installed in the cluster**
+  before upgrading when `zammadConfig.elasticsearch.enabled` is `true` (the default). See
+  [Prerequisites](#prerequisites).
 - The `elasticsearch.*` values changed completely. The previous bitnami values (`master`, `data`,
   `ingest`, `coordinating`, `sysctlImage`, `image`, `global.security.allowInsecureImages`, …) no
   longer apply. Review the new `elasticsearch.*` block in `values.yaml` (`nodeSets`, `http`, …).
@@ -230,8 +234,12 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 - The in-cluster service name changed from `{{ .Release.Name }}-elasticsearch` to
   `{{ .Release.Name }}-elasticsearch-es-http`.
 - TLS on the HTTP layer is disabled by default (`elasticsearch.http.tls.selfSignedCertificate.disabled: true`)
-  to keep the plain-`http` connection behaviour. Set it to `false` and `zammadConfig.elasticsearch.schema: https`
-  to use the operator-managed self-signed certificate.
+  to keep the plain-`http` connection behaviour. Enabling the operator-managed self-signed
+  certificate (`selfSignedCertificate.disabled: false` with `zammadConfig.elasticsearch.schema: https`)
+  is **not supported yet**: Zammad verifies TLS certificates by default and the chart does not mount
+  the ECK-generated CA certificate into the Zammad pods, so the zammad-init job will fail on
+  certificate verification. Leave TLS disabled unless you terminate it yourself and configure
+  Zammad's Elasticsearch client accordingly.
 - The StatefulSet and its `PersistentVolumeClaim`s are recreated under new names. As the search
   index can be rebuilt from PostgreSQL, the recommended path is to delete the old bitnami
   Elasticsearch PVCs and let the index be recreated. This usually happens automatically when the
