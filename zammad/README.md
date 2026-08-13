@@ -56,8 +56,7 @@ Be aware that the Zammad Helm chart version is different from the actual Zammad 
   ```console
   helm repo add elastic https://helm.elastic.co
   helm repo update
-  helm install elastic-operator elastic/eck-operator \
-    --namespace elastic-system --create-namespace
+  helm install elastic-operator elastic/eck-operator --namespace elastic-system --create-namespace
   ```
 
 ## Installing the Chart
@@ -233,8 +232,8 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
   to use the operator-managed self-signed certificate.
 - The StatefulSet and its `PersistentVolumeClaim`s are recreated under new names. As the search
   index can be rebuilt from PostgreSQL, the recommended path is to delete the old bitnami
-  Elasticsearch PVCs and let the index be recreated. To force a full rebuild after the upgrade,
-  set `zammadConfig.elasticsearch.reindex: true` for the upgrade run.
+  Elasticsearch PVCs and let the index be recreated. This usually happens automatically when the
+  zammad-init job runs and finds no index to be available.
 
 ### From Chart Version 16.x to 17.0.0
 
