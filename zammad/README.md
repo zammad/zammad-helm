@@ -228,12 +228,15 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
   `ingest`, `coordinating`, `sysctlImage`, `image`, `global.security.allowInsecureImages`, …) no
   longer apply. Review the new `elasticsearch.*` block in `values.yaml` (`nodeSets`, `http`, …).
 - Authentication is now mandatory: ECK creates a superuser `elastic` and stores its password in
-  the auto-generated secret `{{ .Release.Name }}-es-es-elastic-user`. The chart wires this up
-  automatically, so `secrets.elasticsearch.*` is only relevant for an **external** Elasticsearch
-  now.
-- The in-cluster service name changed from `{{ .Release.Name }}-elasticsearch` to
-  `{{ .Release.Name }}-es-es-http`. Note that ECK caps the Elasticsearch resource name itself at
-  36 characters; the chart fails fast with a clear error at template/install time if your release
+  an auto-generated secret, typically named `{{ .Release.Name }}-es-es-elastic-user` (depending
+  on your release name, see below). The chart wires this up automatically, so
+  `secrets.elasticsearch.*` is only relevant for an **external** Elasticsearch now.
+- The in-cluster service name changed from `{{ .Release.Name }}-elasticsearch` to typically
+  `{{ .Release.Name }}-es-es-http`. The exact name depends on your release name: if it already
+  contains `es` as a substring (e.g. `zammad-helpdesk`), it's used as-is instead of getting `-es`
+  appended, giving `{{ .Release.Name }}-es-http` instead. Either way, the chart's own templates
+  resolve this automatically. Note that ECK caps the Elasticsearch resource name itself at 36
+  characters; the chart fails fast with a clear error at template/install time if your release
   name is too long to fit.
 - TLS on the HTTP layer is disabled by default (`elasticsearch.http.tls.selfSignedCertificate.disabled: true`)
   to keep the plain-`http` connection behaviour. Enabling the operator-managed self-signed
