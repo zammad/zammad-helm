@@ -249,6 +249,12 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
   index can be rebuilt from PostgreSQL, the recommended path is to delete the old bitnami
   Elasticsearch PVCs and let the index be recreated. This usually happens automatically when the
   zammad-init job runs and finds no index to be available.
+- **Behaviour change:** the ECK operator's default `volumeClaimDeletePolicy` is
+  `DeleteOnScaledownAndClusterDeletion`, so uninstalling the release (or setting
+  `zammadConfig.elasticsearch.enabled: false`) now also deletes the Elasticsearch data volume.
+  The old bitnami PVCs were left behind on uninstall. This is harmless in practice since the
+  index rebuilds from PostgreSQL, but if you rely on the volume surviving an uninstall, set
+  `elasticsearch.volumeClaimDeletePolicy: DeleteOnScaledownOnly` explicitly.
 
 #### Faster volume permission fixing
 
