@@ -721,24 +721,26 @@ initContainers: []
 # This deploys an Elasticsearch custom resource that is managed by the ECK operator.
 # The ECK operator (and its CRDs) MUST already be installed in the cluster, see README.
 #
-# ECK names the resource "<release name>-elasticsearch" (nameOverride below), which
-# results in the in-cluster service "<release name>-elasticsearch-es-http" and the
-# auto-generated superuser secret "<release name>-elasticsearch-es-elastic-user"
-# (user "elastic"). The Zammad templates pick these up automatically.
+# ECK names the resource "<release name>-es" (nameOverride below), which results in the
+# in-cluster service "<release name>-es-es-http" and the auto-generated superuser secret
+# "<release name>-es-es-elastic-user" (user "elastic"). The Zammad templates pick these up
+# automatically. Kept short on purpose: ECK caps the Elasticsearch resource name itself at
+# 36 characters, so a short nameOverride leaves more of that budget for the release name.
 #
 # The Elasticsearch version is not pinned here on purpose: it comes from the subchart's
 # default, so it is carried along with the subchart version. Set "version" here if you
 # need to pin a specific Elasticsearch version (it must be supported by the installed
 # ECK operator).
 elasticsearch:
-  nameOverride: elasticsearch
+  nameOverride: es
   http:
     tls:
       selfSignedCertificate:
         # Disable TLS on the HTTP layer (Variant A): Zammad talks plain http to ES.
         # Native authentication (user "elastic" + generated password) stays enabled.
-        # Set to false and adjust zammadConfig.elasticsearch.schema to "https" to
-        # use the operator-managed self-signed certificate instead.
+        # Enabling this (selfSignedCertificate.disabled: false) is not supported yet: Zammad
+        # verifies TLS certificates by default and the chart does not mount the ECK-generated
+        # CA into the Zammad pods, so the zammad-init job will fail on certificate verification.
         disabled: true
   nodeSets:
     - name: default
