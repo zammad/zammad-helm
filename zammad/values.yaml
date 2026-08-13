@@ -770,6 +770,7 @@ elasticsearch:
                   value: "-Xms512m -Xmx512m"
               resources:
                 requests:
+                  cpu: 500m
                   memory: 1Gi
                 limits:
                   memory: 1Gi
