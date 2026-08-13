@@ -212,6 +212,8 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 
 ### From Chart Version 17.x to 18.0.0
 
+#### Elasticsearch subchart migrated to the ECK operator
+
 - The bundled Elasticsearch was migrated from the `bitnami/elasticsearch` subchart to the
   official [`eck-elasticsearch`](https://artifacthub.io/packages/helm/elastic/eck-elasticsearch)
   chart, which is managed by the [ECK operator](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-overview.html).
@@ -234,6 +236,15 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
   index can be rebuilt from PostgreSQL, the recommended path is to delete the old bitnami
   Elasticsearch PVCs and let the index be recreated. This usually happens automatically when the
   zammad-init job runs and finds no index to be available.
+
+#### Faster volume permission fixing
+
+- `securityContext.fsGroupChangePolicy` now defaults to `OnRootMismatch` instead of `Always`. This
+  avoids a lengthy startup delay on volumes with a large number of files, since Kubernetes only
+  recurses into a volume to fix ownership if the volume's root directory doesn't already have the
+  expected group ownership. This is safe for existing volumes (their ownership was already set by
+  a previous `Always` run) and only changes behaviour on future pod restarts. If you rely on the
+  old, more thorough behaviour, set `securityContext.fsGroupChangePolicy: Always` explicitly.
 
 ### From Chart Version 16.x to 17.0.0
 
