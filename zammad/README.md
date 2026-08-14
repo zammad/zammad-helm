@@ -177,6 +177,9 @@ zammadConfig:
       argocd.argoproj.io/hook: Sync
 ```
 
+Note that `randomName` is a bit of a misnomer: the job name suffix is the Helm release revision, not a random value.
+Tools that render the chart statically instead of performing a real Helm install/upgrade (Argo CD, `helm template`, `helm diff`) always see revision `1`, so with `randomName: true` the job name never changes across syncs and the job will not re-run on its own - hence the `false` + Sync Hook workaround above. Flux's helm-controller uses the Helm SDK directly and is unaffected by this.
+
 ## Maintenance Tasks
 
 If you have to run any maintenance commands inside of the Zammad stack, you can do that by
