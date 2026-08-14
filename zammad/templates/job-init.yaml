@@ -4,7 +4,7 @@ kind: Job
 metadata:
   {{- if .Values.zammadConfig.initJob.randomName }}
   # Use a different job name on each run to ensure a new job always runs once.
-  name: {{ include "zammad.fullname" . }}-init-{{ uuidv4 }}
+  name: {{ include "zammad.fullname" . }}-init-{{ .Release.Revision }}
   {{- else }}
   name: {{ include "zammad.fullname" . }}-init
   {{- end}}
