@@ -3,6 +3,48 @@ entries:
   zammad:
   - apiVersion: v2
     appVersion: 7.1.2-0004
+    created: "2026-08-14T09:20:44.33635671Z"
+    dependencies:
+    - condition: zammadConfig.elasticsearch.enabled
+      name: elasticsearch
+      repository: https://charts.bitnami.com/bitnami
+      version: 21.6.3
+    - condition: zammadConfig.minio.enabled
+      name: minio
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.10.5
+    - condition: zammadConfig.memcached.enabled
+      name: memcached
+      repository: oci://ghcr.io/cloudpirates-io/helm-charts
+      version: 0.14.5
+    - condition: zammadConfig.postgresql.enabled
+      name: postgres
+      repository: oci://ghcr.io/cloudpirates-io/helm-charts
+      version: 0.19.14
+    - condition: zammadConfig.redis.enabled
+      name: redis
+      repository: oci://ghcr.io/cloudpirates-io/helm-charts
+      version: 0.34.14
+    description: Zammad is a web based open source helpdesk/customer support system
+      with many features to manage customer communication via several channels like
+      telephone, facebook, twitter, chat and e-mails.
+    digest: 565bece199f88ead7ee7438253389bee5a129865d14ca1bcf75f69bccae51370
+    home: https://zammad.org
+    icon: https://raw.githubusercontent.com/zammad/zammad-documentation/main/images/zammad_logo_600x520.png
+    maintainers:
+    - email: monotek23@gmail.com
+      name: monotek
+    - email: enjoy@zammad.com
+      name: mgruner
+    name: zammad
+    sources:
+    - https://github.com/zammad/zammad
+    - https://github.com/zammad/zammad-helm
+    urls:
+    - https://github.com/zammad/zammad-helm/releases/download/zammad-17.0.1/zammad-17.0.1.tgz
+    version: 17.0.1
+  - apiVersion: v2
+    appVersion: 7.1.2-0004
     created: "2026-08-12T05:35:44.368581996Z"
     dependencies:
     - condition: zammadConfig.elasticsearch.enabled
@@ -8089,4 +8131,4 @@ entries:
     urls:
     - https://github.com/zammad/zammad-helm/releases/download/zammad-0.1.0/zammad-0.1.0.tgz
     version: 0.1.0
-generated: "2026-08-12T05:35:44.369561294Z"
+generated: "2026-08-14T09:20:44.336881552Z"
