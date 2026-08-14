@@ -230,7 +230,10 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 - Authentication is now mandatory: ECK creates a superuser `elastic` and stores its password in
   an auto-generated secret, typically named `{{ .Release.Name }}-es-es-elastic-user` (depending
   on your release name, see below). The chart wires this up automatically, so
-  `secrets.elasticsearch.*` is only relevant for an **external** Elasticsearch now.
+  `secrets.elasticsearch.*` is only relevant for an **external** Elasticsearch now. Since TLS on
+  the HTTP layer is disabled by default (see below), this password still crosses the cluster
+  network in plaintext on every request, same as the previous unauthenticated setup did for all
+  traffic — authentication alone does not protect it in transit.
 - The in-cluster service name changed from `{{ .Release.Name }}-elasticsearch` to typically
   `{{ .Release.Name }}-es-es-http`. The exact name depends on your release name: if it already
   contains `es` as a substring (e.g. `zammad-helpdesk`), it's used as-is instead of getting `-es`
