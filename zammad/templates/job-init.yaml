@@ -2,12 +2,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  {{- if .Values.zammadConfig.initJob.randomName }}
   # Use a different job name on each run to ensure a new job always runs once.
+  # This will generate static names in environments like ArgoCD which
+  #   always use Revision 1.
   name: {{ include "zammad.fullname" . }}-init-{{ .Release.Revision }}
-  {{- else }}
-  name: {{ include "zammad.fullname" . }}-init
-  {{- end}}
   namespace: {{ .Release.Namespace }}
   # Helm post-install/post-upgrade hooks cannot be used here, because
   #   helm's --wait flag causes a deadlock: the job waits for all resources to be ready,

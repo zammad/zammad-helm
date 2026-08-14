@@ -542,12 +542,6 @@ zammadConfig:
     #   initialised, e.g. while restoring a dump (see the PostgreSQL migration notes in the README).
     #   Zammad will not work correctly if this is left disabled permanently.
     enabled: true
-    # Appends the release revision to the job name so a new job always runs on
-    #   install/upgrade. Note that `helm template` and GitOps tools that render
-    #   manifests statically (e.g. Argo CD) always see revision 1, so the name
-    #   stays constant there and the job will not re-run on subsequent syncs -
-    #   see the Argo CD section in the README.
-    randomName: true
     # specify how long after finish pods are deleted
     ttlSecondsAfterFinished: 300
     annotations: {}

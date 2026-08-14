@@ -179,18 +179,14 @@ redis:
 ### Deploying with ArgoCD
 
 Due to the way Argo CD syncs Helm charts into the cluster and this chart deploying the initialization job, the default configuration can lead to Sync loops where Argo CD will create an infinite amount of initialization jobs.
-To prevent this, disable the random name for the initialization job and add the according annotation to the job to let Argo CD treat it as a Sync Hook.
+To prevent this, add the according annotation to the job to let Argo CD treat it as a Sync Hook.
 
 ```yaml
 zammadConfig:
   initJob:
-    randomName: false
     annotations:
       argocd.argoproj.io/hook: Sync
 ```
-
-Note that `randomName` is a bit of a misnomer: the job name suffix is the Helm release revision, not a random value.
-Tools that render the chart statically instead of performing a real Helm install/upgrade (Argo CD, `helm template`, `helm diff`) always see revision `1`, so with `randomName: true` the job name never changes across syncs and the job will not re-run on its own - hence the `false` + Sync Hook workaround above. Flux's helm-controller uses the Helm SDK directly and is unaffected by this.
 
 ## Maintenance Tasks
 
@@ -267,6 +263,19 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
   expected group ownership. This is safe for existing volumes (their ownership was already set by
   a previous `Always` run) and only changes behaviour on future pod restarts. If you rely on the
   old, more thorough behaviour, set `securityContext.fsGroupChangePolicy: Always` explicitly.
+
+#### `initJob.randomName` removed
+
+- The `zammadConfig.initJob.randomName` setting was removed. The init Job name is now always
+  suffixed with the Helm release revision, which is what `randomName: true` (the default) already
+  did in practice.
+- If you had set `randomName: false`, e.g. for the Argo CD workaround described in
+  [Deploying with ArgoCD](#deploying-with-argocd), remove that line - it is now a no-op. Argo CD
+  and other tools that render the chart statically (also `helm template`, `helm diff`) always see
+  revision `1`, so the job name is stable there regardless. It's the Sync Hook annotation that
+  actually prevents the sync loop, and that is unaffected by this change.
+- On upgrade, installs that previously had `randomName: false` will see their init Job renamed once
+  (`<fullname>-init` to `<fullname>-init-<revision>`); this is a harmless one-time replacement.
 
 ### From Chart Version 16.x to 17.0.0
 
