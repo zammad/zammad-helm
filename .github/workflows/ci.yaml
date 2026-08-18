@@ -101,15 +101,46 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Helm
+        id: setup-helm
         uses: azure/setup-helm@v5
         with:
-          # Pinned to Helm 3, not env.helm-version: Helm 4 defaults to Server-Side
-          # Apply, which conflicts with fields (e.g. .spec.nodeSets) the ECK operator
-          # takes ownership of after install. ct's --helm-extra-args is passed to every
-          # helm subcommand it runs (install, test, upgrade, uninstall) with no way to
-          # scope it, so a Helm-4-only flag like --force-conflicts can't be added here
-          # without breaking `helm test`/`helm uninstall` (see helm/chart-testing#540).
-          version: "v3.21.4"
+          version: "${{ env.helm-version }}"
+
+      - name: Scope --force-conflicts to install/upgrade
+        # Helm 4 defaults to Server-Side Apply, which conflicts with fields (e.g.
+        # .spec.nodeSets) the ECK operator takes ownership of after install, so
+        # `helm upgrade` needs --force-conflicts. But ct's --helm-extra-args is
+        # passed to every helm subcommand it runs (install, upgrade, test,
+        # uninstall), and --force-conflicts is only accepted by
+        # install/upgrade/rollback - ct has no way to scope it per subcommand
+        # (helm/chart-testing#540, closed as not_planned). This wrapper shadows
+        # the real `helm` binary and strips --force-conflicts for any subcommand
+        # that doesn't understand it, so it can stay in --helm-extra-args below
+        # without breaking `helm test`/`helm uninstall`. Remove once chart-testing
+        # supports per-subcommand extra args.
+        run: |
+          wrapper_dir="${RUNNER_TEMP}/helm-wrapper"
+          mkdir -p "${wrapper_dir}"
+          cat > "${wrapper_dir}/helm" <<'EOF'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          real_helm="REAL_HELM_PATH"
+          case "${1:-}" in
+            install|upgrade|rollback)
+              exec "$real_helm" "$@"
+              ;;
+            *)
+              args=()
+              for a in "$@"; do
+                [[ "$a" == "--force-conflicts" ]] || args+=("$a")
+              done
+              exec "$real_helm" "${args[@]}"
+              ;;
+          esac
+          EOF
+          sed -i "s#REAL_HELM_PATH#${{ steps.setup-helm.outputs.helm-path }}#" "${wrapper_dir}/helm"
+          chmod +x "${wrapper_dir}/helm"
+          echo "${wrapper_dir}" >> "$GITHUB_PATH"
 
       - uses: actions/setup-python@v7
         with:
@@ -144,4 +175,4 @@ jobs:
         run: kubectl create --namespace zammad --filename zammad/ci/full-objects.yaml
 
       - name: Run chart-testing (install)
-        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s'
+        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s --force-conflicts'
