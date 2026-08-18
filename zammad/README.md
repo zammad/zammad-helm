@@ -257,8 +257,8 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 - **Helm 4 users:** Helm 4 defaults to Server-Side Apply, and will keep using it for every
   subsequent `helm upgrade` once a release was installed with it. The ECK operator also manages
   fields on the `Elasticsearch` resource (e.g. `.spec.nodeSets`) via its own field manager, so a
-  later `helm upgrade` can fail with `Apply failed with 1 conflict: conflict with
-  "elastic-operator" ...`. If you hit this, pass `--force-conflicts` to `helm upgrade` (or
+  later `helm upgrade` can fail with `Apply failed with 1 conflict: conflict with "elastic-operator" ...`.
+  If you hit this, pass `--force-conflicts` to `helm upgrade` (or
   `--server-side=false` to opt back into client-side apply for this release).
 
 #### Faster volume permission fixing
