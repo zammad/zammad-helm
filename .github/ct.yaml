@@ -6,6 +6,8 @@ chart-repos:
 check-version-increment: true
 debug: true
 upgrade: true
+# Needed because of CI splits value to its own job, so that default can be missing.
+skip-missing-values: true
 target-branch: main
 namespace: zammad
 release-label: zammad
