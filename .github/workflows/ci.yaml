@@ -108,12 +108,12 @@ jobs:
 
       - name: Scope --force-conflicts to install/upgrade
         # See .github/helm-force-conflicts-wrapper.sh for why this is needed.
+        env:
+          WRAPPER_DIR: ${{ runner.temp }}/helm-wrapper
         run: |
-          wrapper_dir="${RUNNER_TEMP}/helm-wrapper"
-          mkdir -p "${wrapper_dir}"
-          cp .github/helm-force-conflicts-wrapper.sh "${wrapper_dir}/helm"
-          chmod +x "${wrapper_dir}/helm"
-          echo "${wrapper_dir}" >> "$GITHUB_PATH"
+          mkdir -p "${WRAPPER_DIR}"
+          cp -a .github/helm-force-conflicts-wrapper.sh "${WRAPPER_DIR}/helm"
+          echo "${WRAPPER_DIR}" >> "$GITHUB_PATH"
           echo "REAL_HELM=${{ steps.setup-helm.outputs.helm-path }}" >> "$GITHUB_ENV"
 
       - uses: actions/setup-python@v7

@@ -21,14 +21,14 @@ set -o pipefail
 set -o nounset
 
 case "${1:-}" in
-  install | upgrade | rollback)
-    exec "${REAL_HELM}" "$@"
-    ;;
-  *)
-    args=()
-    for arg in "$@"; do
-      [[ "${arg}" == "--force-conflicts" ]] || args+=("${arg}")
-    done
-    exec "${REAL_HELM}" "${args[@]}"
-    ;;
+install | upgrade | rollback)
+  exec "${REAL_HELM}" "$@"
+  ;;
+*)
+  args=()
+  for arg in "$@"; do
+    [[ "${arg}" == "--force-conflicts" ]] || args+=("${arg}")
+  done
+  exec "${REAL_HELM}" "${args[@]}"
+  ;;
 esac
