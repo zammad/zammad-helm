@@ -41,9 +41,26 @@ Be aware that the Zammad Helm chart version is different from the actual Zammad 
 
 ## Prerequisites
 
-- Kubernetes 1.19+
+- Kubernetes 1.21+
 - Helm 3.8.0+
 - Cluster with at least 4GB of free RAM
+- The [ECK operator](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-install-helm.html),
+  **version 3.5.0 or newer**, must be installed in the cluster when using the bundled
+  Elasticsearch (`zammadConfig.elasticsearch.enabled: true`, the default). The bundled
+  Elasticsearch is deployed via the official `eck-elasticsearch` chart (pinned to `0.20.0`
+  in `Chart.yaml`), which creates an `Elasticsearch` custom resource that is reconciled by
+  the operator. If your cluster already runs an
+  older ECK operator for other workloads, upgrade it first — an older operator's webhook may
+  reject the `Elasticsearch` resource this chart creates. This is **not** required when
+  connecting to an external Elasticsearch service.
+
+  Install the operator once per cluster:
+
+  ```console
+  helm repo add elastic https://helm.elastic.co
+  helm repo update
+  helm install elastic-operator elastic/eck-operator --namespace elastic-system --create-namespace
+  ```
 
 ## Installing the Chart
 
@@ -114,7 +131,11 @@ To deploy on OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://c
 - [Delete the default key](https://helm.sh/docs/chart_template_guide/values_files/#deleting-a-default-key) `securityContext` and `zammadConfig.initContainers.zammad.securityContext.runAsUser` with `null`.
 - Disable if used:
   - also `podSecurityContext` in all subcharts.
-  - the privileged [sysctlImage](https://github.com/bitnami/charts/tree/main/bitnami/elasticsearch#default-kernel-settings) in elasticsearch subchart.
+
+The bundled Elasticsearch uses `node.store.allow_mmap: false` by default (see
+`elasticsearch.nodeSets[].config`), so no privileged sysctl init container is
+required. If you raise `vm.max_map_count` for production instead, do so on the
+node level rather than via a privileged init container.
 
 ```yaml
 securityContext: null
@@ -129,15 +150,6 @@ zammadConfig:
   tmpDirVolume:
     emptyDir:
       medium: memory
-
-elasticsearch:
-  sysctlImage:
-    enabled: false
-  master:
-    podSecurityContext:
-      enabled: false
-    containerSecurityContext:
-      enabled: false
 
 memcached:
   podSecurityContext:
@@ -167,18 +179,14 @@ redis:
 ### Deploying with ArgoCD
 
 Due to the way Argo CD syncs Helm charts into the cluster and this chart deploying the initialization job, the default configuration can lead to Sync loops where Argo CD will create an infinite amount of initialization jobs.
-To prevent this, disable the random name for the initialization job and add the according annotation to the job to let Argo CD treat it as a Sync Hook.
+To prevent this, add the according annotation to the job to let Argo CD treat it as a Sync Hook.
 
 ```yaml
 zammadConfig:
   initJob:
-    randomName: false
     annotations:
       argocd.argoproj.io/hook: Sync
 ```
-
-Note that `randomName` is a bit of a misnomer: the job name suffix is the Helm release revision, not a random value.
-Tools that render the chart statically instead of performing a real Helm install/upgrade (Argo CD, `helm template`, `helm diff`) always see revision `1`, so with `randomName: true` the job name never changes across syncs and the job will not re-run on its own - hence the `false` + Sync Hook workaround above. Flux's helm-controller uses the Helm SDK directly and is unaffected by this.
 
 ## Maintenance Tasks
 
@@ -200,6 +208,74 @@ This cronjob never runs by default, but you can change `zammadConfig.cronJob.rei
 and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 
 ## Upgrading
+
+### From Chart Version 17.x to 18.0.0
+
+#### Elasticsearch subchart migrated to the ECK operator
+
+- The bundled Elasticsearch was migrated from the `bitnami/elasticsearch` subchart to the
+  official [`eck-elasticsearch`](https://artifacthub.io/packages/helm/elastic/eck-elasticsearch)
+  chart, which is managed by the [ECK operator](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-overview.html).
+  This is the deployment method officially supported by Elastic.
+- **The ECK operator (and its CRDs), version 3.5.0+, must now be installed in the cluster**
+  before upgrading when `zammadConfig.elasticsearch.enabled` is `true` (the default). See
+  [Prerequisites](#prerequisites).
+- The `elasticsearch.*` values changed completely. The previous bitnami values (`master`, `data`,
+  `ingest`, `coordinating`, `sysctlImage`, `image`, `global.security.allowInsecureImages`, …) no
+  longer apply. Review the new `elasticsearch.*` block in `values.yaml` (`nodeSets`, `http`, …).
+- Authentication is now mandatory: ECK creates a superuser `elastic` and stores its password in
+  an auto-generated secret, typically named `{{ .Release.Name }}-es-es-elastic-user` (depending
+  on your release name, see below). The chart wires this up automatically, so
+  `secrets.elasticsearch.*` is only relevant for an **external** Elasticsearch now. Since TLS on
+  the HTTP layer is disabled by default (see below), this password still crosses the cluster
+  network in plaintext on every request, same as the previous unauthenticated setup did for all
+  traffic — authentication alone does not protect it in transit.
+- The in-cluster service name changed from `{{ .Release.Name }}-elasticsearch` to typically
+  `{{ .Release.Name }}-es-es-http`. The exact name depends on your release name: if it already
+  contains `es` as a substring (e.g. `zammad-helpdesk`), it's used as-is instead of getting `-es`
+  appended, giving `{{ .Release.Name }}-es-http` instead. Either way, the chart's own templates
+  resolve this automatically. Note that ECK caps the Elasticsearch resource name itself at 36
+  characters; the chart fails fast with a clear error at template/install time if your release
+  name is too long to fit.
+- TLS on the HTTP layer is disabled by default (`elasticsearch.http.tls.selfSignedCertificate.disabled: true`)
+  to keep the plain-`http` connection behaviour. Enabling the operator-managed self-signed
+  certificate (`selfSignedCertificate.disabled: false` with `zammadConfig.elasticsearch.schema: https`)
+  is **not supported yet**: Zammad verifies TLS certificates by default and the chart does not mount
+  the ECK-generated CA certificate into the Zammad pods, so the zammad-init job will fail on
+  certificate verification. Leave TLS disabled unless you terminate it yourself and configure
+  Zammad's Elasticsearch client accordingly.
+- The StatefulSet and its `PersistentVolumeClaim`s are recreated under new names. As the search
+  index can be rebuilt from PostgreSQL, the recommended path is to delete the old bitnami
+  Elasticsearch PVCs and let the index be recreated. This usually happens automatically when the
+  zammad-init job runs and finds no index to be available.
+- **Behaviour change:** the ECK operator's default `volumeClaimDeletePolicy` is
+  `DeleteOnScaledownAndClusterDeletion`, so uninstalling the release (or setting
+  `zammadConfig.elasticsearch.enabled: false`) now also deletes the Elasticsearch data volume.
+  The old bitnami PVCs were left behind on uninstall. This is harmless in practice since the
+  index rebuilds from PostgreSQL, but if you rely on the volume surviving an uninstall, set
+  `elasticsearch.volumeClaimDeletePolicy: DeleteOnScaledownOnly` explicitly.
+
+#### Faster volume permission fixing
+
+- `securityContext.fsGroupChangePolicy` now defaults to `OnRootMismatch` instead of `Always`. This
+  avoids a lengthy startup delay on volumes with a large number of files, since Kubernetes only
+  recurses into a volume to fix ownership if the volume's root directory doesn't already have the
+  expected group ownership. This is safe for existing volumes (their ownership was already set by
+  a previous `Always` run) and only changes behaviour on future pod restarts. If you rely on the
+  old, more thorough behaviour, set `securityContext.fsGroupChangePolicy: Always` explicitly.
+
+#### `initJob.randomName` removed
+
+- The `zammadConfig.initJob.randomName` setting was removed. The init Job name is now always
+  suffixed with the Helm release revision, which is what `randomName: true` (the default) already
+  did in practice.
+- If you had set `randomName: false`, e.g. for the Argo CD workaround described in
+  [Deploying with ArgoCD](#deploying-with-argocd), remove that line - it is now a no-op. Argo CD
+  and other tools that render the chart statically (also `helm template`, `helm diff`) always see
+  revision `1`, so the job name is stable there regardless. It's the Sync Hook annotation that
+  actually prevents the sync loop, and that is unaffected by this change.
+- On upgrade, installs that previously had `randomName: false` will see their init Job renamed once
+  (`<fullname>-init` to `<fullname>-init-<revision>`); this is a harmless one-time replacement.
 
 ### From Chart Version 16.x to 17.0.0
 

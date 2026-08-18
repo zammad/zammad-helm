@@ -2,6 +2,7 @@
 chart-dirs: .
 chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
+  - elastic=https://helm.elastic.co
 check-version-increment: true
 debug: true
 # upgrade: true # Causes issues because of low performance on default GitHub actions servers.

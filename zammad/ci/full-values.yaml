@@ -24,8 +24,7 @@ autoWizard:
   enabled: true
 
 elasticsearch:
-  security:
-    existingSecret: elasticsearch-existing-secret
+  nameOverride: my-local-es
 
 ingress:
   enabled: true
