@@ -103,7 +103,13 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v5
         with:
-          version: "${{ env.helm-version }}"
+          # Pinned to Helm 3, not env.helm-version: Helm 4 defaults to Server-Side
+          # Apply, which conflicts with fields (e.g. .spec.nodeSets) the ECK operator
+          # takes ownership of after install. ct's --helm-extra-args is passed to every
+          # helm subcommand it runs (install, test, upgrade, uninstall) with no way to
+          # scope it, so a Helm-4-only flag like --force-conflicts can't be added here
+          # without breaking `helm test`/`helm uninstall` (see helm/chart-testing#540).
+          version: "v3.21.4"
 
       - uses: actions/setup-python@v7
         with:
@@ -138,7 +144,4 @@ jobs:
         run: kubectl create --namespace zammad --filename zammad/ci/full-objects.yaml
 
       - name: Run chart-testing (install)
-        # --force-conflicts: Helm 4 defaults to Server-Side Apply and otherwise errors
-        # when the ECK operator has taken ownership of Elasticsearch CR fields
-        # (e.g. .spec.nodeSets) between the install and the upgrade test.
-        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s --force-conflicts'
+        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s'
