@@ -8,7 +8,7 @@ on:
       - main
 
 env:
-  helm-version: v4.2.3
+  helm-version: v4.2.4
 
 jobs:
   release:
