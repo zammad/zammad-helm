@@ -85,6 +85,7 @@ jobs:
   install-chart:
     name: install-chart
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     needs:
       - kubeconform-chart
     strategy:
@@ -148,6 +149,6 @@ jobs:
       - name: Install additional objects for 'full' test scenario
         run: kubectl create --namespace zammad --filename zammad/ci/full-objects.yaml
 
-      # Use --force-testing because of https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing.
+      # Use --force-conflicts because of https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing.
       - name: Run chart-testing (install)
         run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s --force-conflicts'

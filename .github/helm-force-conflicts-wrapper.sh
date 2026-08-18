@@ -18,7 +18,8 @@
 
 set -o errexit
 set -o pipefail
-set -o nounset
+
+: "${REAL_HELM:?REAL_HELM must point at the real helm binary}"
 
 case "${1:-}" in
 install | upgrade | rollback)
