@@ -58,7 +58,6 @@ jobs:
     runs-on: ubuntu-24.04
     needs:
       - lint-chart
-      - super-linter
     strategy:
       matrix:
         k8s:
@@ -95,6 +94,11 @@ jobs:
           - v1.33.7
           - v1.34.3
           - v1.35.1
+        ci-values:
+          # One job per zammad/ci/*-values.yaml file, so the default and full
+          # scenarios run in parallel instead of sequentially in the same job.
+          - default
+          - full
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -124,6 +128,14 @@ jobs:
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.8.0
 
+      - name: Isolate zammad/ci/${{ matrix.ci-values }}-values.yaml
+        # ct has no flag to pick a single ci/*-values.yaml file; it always tests every
+        # one it finds. Removing the other scenario's file here (workspace-only, never
+        # committed) makes ct test only this matrix leg's scenario. --skip-missing-values
+        # below then stops ct from erroring about that file being "removed" relative to
+        # the previous revision, which still has both.
+        run: find zammad/ci -name '*-values.yaml' ! -name '${{ matrix.ci-values }}-values.yaml' -delete
+
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: if [[ -n "$(ct list-changed --config .github/ct.yaml)" ]]; then echo 'changed=true' >> "$GITHUB_OUTPUT"; fi
@@ -147,8 +159,9 @@ jobs:
         run: kubectl create namespace zammad
 
       - name: Install additional objects for 'full' test scenario
+        if: matrix.ci-values == 'full'
         run: kubectl create --namespace zammad --filename zammad/ci/full-objects.yaml
 
       # Use --force-conflicts because of https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing.
       - name: Run chart-testing (install)
-        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s --force-conflicts'
+        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s --force-conflicts' --skip-missing-values
