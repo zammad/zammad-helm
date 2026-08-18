@@ -209,6 +209,12 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 
 ## Upgrading
 
+**Helm 4 users:** the ECK operator manages fields on the `Elasticsearch` resource (e.g.
+`.spec.nodeSets`) via its own field manager, so Helm 4's default Server-Side Apply can make
+`helm upgrade` fail with `Apply failed with 1 conflict: conflict with "elastic-operator" ...`. If
+you hit this, pass `--force-conflicts` to `helm upgrade` - see
+[HIP-0023](https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing).
+
 ### From Chart Version 17.x to 18.0.0
 
 #### Elasticsearch subchart migrated to the ECK operator

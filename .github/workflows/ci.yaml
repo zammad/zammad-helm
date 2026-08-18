@@ -58,7 +58,6 @@ jobs:
     runs-on: ubuntu-24.04
     needs:
       - lint-chart
-      - super-linter
     strategy:
       matrix:
         k8s:
@@ -85,6 +84,7 @@ jobs:
   install-chart:
     name: install-chart
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     needs:
       - kubeconform-chart
     strategy:
@@ -94,6 +94,11 @@ jobs:
           - v1.33.7
           - v1.34.3
           - v1.35.1
+        ci-values:
+          # One job per zammad/ci/*-values.yaml file, so the default and full
+          # scenarios run in parallel instead of sequentially in the same job.
+          - default
+          - full
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -101,9 +106,20 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Helm
+        id: setup-helm
         uses: azure/setup-helm@v5
         with:
           version: "${{ env.helm-version }}"
+
+      - name: Scope --force-conflicts to install/upgrade
+        # See .github/helm-force-conflicts-wrapper.sh for why this is needed.
+        env:
+          WRAPPER_DIR: ${{ runner.temp }}/helm-wrapper
+        run: |
+          mkdir -p "${WRAPPER_DIR}"
+          cp -a .github/helm-force-conflicts-wrapper.sh "${WRAPPER_DIR}/helm"
+          echo "${WRAPPER_DIR}" >> "$GITHUB_PATH"
+          echo "REAL_HELM=${{ steps.setup-helm.outputs.helm-path }}" >> "$GITHUB_ENV"
 
       - uses: actions/setup-python@v7
         with:
@@ -111,6 +127,14 @@ jobs:
 
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.8.0
+
+      - name: Isolate zammad/ci/${{ matrix.ci-values }}-values.yaml
+        # ct has no flag to pick a single ci/*-values.yaml file; it always tests every
+        # one it finds. Removing the other scenario's file here (workspace-only, never
+        # committed) makes ct test only this matrix leg's scenario. --skip-missing-values
+        # below then stops ct from erroring about that file being "removed" relative to
+        # the previous revision, which still has both.
+        run: find zammad/ci -name '*-values.yaml' ! -name '${{ matrix.ci-values }}-values.yaml' -delete
 
       - name: Run chart-testing (list-changed)
         id: list-changed
@@ -135,7 +159,9 @@ jobs:
         run: kubectl create namespace zammad
 
       - name: Install additional objects for 'full' test scenario
+        if: matrix.ci-values == 'full'
         run: kubectl create --namespace zammad --filename zammad/ci/full-objects.yaml
 
+      # Use --force-conflicts because of https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing.
       - name: Run chart-testing (install)
-        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s'
+        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s --force-conflicts'
