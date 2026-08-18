@@ -21,7 +21,36 @@ set -o pipefail
 
 : "${REAL_HELM:?REAL_HELM must point at the real helm binary}"
 
-case "${1:-}" in
+# The subcommand isn't necessarily $1: Helm's global flags (--namespace,
+# --kube-context, ...) are valid before it too, e.g. `helm --namespace zammad
+# upgrade ...`. Scan for the first non-flag token, skipping the value of any
+# preceding flag that takes one. Helm's only boolean global flags are --debug
+# and --kube-insecure-skip-tls-verify (see `helm help environment`); every
+# other "-"-prefixed global flag takes a value.
+find_subcommand() {
+  local skip_next=false
+  for arg in "$@"; do
+    if [[ "${skip_next}" == true ]]; then
+      skip_next=false
+      continue
+    fi
+    case "${arg}" in
+    --debug | --kube-insecure-skip-tls-verify | -h | --help)
+      continue
+      ;;
+    -*)
+      [[ "${arg}" == *=* ]] || skip_next=true
+      continue
+      ;;
+    *)
+      echo "${arg}"
+      return
+      ;;
+    esac
+  done
+}
+
+case "$(find_subcommand "$@")" in
 install | upgrade | rollback)
   exec "${REAL_HELM}" "$@"
   ;;
