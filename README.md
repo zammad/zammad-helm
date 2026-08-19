@@ -11,9 +11,9 @@ Please see [zammad/README.md](zammad/README.md) for detailed information & instr
 
 ## Sources
 
-* [Helm chart sources](https://github.com/zammad/zammad-helm)
-* [Helm repository source](https://github.com/zammad/zammad-helm/tree/gh-pages)
-* [Helm releases](https://github.com/zammad/zammad-helm/releases)
+- [Helm chart sources](https://github.com/zammad/zammad-helm)
+- [Helm repository source](https://github.com/zammad/zammad-helm/tree/gh-pages)
+- [Helm releases](https://github.com/zammad/zammad-helm/releases)
 
 ## Contributing
 
