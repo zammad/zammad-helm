@@ -388,35 +388,10 @@ upgraded Zammad release at that volume via `rustfs.mode.standalone.existingClaim
 subchart's PVC carries `helm.sh/resource-policy: keep`, so it survives uninstalling the temporary
 release.
 
-##### Alternative: migrating through Zammad
-
-If you would rather not handle the objects yourself, you can let Zammad move the attachments
-between storage providers. This needs no external tooling and no local disk, but it is
-considerably slower, and the intermediate provider has to hold all attachments - check that your
-database (or `ReadWriteMany` volume) has room for them first. Unlike the procedure above it leaves
-no copy behind in S3, so it has no rollback path once the first move has run.
-
-1. With the old release still running, go to "System -> Storage" in the admin panel and select
-   "Database" (or "File", if you have a suitable `ReadWriteMany` PVC configured via
-   `zammadConfig.storageVolume`).
-2. Move the existing content out of S3:
-
-   ```console
-   kubectl exec -n <namespace> deploy/<release_name>-railsserver -c zammad-railsserver -- \
-     bundle exec rails r "Store::File.move('S3', 'Database')"
-   ```
-
-3. Upgrade to chart version 19.0.0 with your adjusted values. The empty rustfs instance comes up
-   and the init job creates the bucket.
-4. Switch the storage provider back to "Simple Storage (S3)" in the admin panel.
-5. Move the content into the new instance:
-
-   ```console
-   kubectl exec -n <namespace> deploy/<release_name>-railsserver -c zammad-railsserver -- \
-     bundle exec rails r "Store::File.move('Database', 'S3')"
-   ```
-
-6. Remove the old minio volume once you have verified everything works.
+Zammad could in principle also move the attachments itself, via the `Database` or `File` provider
+and back - see [How to migrate from `File` to `S3` storage](#how-to-migrate-from-file-to-s3-storage)
+for the `Store::File.move` mechanism. That needs no external tooling, but the intermediate provider
+has to hold every attachment, so it is rarely practical for an installation that is already on S3.
 
 ### From Chart Version 17.x to 18.0.0
 
