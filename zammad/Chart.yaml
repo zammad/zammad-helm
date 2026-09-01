@@ -1,6 +1,6 @@
 apiVersion: v2
 name: zammad
-version: 18.0.4
+version: 19.0.0
 appVersion: 7.1.3-0006
 description: Zammad is a web based open source helpdesk/customer support system with many features to manage customer communication via several channels like telephone, facebook, twitter, chat and e-mails.
 home: https://zammad.org
@@ -23,10 +23,15 @@ dependencies:
     repository: https://helm.elastic.co
     version: 0.20.0
     condition: zammadConfig.elasticsearch.enabled
-  - name: minio
-    version: 14.10.5
-    repository: https://charts.bitnami.com/bitnami
-    condition: zammadConfig.minio.enabled
+  # Optional S3 storage provider for attachments. Replaces the former bitnami/minio
+  # subchart: MinIO stopped publishing community Helm charts and images, and the MinIO
+  # operator was archived in March 2026. RustFS is an S3-compatible drop-in replacement
+  # with an official chart. Note that it does not create buckets on its own, so the
+  # zammad-init job provisions the bucket (zammadConfig.rustfs.bucketInitialisation).
+  - name: rustfs
+    version: 1.0.0-rc.4
+    repository: https://charts.rustfs.com
+    condition: zammadConfig.rustfs.enabled
   - name: memcached
     version: 0.14.8
     repository: oci://ghcr.io/cloudpirates-io/helm-charts

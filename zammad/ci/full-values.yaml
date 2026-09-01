@@ -29,9 +29,9 @@ elasticsearch:
 ingress:
   enabled: true
 
-minio:
-  auth:
-    existingSecret: minio-existing-secret
+rustfs:
+  secret:
+    existingSecret: rustfs-existing-secret
 
 # Use existing Redis secrets and run in Redis Sentinel mode.
 redis:
@@ -46,7 +46,7 @@ zammadConfig:
   storageVolume:
     enabled: true
     existingClaim: 'storage-volume-claim'
-  minio:
+  rustfs:
     enabled: true
   customVolumes:
     - name: custom-volume

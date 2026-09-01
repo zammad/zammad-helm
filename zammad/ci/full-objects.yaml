@@ -1,10 +1,11 @@
 apiVersion: v1
 data:
-  root-password: emFtbWFkYWRtaW4=
-  root-user: emFtbWFkYWRtaW4=
+  # zammadadmin / zammadadmin
+  RUSTFS_ACCESS_KEY: emFtbWFkYWRtaW4=
+  RUSTFS_SECRET_KEY: emFtbWFkYWRtaW4=
 kind: Secret
 metadata:
-  name: minio-existing-secret
+  name: rustfs-existing-secret
   namespace: zammad
 type: Opaque
 ---
