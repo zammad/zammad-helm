@@ -124,6 +124,40 @@ I, [2024-01-24T11:06:14.566513#168-5980]  INFO -- : Moved file dbaa01dd0df3a33bc
 I, [2024-01-24T11:06:14.627896#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/e81f/fb09/c5a26/f2081/f93401a/cbe8fff/9983e56c86fccb48d17a2eb1e5900b5b'
 ```
 
+### Redis Sentinel
+
+The chart can talk to Redis through Sentinel instead of a direct connection, either using the bundled Redis subchart or an external Redis/Sentinel setup.
+
+To enable Sentinel with the **bundled** Redis subchart:
+
+```yaml
+redis:
+  sentinel:
+    enabled: true
+  architecture: replication # required: the Sentinel service only exists in this mode
+
+zammadConfig:
+  redis:
+    sentinel:
+      enabled: true
+```
+
+When bundled Redis is enabled, `redis.sentinel.enabled` and `redis.architecture=replication` are both required whenever `zammadConfig.redis.sentinel.enabled` is set — the chart fails fast at render time otherwise. The Sentinel hostname is derived automatically from the release name; you don't need to set `zammadConfig.redis.sentinel.sentinels`.
+
+To use an **external** Redis/Sentinel setup instead, disable the bundled subchart and point at your own Sentinels:
+
+```yaml
+zammadConfig:
+  redis:
+    enabled: false
+    sentinel:
+      enabled: true
+      sentinels:
+        - my-sentinel-1:26379
+        - my-sentinel-2:26379
+      masterName: mymaster
+```
+
 ### Deploying on OpenShift
 
 To deploy on OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids):
