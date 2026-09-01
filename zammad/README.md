@@ -318,6 +318,10 @@ soon as the subchart is gone. Step 2 below prevents this and must not be skipped
 subchart in `distributed` mode, the volumes are StatefulSet `volumeClaimTemplates` named
 `data-{{ .Release.Name }}-minio-N`, which Kubernetes never deletes automatically.)
 
+RustFS advertises a "binary replacement" migration that reuses the MinIO data directory as-is.
+That does not work with the version pinned here - RustFS refuses to start on a MinIO volume, see
+[rustfs/rustfs#7014](https://github.com/rustfs/rustfs/issues/7014) - so the data has to be copied.
+
 Zammad stores each attachment under its SHA256 checksum as a flat object key, and the database
 references those checksums, not the storage backend. Copying the bucket verbatim is therefore
 enough - no database changes are involved (adjust namespace, release name and credentials to your
