@@ -266,7 +266,7 @@ Redis Variables
 {{- if .Values.zammadConfig.redis.sentinel.enabled }}
 - name: REDIS_SENTINELS
 {{- if .Values.zammadConfig.redis.enabled }}
-  value: "{{ .Release.Name }}-redis"
+  value: "{{ .Release.Name }}-redis-sentinel:26379"
 {{- else }}
   value: "{{ join "," .Values.zammadConfig.redis.sentinel.sentinels }}"
 {{- end }}
