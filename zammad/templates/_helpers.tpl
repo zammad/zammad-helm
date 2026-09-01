@@ -266,8 +266,8 @@ Redis Variables
 {{- if .Values.zammadConfig.redis.sentinel.enabled }}
 - name: REDIS_SENTINELS
 {{- if .Values.zammadConfig.redis.enabled }}
-{{- if ne .Values.redis.architecture "replication" }}
-{{ fail "zammadConfig.redis.sentinel.enabled requires redis.architecture=replication when the bundled Redis subchart is used (redis.enabled=true); the Sentinel service is only created in replication mode." }}
+{{- if not (and .Values.redis.sentinel.enabled (eq .Values.redis.architecture "replication")) }}
+{{ fail "zammadConfig.redis.sentinel.enabled requires redis.sentinel.enabled=true and redis.architecture=replication when the bundled Redis subchart is used (zammadConfig.redis.enabled=true); the Sentinel service is only created in that combination." }}
 {{- end }}
   value: "{{ .Release.Name }}-redis-sentinel:26379"
 {{- else }}
