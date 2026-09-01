@@ -134,7 +134,7 @@ To enable Sentinel with the **bundled** Redis subchart:
 redis:
   sentinel:
     enabled: true
-  architecture: replication  # required: the Sentinel service only exists in this mode
+  architecture: replication # required: the Sentinel service only exists in this mode
 
 zammadConfig:
   redis:
@@ -147,16 +147,14 @@ zammadConfig:
 To use an **external** Redis/Sentinel setup instead, disable the bundled subchart and point at your own Sentinels:
 
 ```yaml
-redis:
-  enabled: false
-
 zammadConfig:
   redis:
+    enabled: false
     sentinel:
       enabled: true
       sentinels:
-      - my-sentinel-1:26379
-      - my-sentinel-2:26379
+        - my-sentinel-1:26379
+        - my-sentinel-2:26379
       masterName: mymaster
 ```
 
