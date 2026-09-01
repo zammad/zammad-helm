@@ -142,7 +142,7 @@ zammadConfig:
       enabled: true
 ```
 
-`redis.sentinel.enabled` and `redis.architecture=replication` are both required whenever `zammadConfig.redis.sentinel.enabled` is set — the chart fails fast at render time otherwise. The Sentinel hostname is derived automatically from the release name; you don't need to set `zammadConfig.redis.sentinel.sentinels`.
+When bundled Redis is enabled, `redis.sentinel.enabled` and `redis.architecture=replication` are both required whenever `zammadConfig.redis.sentinel.enabled` is set — the chart fails fast at render time otherwise. The Sentinel hostname is derived automatically from the release name; you don't need to set `zammadConfig.redis.sentinel.sentinels`.
 
 To use an **external** Redis/Sentinel setup instead, disable the bundled subchart and point at your own Sentinels:
 
