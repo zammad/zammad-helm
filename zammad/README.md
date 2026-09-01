@@ -272,7 +272,7 @@ you hit this, pass `--force-conflicts` to `helm upgrade` - see
   usable through the `bitnamilegacy` image workaround. RustFS is S3-compatible, so Zammad talks to
   it exactly as it did to MinIO.
 - **If you used the bundled minio subchart, this is a breaking change that requires a manual,
-  one-time data migration** - see [Data migration](#data-migration) below. Read it before you
+  one-time data migration** - see [Rustfs data migration](#rustfs-data-migration) below. Read it before you
   upgrade: the old volume is deleted by the upgrade itself unless you protect it first.
 - If `zammadConfig.minio.enabled` was `false` (the default), only the value keys below change and
   there is no data to migrate. The same is true if you point Zammad at an external S3 service.
@@ -309,7 +309,7 @@ you hit this, pass `--force-conflicts` to `helm upgrade` - see
   `zammadConfig.rustfs.enabled: false`) and has to be removed manually. The old bitnami PVC was
   deleted in those cases.
 
-#### Data migration
+#### Rustfs data migration
 
 The upgrade removes the minio subchart. In its default `standalone` mode the bitnami chart created
 a plain `PersistentVolumeClaim` named `{{ .Release.Name }}-minio` **without**
@@ -337,6 +337,7 @@ kubectl annotate pvc -n <namespace> <release_name>-minio helm.sh/resource-policy
 # 3. Copy the bucket out of the still-running minio. Note the reported object count and size,
 #    you will compare them against the new instance in step 5.
 kubectl port-forward -n <namespace> svc/<release_name>-minio 9000:9000 &
+PF_PID=$!
 export RCLONE_CONFIG_OLD_TYPE=s3
 export RCLONE_CONFIG_OLD_PROVIDER=Minio
 export RCLONE_CONFIG_OLD_ENDPOINT=http://localhost:9000
@@ -344,7 +345,7 @@ export RCLONE_CONFIG_OLD_ACCESS_KEY_ID=<minio_root_user>
 export RCLONE_CONFIG_OLD_SECRET_ACCESS_KEY=<minio_root_password>
 rclone sync old:zammad ./zammad-attachments --progress
 rclone size old:zammad
-kill %1
+kill "${PF_PID}"
 
 # 4. Upgrade with the Zammad components scaled to zero, so that the new, empty rustfs instance
 #    comes up and the init job creates the bucket before anything tries to read from it.
@@ -359,6 +360,7 @@ helm upgrade <release_name> . -n <namespace> -f my-values.yaml \
 # 5. Copy the data into the new rustfs instance and check that nothing was lost: the object count
 #    and size must match what step 3 reported.
 kubectl port-forward -n <namespace> svc/<release_name>-rustfs-svc 9000:9000 &
+PF_PID=$!
 export RCLONE_CONFIG_NEW_TYPE=s3
 export RCLONE_CONFIG_NEW_PROVIDER=Other
 export RCLONE_CONFIG_NEW_ENDPOINT=http://localhost:9000
@@ -366,7 +368,7 @@ export RCLONE_CONFIG_NEW_ACCESS_KEY_ID=<rustfs_access_key>
 export RCLONE_CONFIG_NEW_SECRET_ACCESS_KEY=<rustfs_secret_key>
 rclone sync ./zammad-attachments new:zammad --progress
 rclone size new:zammad
-kill %1
+kill "${PF_PID}"
 
 # 6. Upgrade again with your regular values to scale Zammad back up.
 #    Note that --reset-values drops the --set values from step 4. If you prefer to keep other
@@ -515,7 +517,7 @@ no copy behind in S3, so it has no rollback path once the first move has run.
   - `zammadConfig.scheduler.replicas` and `zammadConfig.websocket.replicas` can now be set to `0` to disable
     those components. They may only run once per cluster, so any value above `1` is capped to `1`.
 
-#### Data migration
+#### PostgreSQL data migration
 
 The new subchart provisions a fresh, empty PostgreSQL cluster on its own volume, so the migration is a
 non-destructive logical dump/restore (adjust namespace, release name and credentials to your setup).
