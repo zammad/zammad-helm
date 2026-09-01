@@ -304,9 +304,11 @@ zammadConfig:
     tls: false
 
     sentinel:
-      enabled: false  # set to true to enable Redis Sentinel; requires redis.architecture=replication when redis.enabled=true
-      # only used when redis.enabled=false (external Redis/Sentinel); the bundled subchart's
-      # sentinel service is discovered automatically and does not use this list
+      enabled: false  # set to true to enable Redis Sentinel; with the bundled subchart
+                      # (zammadConfig.redis.enabled=true) this also requires
+                      # redis.sentinel.enabled=true and redis.architecture=replication
+      # only used when zammadConfig.redis.enabled=false (external Redis/Sentinel); the
+      # bundled subchart's sentinel service is discovered automatically and ignores this list
       sentinels:
       - zammad-redis:26379
       masterName: mymaster
