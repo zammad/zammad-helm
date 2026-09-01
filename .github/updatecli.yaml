@@ -33,14 +33,17 @@ sources:
       #   the resulting Elasticsearch version.
       versionfilter:
         pattern: "0.20.x"
-  # minio:
-  #   name: minio
+  # Disabled while the subchart is pinned to a 1.0.0 release candidate: a semver
+  #   filter would not match prereleases anyway. Enable this together with the
+  #   corresponding target below once Chart.yaml pins the 1.0.0 GA release.
+  # rustfs:
+  #   name: rustfs
   #   kind: helmchart
   #   spec:
-  #     url: https://charts.bitnami.com/bitnami
-  #     name: minio
+  #     url: https://charts.rustfs.com
+  #     name: rustfs
   #     versionfilter:
-  #       pattern: "14.x.x"
+  #       pattern: "1.x.x"
   memcached:
     name: memcached
     kind: helmchart
@@ -121,10 +124,11 @@ targets:
       file: "Chart.yaml"
       key: "$.dependencies[0].version"
       versionincrement: patch
-  # minio:
-  #   name: minio
+  # See the commented out rustfs source above.
+  # rustfs:
+  #   name: rustfs
   #   kind: helmchart
-  #   sourceid: minio
+  #   sourceid: rustfs
   #   # {{ if .github.enabled }}
   #   scmid: zammad-helm
   #   # {{ end }}

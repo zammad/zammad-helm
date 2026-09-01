@@ -1,8 +1,11 @@
 ---
 chart-dirs: .
 chart-repos:
+  # Only still needed to resolve the minio dependency of the 18.x chart in the
+  #   upgrade test below. Can be dropped once the target branch carries 19.x.
   - bitnami=https://charts.bitnami.com/bitnami
   - elastic=https://helm.elastic.co
+  - rustfs=https://charts.rustfs.com
 check-version-increment: true
 debug: true
 upgrade: true
