@@ -91,11 +91,22 @@ data:
       attempts = 0
 
       begin
-        client.head_bucket(bucket: bucket)
-        puts "S3 bucket '#{bucket}' already exists."
-      rescue Aws::S3::Errors::NotFound, Aws::S3::Errors::NoSuchBucket
-        puts "S3 bucket '#{bucket}' does not exist yet, creating it…"
-        client.create_bucket(bucket: bucket)
+        begin
+          client.head_bucket(bucket: bucket)
+          puts "S3 bucket '#{bucket}' already exists."
+        rescue Aws::S3::Errors::NotFound, Aws::S3::Errors::NoSuchBucket
+          puts "S3 bucket '#{bucket}' does not exist yet, creating it…"
+          begin
+            client.create_bucket(bucket: bucket)
+          rescue Aws::S3::Errors::BucketAlreadyOwnedByYou, Aws::S3::Errors::BucketAlreadyExists
+            # The bucket showed up between the check and the create, e.g. because
+            # the server was still adopting an existing data directory.
+            puts "S3 bucket '#{bucket}' appeared in the meantime."
+          end
+        end
+      # Rescued on the outer begin, so that a networking error raised while
+      #   creating the bucket is retried too - Ruby does not enter the rescue
+      #   clauses of the same begin block again.
       rescue Seahorse::Client::NetworkingError => e
         # A fresh install races the rustfs pod's startup; retry instead of
         # crash-looping the whole init job pod.

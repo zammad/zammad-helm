@@ -111,11 +111,6 @@ never creates the bucket either - it only reads from it. The chart therefore pro
 the `zammad-init` job. Set `zammadConfig.rustfs.bucketInitialisation: false` if you want to manage the
 bucket yourself. This never touches an external S3 service, only the bundled instance.
 
-The subchart is deployed as a single node with a single data volume, which is what Zammad's attachment
-store needs. If you want the redundancy of an erasure-coded cluster, switch `rustfs.mode` to
-`distributed` and raise `rustfs.replicaCount` - see the [subchart's
-documentation](https://github.com/rustfs/rustfs/tree/main/helm).
-
 You can also use `File` storage. In this case, you need to provide an existing `PVC` via `zammadConfig.storageVolume`.
 Note that this `PVC` must provide `ReadWriteMany` access to work properly for the different Deployments which may be on different nodes.
 
@@ -203,10 +198,14 @@ memcached:
   containerSecurityContext:
     enabled: false
 
-# The rustfs subchart has no "enabled" toggle for its security contexts; emptying
-# podSecurityContext drops the hardcoded UID/GID so that OpenShift can assign its own.
+# The rustfs subchart has no "enabled" toggle for its security contexts. An empty map
+# would merge nothing and leave the subchart defaults in place, so the hardcoded UID/GID
+# have to be deleted individually for OpenShift to assign its own.
 rustfs:
-  podSecurityContext: {}
+  podSecurityContext:
+    fsGroup: null
+    runAsUser: null
+    runAsGroup: null
 
 redis:
   master:
@@ -337,6 +336,11 @@ kubectl annotate pvc -n <namespace> <release_name>-minio helm.sh/resource-policy
 # 3. Phase one: upgrade with everything scaled to zero. This creates the new, empty rustfs
 #    volume without ever starting rustfs on it, so it stays pristine for the copy below.
 #    The init job is disabled here because the bucket comes with the copied data.
+#    Set rustfs.storageclass.dataStorageSize in my-values.yaml to at least the size of the
+#    old volume beforehand - it defaults to 10Gi and a PVC cannot be shrunk again later.
+#    Read the old size with:
+#      kubectl get pvc -n <namespace> <release_name>-minio \
+#        -o jsonpath='{.spec.resources.requests.storage}'
 helm upgrade <release_name> . -n <namespace> -f my-values.yaml \
   --set zammadConfig.initJob.enabled=false \
   --set zammadConfig.nginx.replicas=0 \
@@ -346,8 +350,9 @@ helm upgrade <release_name> . -n <namespace> -f my-values.yaml \
   --set zammadConfig.cronJob.reindex.suspend=true \
   --set rustfs.replicaCount=0
 
-# 4. Copy the data directory from the old volume to the new one. The chown matches the
-#    subchart's default runAsUser/fsGroup; adjust it if you changed the security context.
+# 4. Copy the data directory from the old volume to the new one. The rm drops the lost+found
+#    that ext4-backed volumes carry, which would otherwise show up as a stray bucket. The
+#    chown matches the subchart's default runAsUser/fsGroup; adjust it if you changed those.
 kubectl apply -n <namespace> -f - <<'EOF'
 apiVersion: batch/v1
 kind: Job
@@ -363,7 +368,7 @@ spec:
       containers:
         - name: copy
           image: alpine:3
-          command: ["sh", "-ec", "cp -a /src/. /dst/ && chown -R 10001:10001 /dst && du -sh /dst"]
+          command: ["sh", "-ec", "cp -a /src/. /dst/ && rm -rf /dst/lost+found && chown -R 10001:10001 /dst"]
           volumeMounts:
             - { name: src, mountPath: /src }
             - { name: dst, mountPath: /dst }
@@ -387,6 +392,12 @@ helm upgrade <release_name> . -n <namespace> -f my-values.yaml --reset-values
 kubectl delete job -n <namespace> minio-to-rustfs
 kubectl delete pvc -n <namespace> <release_name>-minio
 ```
+
+The Job runs as root for the `chown`, which a namespace enforcing the `restricted`
+[Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/) (or
+OpenShift's default SCC) rejects. There, drop `securityContext.runAsUser` and the `chown` line and
+set `securityContext.fsGroup` to the UID rustfs runs as instead, which makes the kubelet adjust
+the ownership on mount.
 
 The copy Job mounts both volumes at once, so they have to be attachable to the same node - with
 `ReadWriteOnce` volumes bound to different nodes or zones the Job will not schedule. In that case
