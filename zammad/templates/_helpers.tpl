@@ -258,17 +258,24 @@ S3 access URL
      values.yaml would leave Zammad without an S3_URL and delete the old attachment
      volume unnoticed. */}}
 {{- if or .Values.zammadConfig.minio .Values.minio -}}
-{{- fail "zammadConfig.minio/minio were replaced by zammadConfig.rustfs/rustfs in chart 19.0.0. See the upgrade notes in the README - the old attachment volume needs to be protected before upgrading." -}}
+{{- $hint := "" -}}
+{{- if and .Values.zammadConfig.minio .Values.zammadConfig.minio.enabled -}}
+{{- $hint = " The old attachment volume needs to be protected before upgrading, see the data migration in the upgrade notes." -}}
 {{- end -}}
-{{- if .Values.secrets.s3.useExisting -}}
+{{- fail (printf "zammadConfig.minio/minio were replaced by zammadConfig.rustfs/rustfs in chart 19.0.0.%s" $hint) -}}
+{{- end -}}
+{{/* Order matters: up to 18.x externalS3Url took precedence over secrets.s3, so
+     keep it that way to not silently move an existing installation to a different
+     endpoint. */}}
+{{- if .Values.zammadConfig.rustfs.externalS3Url -}}
+- name: S3_URL
+  value: {{ .Values.zammadConfig.rustfs.externalS3Url | quote }}
+{{- else if .Values.secrets.s3.useExisting -}}
 - name: S3_URL
   valueFrom:
     secretKeyRef:
       name: {{ .Values.secrets.s3.secretName }}
       key: {{ .Values.secrets.s3.secretKey }}
-{{- else if .Values.zammadConfig.rustfs.externalS3Url -}}
-- name: S3_URL
-  value: {{ .Values.zammadConfig.rustfs.externalS3Url | quote }}
 {{- else if .Values.zammadConfig.rustfs.enabled -}}
 {{- $bucket := .Values.zammadConfig.rustfs.bucket -}}
 {{- $region := dig "config" "rustfs" "region" "zammad" (.Values.rustfs | default dict) -}}

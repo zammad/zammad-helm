@@ -368,7 +368,7 @@ spec:
       containers:
         - name: copy
           image: alpine:3
-          command: ["sh", "-ec", "cp -a /src/. /dst/ && rm -rf /dst/lost+found && chown -R 10001:10001 /dst"]
+          command: ["sh", "-ec", "cp -a /src/. /dst/ && rm -rf /dst/lost+found && chown -R 10001:10001 /dst && du -sh /dst"]
           volumeMounts:
             - { name: src, mountPath: /src }
             - { name: dst, mountPath: /dst }
@@ -395,9 +395,9 @@ kubectl delete pvc -n <namespace> <release_name>-minio
 
 The Job runs as root for the `chown`, which a namespace enforcing the `restricted`
 [Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/) (or
-OpenShift's default SCC) rejects. There, drop `securityContext.runAsUser` and the `chown` line and
-set `securityContext.fsGroup` to the UID rustfs runs as instead, which makes the kubelet adjust
-the ownership on mount.
+OpenShift's default SCC) rejects. There, drop `securityContext.runAsUser` and the `chown`, and
+leave `fsGroup` unset: the SCC assigns it per namespace and the kubelet relabels the volume to the
+same GID the rustfs pod gets. Only pin a `fsGroup` if you assign the IDs yourself.
 
 The copy Job mounts both volumes at once, so they have to be attachable to the same node - with
 `ReadWriteOnce` volumes bound to different nodes or zones the Job will not schedule. In that case
