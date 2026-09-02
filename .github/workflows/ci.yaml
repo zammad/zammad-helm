@@ -7,6 +7,7 @@ on:
 env:
   helm-version: v4.2.4
   kubeconform-version: v0.8.0
+  kind-version: v0.33.0
 
 jobs:
   super-linter:
@@ -61,9 +62,10 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.34.8
-          - v1.35.5
-          - v1.36.1
+          # kubernetes releases
+          - v1.35.8
+          - v1.36.4
+          - v1.37.0
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -91,9 +93,9 @@ jobs:
       matrix:
         k8s:
           # Versions of kindest/node
-          - v1.33.7
-          - v1.34.3
-          - v1.35.1
+          - v1.35.8
+          - v1.36.4
+          - v1.37.0
         ci-values:
           # One job per zammad/ci/*-values.yaml file, so the default and full
           # scenarios run in parallel instead of sequentially in the same job.
@@ -146,6 +148,13 @@ jobs:
         with:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s }}
+          # Kubernetes 1.37+ node images dropped the kubeadm v1beta3 config
+          # format that older kind releases emit; kind needs to be at least
+          # as new as the newest node image tested above.
+          version: "${{ env.kind-version }}"
+          # Keep the kubectl client used by later steps within kubectl's
+          # supported +/-1 minor version skew of the cluster's API server.
+          kubectl_version: ${{ matrix.k8s }}
 
       - name: Install ECK operator (CRDs + operator)
         if: steps.list-changed.outputs.changed == 'true'
