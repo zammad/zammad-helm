@@ -29,7 +29,7 @@ dependencies:
   # with an official chart. Note that it does not create buckets on its own, so the
   # zammad-init job provisions the bucket (zammadConfig.rustfs.bucketInitialisation).
   - name: rustfs
-    version: 1.0.0-rc.4
+    version: 1.0.0-rc.5
     repository: https://charts.rustfs.com
     condition: zammadConfig.rustfs.enabled
   - name: memcached

@@ -318,14 +318,10 @@ soon as the subchart is gone. Step 2 below prevents this and must not be skipped
 subchart in `distributed` mode, the volumes are StatefulSet `volumeClaimTemplates` named
 `data-{{ .Release.Name }}-minio-N`, which Kubernetes never deletes automatically.)
 
-RustFS advertises a "binary replacement" migration that reuses the MinIO data directory as-is.
-That does not work with the version pinned here - RustFS refuses to start on a MinIO volume, see
-[rustfs/rustfs#7014](https://github.com/rustfs/rustfs/issues/7014) - so the data has to be copied.
-
-Zammad stores each attachment under its SHA256 checksum as a flat object key, and the database
-references those checksums, not the storage backend. Copying the bucket verbatim is therefore
-enough - no database changes are involved (adjust namespace, release name and credentials to your
-setup):
+RustFS reads MinIO's on-disk layout and migrates its metadata on first start, so the attachments
+can be moved as a plain file copy between the two volumes - no S3 client, no data leaving the
+cluster, and the database is not involved (Zammad keys each attachment by its SHA256 checksum and
+references that, not the storage backend). Adjust namespace and release name to your setup:
 
 ```bash
 # 1. Stop Zammad so there are no more writes to the attachment store. If you have enabled the
@@ -334,63 +330,72 @@ kubectl scale -n <namespace> deploy -l app.kubernetes.io/name=zammad --replicas=
 kubectl patch -n <namespace> -p '{"spec":{"suspend":true}}' \
   "$(kubectl get cronjob -n <namespace> -l app.kubernetes.io/component=zammad-cronjob-reindex -o name)"
 
-# 2. Protect the old minio volume, so that the upgrade in step 4 leaves it behind instead of
-#    deleting it. It then serves as your rollback safety net.
+# 2. Protect the old minio volume, so that the upgrade in step 3 leaves it behind instead of
+#    deleting it. It then serves as your rollback safety net and as the source for the copy.
 kubectl annotate pvc -n <namespace> <release_name>-minio helm.sh/resource-policy=keep
 
-# 3. Copy the bucket out of the still-running minio. Note the reported object count and size,
-#    you will compare them against the new instance in step 5.
-kubectl port-forward -n <namespace> svc/<release_name>-minio 9000:9000 &
-PF_PID=$!
-export RCLONE_CONFIG_OLD_TYPE=s3
-export RCLONE_CONFIG_OLD_PROVIDER=Minio
-export RCLONE_CONFIG_OLD_ENDPOINT=http://localhost:9000
-export RCLONE_CONFIG_OLD_ACCESS_KEY_ID=<minio_root_user>
-export RCLONE_CONFIG_OLD_SECRET_ACCESS_KEY=<minio_root_password>
-rclone sync old:zammad ./zammad-attachments --progress
-rclone size old:zammad
-kill "${PF_PID}"
-
-# 4. Upgrade with the Zammad components scaled to zero, so that the new, empty rustfs instance
-#    comes up and the init job creates the bucket before anything tries to read from it.
-#    Keep the init job enabled - it is what provisions the bucket.
+# 3. Phase one: upgrade with everything scaled to zero. This creates the new, empty rustfs
+#    volume without ever starting rustfs on it, so it stays pristine for the copy below.
+#    The init job is disabled here because the bucket comes with the copied data.
 helm upgrade <release_name> . -n <namespace> -f my-values.yaml \
+  --set zammadConfig.initJob.enabled=false \
   --set zammadConfig.nginx.replicas=0 \
   --set zammadConfig.railsserver.replicas=0 \
   --set zammadConfig.scheduler.replicas=0 \
   --set zammadConfig.websocket.replicas=0 \
-  --set zammadConfig.cronJob.reindex.suspend=true
+  --set zammadConfig.cronJob.reindex.suspend=true \
+  --set rustfs.replicaCount=0
 
-# 5. Copy the data into the new rustfs instance and check that nothing was lost: the object count
-#    and size must match what step 3 reported.
-kubectl port-forward -n <namespace> svc/<release_name>-rustfs-svc 9000:9000 &
-PF_PID=$!
-export RCLONE_CONFIG_NEW_TYPE=s3
-export RCLONE_CONFIG_NEW_PROVIDER=Other
-export RCLONE_CONFIG_NEW_ENDPOINT=http://localhost:9000
-export RCLONE_CONFIG_NEW_ACCESS_KEY_ID=<rustfs_access_key>
-export RCLONE_CONFIG_NEW_SECRET_ACCESS_KEY=<rustfs_secret_key>
-rclone sync ./zammad-attachments new:zammad --progress
-rclone size new:zammad
-kill "${PF_PID}"
+# 4. Copy the data directory from the old volume to the new one. The chown matches the
+#    subchart's default runAsUser/fsGroup; adjust it if you changed the security context.
+kubectl apply -n <namespace> -f - <<'EOF'
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-to-rustfs
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsUser: 0
+      containers:
+        - name: copy
+          image: alpine:3
+          command: ["sh", "-ec", "cp -a /src/. /dst/ && chown -R 10001:10001 /dst && du -sh /dst"]
+          volumeMounts:
+            - { name: src, mountPath: /src }
+            - { name: dst, mountPath: /dst }
+      volumes:
+        - name: src
+          persistentVolumeClaim: { claimName: <release_name>-minio }
+        - name: dst
+          persistentVolumeClaim: { claimName: <release_name>-rustfs-data }
+EOF
+kubectl wait -n <namespace> --for=condition=complete --timeout=2h job/minio-to-rustfs
+kubectl logs -n <namespace> job/minio-to-rustfs
 
-# 6. Upgrade again with your regular values to scale Zammad back up.
-#    Note that --reset-values drops the --set values from step 4. If you prefer to keep other
-#    values set on the command line, omit it and reset the keys from step 4 manually.
+# 5. Phase two: upgrade with your regular values. RustFS starts on the copied directory and
+#    migrates MinIO's metadata into its own; the init job finds the bucket already present.
+#    Note that --reset-values drops the --set values from step 3. If you prefer to keep other
+#    values set on the command line, omit it and reset the keys from step 3 manually.
 helm upgrade <release_name> . -n <namespace> -f my-values.yaml --reset-values
 
-# 7. Once you have verified that attachments open correctly in Zammad, clean up at your
-#    convenience.
+# 6. Once you have verified that attachments open correctly in Zammad, clean up at your
+#    convenience. Until then the old volume is untouched and you can roll back to it.
+kubectl delete job -n <namespace> minio-to-rustfs
 kubectl delete pvc -n <namespace> <release_name>-minio
-rm -r ./zammad-attachments
 ```
 
-For very large attachment stores where the local copy in step 3 is impractical, you can instead
-pre-fill the new volume inside the cluster: install the rustfs chart as a temporary separate
-release, sync `old:zammad` into it from a pod while minio is still running, and then point the
-upgraded Zammad release at that volume via `rustfs.mode.standalone.existingClaim.dataClaim`. The
-subchart's PVC carries `helm.sh/resource-policy: keep`, so it survives uninstalling the temporary
-release.
+The copy Job mounts both volumes at once, so they have to be attachable to the same node - with
+`ReadWriteOnce` volumes bound to different nodes or zones the Job will not schedule. In that case
+copy at the object level instead, which needs no shared node but does need somewhere to park the
+data: before step 3, port-forward `svc/<release_name>-minio` and pull the bucket into a local
+directory with any S3 client (`rclone sync old:zammad ./attachments`); after step 3, port-forward
+`svc/<release_name>-rustfs-svc` and push it back (`rclone sync ./attachments new:zammad`). Skip
+step 4, and in step 3 drop both `--set zammadConfig.initJob.enabled=false` and
+`--set rustfs.replicaCount=0`, so that rustfs runs and the init job creates the bucket for you.
 
 Zammad could in principle also move the attachments itself, via the `Database` or `File` provider
 and back - see [How to migrate from `File` to `S3` storage](#how-to-migrate-from-file-to-s3-storage)
