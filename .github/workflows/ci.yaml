@@ -152,6 +152,9 @@ jobs:
           # format that older kind releases emit; kind needs to be at least
           # as new as the newest node image tested above.
           version: "${{ env.kind-version }}"
+          # Keep the kubectl client used by later steps within kubectl's
+          # supported +/-1 minor version skew of the cluster's API server.
+          kubectl_version: ${{ matrix.k8s }}
 
       - name: Install ECK operator (CRDs + operator)
         if: steps.list-changed.outputs.changed == 'true'
