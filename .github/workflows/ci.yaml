@@ -61,9 +61,9 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.34.8
-          - v1.35.5
-          - v1.36.1
+          - v1.35.8
+          - v1.36.4
+          - v1.37.0
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -91,9 +91,9 @@ jobs:
       matrix:
         k8s:
           # Versions of kindest/node
-          - v1.33.7
-          - v1.34.3
-          - v1.35.1
+          - v1.35.8
+          - v1.36.4
+          - v1.37.0
         ci-values:
           # One job per zammad/ci/*-values.yaml file, so the default and full
           # scenarios run in parallel instead of sequentially in the same job.
