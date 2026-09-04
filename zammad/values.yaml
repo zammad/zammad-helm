@@ -109,12 +109,21 @@ zammadConfig:
     host: zammad-memcached
     port: 11211
 
-  minio:
-    # enable/disable minio chart dependency
+  rustfs:
+    # enable/disable rustfs chart dependency (S3 storage provider for attachments)
     enabled: false
 
+    # Create the bucket in the bundled rustfs instance if it does not exist yet.
+    # Unlike the former minio subchart, the rustfs chart has no built-in bucket
+    # provisioning, so the zammad-init job takes care of it. Only applies to the
+    # bundled instance; an external S3 service is never modified.
+    bucketInitialisation: true
+
+    # Bucket used for attachment storage in the bundled rustfs instance.
+    bucket: zammad
+
     # Uncomment this in case you want to use an external S3 service.
-    # externalS3Url: https://user:pw@external-minio-service/bucket
+    # externalS3Url: https://user:pw@external-s3-service/bucket
 
   nginx:
     replicas: 1
@@ -493,6 +502,23 @@ zammadConfig:
             - ALL
         readOnlyRootFilesystem: true
         privileged: false
+    # Provisions the bucket in the bundled rustfs instance, see
+    #   zammadConfig.rustfs.bucketInitialisation.
+    s3:
+      resources: {}
+        # requests:
+        #   cpu: 100m
+        #   memory: 256Mi
+        # limits:
+        #   cpu: 200m
+        #   memory: 512Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        privileged: false
     # VolumePermissions will be used by all Zammad Pods.
     # We need it to drop global write permission that comes with EmptyDir, otherwise
     #   Ruby's Tempfile.create raises an error.
@@ -787,37 +813,50 @@ memcached:
     #   cpu: 100m
     #   memory: 128Mi
 
-# settings for the minio subchart
-minio:
-  # Workaround: switch to bitnami legacy image repository (https://github.com/bitnami/containers/issues/83267)
-  image:
-    repository: bitnamilegacy/minio
-  clientImage:
-    repository: bitnamilegacy/minio-client
-  global:
-    security:
-      allowInsecureImages: true
-  defaultInitContainers:
-    volumePermissions:
-      image:
-        repository: bitnamilegacy/os-shell
-  console:
-    image:
-      repository: bitnamilegacy/minio-object-browser
+# settings for the rustfs subchart
+rustfs:
+  # Run a single node with a single data volume. The subchart itself defaults to a
+  # distributed, erasure-coded cluster of four pods, which is far more than Zammad's
+  # attachment store needs and would also be a big jump from the previous minio
+  # default. Scale this out via mode.distributed if you need the redundancy.
+  mode:
+    standalone:
+      enabled: true
+    distributed:
+      enabled: false
+  replicaCount: 1
 
-  auth:
-    rootUser: zammadadmin
-    rootPassword: zammadadmin
+  secret:
+    rustfs:
+      access_key: zammadadmin
+      secret_key: zammadadmin
 
-    # Use existing secret for credentials details (auth.rootUser and
-    # auth.rootPassword will be ignored and picked up from this secret).
-    # The secret has to contain the keys root-user and root-password)
-    # existingSecret: minio-credentials
+    # Use an existing secret for the credentials (secret.rustfs.access_key and
+    # secret.rustfs.secret_key will be ignored and picked up from this secret).
+    # The secret has to contain the keys RUSTFS_ACCESS_KEY and RUSTFS_SECRET_KEY.
+    # existingSecret: rustfs-credentials
 
-  defaultBuckets: zammad
+  config:
+    rustfs:
+      # The chart builds the region into the S3 URL from this value, so the server
+      # and what Zammad signs its requests with stay in sync if you change it.
+      # (rustfs does not currently reject a mismatch, but do not rely on that.)
+      region: zammad
+      # Web UI, you can enable this for debugging.
+      console_enable: "false"
+      # Log to stdout rather than into a second PersistentVolumeClaim.
+      obs_log_directory: ""
+      obs_environment: production
 
-  # You can use this to enable the web UI for debugging.
-  disableWebUI: true
+  # Zammad talks to rustfs cluster-internally, so no ingress is needed. The subchart
+  # would otherwise create one for its example.rustfs.com default host.
+  ingress:
+    enabled: false
+
+  storageclass:
+    # Empty means the cluster's default StorageClass is used.
+    name: ""
+    dataStorageSize: 10Gi
 
 # settings for the postgres subchart
 postgres:

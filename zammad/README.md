@@ -35,7 +35,7 @@ has a bright and sustainable future, consider becoming a Zammad customer!
 This chart will do the following:
 
 - Install several `Deployment`s for the different Zammad services
-- Install Elasticsearch, Memcached, PostgreSQL, Redis & Minio (optional) as requirements
+- Install Elasticsearch, Memcached, PostgreSQL, Redis & RustFS (optional) as requirements
 
 Be aware that the Zammad Helm chart version is different from the actual Zammad version.
 
@@ -102,7 +102,14 @@ helm show values zammad/zammad
 Zammad uses the database as the default storage provider for new systems. This works well for the majority of systems.
 Only if you have a large volume of tickets and attachments, you may need to store attachments in another storage provider.
 
-We recommend the `S3` storage provider using the optional `minio` subchart in this case.
+We recommend the `S3` storage provider using the optional [`rustfs`](https://rustfs.com) subchart in this
+case (`zammadConfig.rustfs.enabled: true`). RustFS is an S3-compatible object store; it replaced the
+former `minio` subchart in chart version 19.0.0, see [Upgrading](#from-chart-version-18x-to-1900).
+
+Unlike the former `minio` subchart, the `rustfs` chart does not create buckets on its own, and Zammad
+never creates the bucket either - it only reads from it. The chart therefore provisions the bucket from
+the `zammad-init` job. Set `zammadConfig.rustfs.bucketInitialisation: false` if you want to manage the
+bucket yourself. This never touches an external S3 service, only the bundled instance.
 
 You can also use `File` storage. In this case, you need to provide an existing `PVC` via `zammadConfig.storageVolume`.
 Note that this `PVC` must provide `ReadWriteMany` access to work properly for the different Deployments which may be on different nodes.
@@ -191,11 +198,14 @@ memcached:
   containerSecurityContext:
     enabled: false
 
-minio:
+# The rustfs subchart has no "enabled" toggle for its security contexts. An empty map
+# would merge nothing and leave the subchart defaults in place, so the hardcoded UID/GID
+# have to be deleted individually for OpenShift to assign its own.
+rustfs:
   podSecurityContext:
-    enabled: false
-  containerSecurityContext:
-    enabled: false
+    fsGroup: null
+    runAsUser: null
+    runAsGroup: null
 
 redis:
   master:
@@ -248,6 +258,160 @@ and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
 `helm upgrade` fail with `Apply failed with 1 conflict: conflict with "elastic-operator" ...`. If
 you hit this, pass `--force-conflicts` to `helm upgrade` - see
 [HIP-0023](https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing).
+
+### From Chart Version 18.x to 19.0.0
+
+#### Minio subchart replaced with RustFS
+
+- The bundled, optional S3 storage provider was migrated from the deprecated `bitnami/minio`
+  subchart to [RustFS](https://rustfs.com) and its
+  [official chart](https://github.com/rustfs/rustfs/tree/main/helm). MinIO stopped publishing
+  community Helm charts and container images, and the MinIO operator repository was archived in
+  March 2026, so there is no upstream path there any more. The bitnami chart was already only
+  usable through the `bitnamilegacy` image workaround. RustFS is S3-compatible, so Zammad talks to
+  it exactly as it did to MinIO.
+- **If you used the bundled minio subchart, this is a breaking change that requires a manual,
+  one-time data migration** - see [Rustfs data migration](#rustfs-data-migration) below. Read it before you
+  upgrade: the old volume is deleted by the upgrade itself unless you protect it first.
+- If `zammadConfig.minio.enabled` was `false` (the default), only the value keys below change and
+  there is no data to migrate. The same is true if you point Zammad at an external S3 service.
+- Please check your values for this subchart, as the structure changed completely:
+  - The Zammad-side key `zammadConfig.minio` is now `zammadConfig.rustfs`. `enabled` and
+    `externalS3Url` keep their meaning.
+  - The subchart values key changed from `minio:` to `rustfs:`. None of the bitnami-specific keys
+    (`image`, `clientImage`, `console`, `defaultInitContainers`, `global.security.allowInsecureImages`, …)
+    apply any more. Review the new `rustfs.*` block in [values.yaml](./values.yaml).
+  - Credentials moved from `minio.auth.rootUser` / `minio.auth.rootPassword` to
+    `rustfs.secret.rustfs.access_key` / `rustfs.secret.rustfs.secret_key`. Note that the subchart
+    refuses to render with empty or well-known default credentials.
+  - `minio.auth.existingSecret` is now `rustfs.secret.existingSecret`, and **the expected keys
+    inside that secret changed** from `root-user` / `root-password` to `RUSTFS_ACCESS_KEY` /
+    `RUSTFS_SECRET_KEY`.
+  - `minio.defaultBuckets` is gone. The rustfs chart cannot provision buckets, so the `zammad-init`
+    job now creates it, controlled by `zammadConfig.rustfs.bucketInitialisation` (default `true`)
+    and `zammadConfig.rustfs.bucket` (default `zammad`). See
+    [Choosing the Storage Provider](#choosing-the-storage-provider).
+  - `minio.disableWebUI: true` is now `rustfs.config.rustfs.console_enable: "false"`.
+  - The chart sets `rustfs.ingress.enabled: false`, because the subchart would otherwise create an
+    ingress for its `example.rustfs.com` default host. Zammad reaches the service cluster-internally.
+  - The chart runs the subchart in single-node mode (`rustfs.mode.standalone.enabled: true`,
+    `rustfs.replicaCount: 1`) rather than the subchart's own default of a four-pod, erasure-coded
+    cluster.
+  - The in-cluster service name changed from `{{ .Release.Name }}-minio` to
+    `{{ .Release.Name }}-rustfs-svc`; the S3 port stays `9000`. The chart's templates resolve this
+    automatically, including when `rustfs.nameOverride` / `rustfs.fullnameOverride` are set.
+  - `secrets.s3.*`, for supplying a complete `S3_URL` from an existing secret, is unchanged.
+- The new data volume is a fresh, empty `PersistentVolumeClaim` named
+  `{{ .Release.Name }}-rustfs-data`. It does not collide with the old minio volume.
+- **Behaviour change:** the rustfs chart annotates its PVC with `helm.sh/resource-policy: keep`, so
+  the attachment volume now survives uninstalling the release (or setting
+  `zammadConfig.rustfs.enabled: false`) and has to be removed manually. The old bitnami PVC was
+  deleted in those cases.
+
+#### Rustfs data migration
+
+The upgrade removes the minio subchart. In its default `standalone` mode the bitnami chart created
+a plain `PersistentVolumeClaim` named `{{ .Release.Name }}-minio` **without**
+`helm.sh/resource-policy: keep`, so Helm deletes that volume - and with it every attachment - as
+soon as the subchart is gone. Step 2 below prevents this and must not be skipped. (If you ran the
+subchart in `distributed` mode, the volumes are StatefulSet `volumeClaimTemplates` named
+`data-{{ .Release.Name }}-minio-N`, which Kubernetes never deletes automatically.)
+
+RustFS reads MinIO's on-disk layout and migrates its metadata on first start, so the attachments
+can be moved as a plain file copy between the two volumes - no S3 client, no data leaving the
+cluster, and the database is not involved (Zammad keys each attachment by its SHA256 checksum and
+references that, not the storage backend). Adjust namespace and release name to your setup:
+
+```bash
+# 1. Stop Zammad so there are no more writes to the attachment store. If you have enabled the
+#    reindex cronjob, suspend it as well - it runs Zammad too and would otherwise still write.
+kubectl scale -n <namespace> deploy -l app.kubernetes.io/name=zammad --replicas=0
+kubectl patch -n <namespace> -p '{"spec":{"suspend":true}}' \
+  "$(kubectl get cronjob -n <namespace> -l app.kubernetes.io/component=zammad-cronjob-reindex -o name)"
+
+# 2. Protect the old minio volume, so that the upgrade in step 3 leaves it behind instead of
+#    deleting it. It then serves as your rollback safety net and as the source for the copy.
+kubectl annotate pvc -n <namespace> <release_name>-minio helm.sh/resource-policy=keep
+
+# 3. Phase one: upgrade with everything scaled to zero. This creates the new, empty rustfs
+#    volume without ever starting rustfs on it, so it stays pristine for the copy below.
+#    The init job is disabled here because the bucket comes with the copied data.
+#    Set rustfs.storageclass.dataStorageSize in my-values.yaml to at least the size of the
+#    old volume beforehand - it defaults to 10Gi and a PVC cannot be shrunk again later.
+#    Read the old size with:
+#      kubectl get pvc -n <namespace> <release_name>-minio \
+#        -o jsonpath='{.spec.resources.requests.storage}'
+helm upgrade <release_name> . -n <namespace> -f my-values.yaml \
+  --set zammadConfig.initJob.enabled=false \
+  --set zammadConfig.nginx.replicas=0 \
+  --set zammadConfig.railsserver.replicas=0 \
+  --set zammadConfig.scheduler.replicas=0 \
+  --set zammadConfig.websocket.replicas=0 \
+  --set zammadConfig.cronJob.reindex.suspend=true \
+  --set rustfs.replicaCount=0
+
+# 4. Copy the data directory from the old volume to the new one. The rm drops the lost+found
+#    that ext4-backed volumes carry, which would otherwise show up as a stray bucket. The
+#    chown matches the subchart's default runAsUser/fsGroup; adjust it if you changed those.
+kubectl apply -n <namespace> -f - <<'EOF'
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-to-rustfs
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsUser: 0
+      containers:
+        - name: copy
+          image: alpine:3
+          command: ["sh", "-ec", "cp -a /src/. /dst/ && rm -rf /dst/lost+found && chown -R 10001:10001 /dst && du -sh /dst"]
+          volumeMounts:
+            - { name: src, mountPath: /src }
+            - { name: dst, mountPath: /dst }
+      volumes:
+        - name: src
+          persistentVolumeClaim: { claimName: <release_name>-minio }
+        - name: dst
+          persistentVolumeClaim: { claimName: <release_name>-rustfs-data }
+EOF
+kubectl wait -n <namespace> --for=condition=complete --timeout=2h job/minio-to-rustfs
+kubectl logs -n <namespace> job/minio-to-rustfs
+
+# 5. Phase two: upgrade with your regular values. RustFS starts on the copied directory and
+#    migrates MinIO's metadata into its own; the init job finds the bucket already present.
+#    Note that --reset-values drops the --set values from step 3. If you prefer to keep other
+#    values set on the command line, omit it and reset the keys from step 3 manually.
+helm upgrade <release_name> . -n <namespace> -f my-values.yaml --reset-values
+
+# 6. Once you have verified that attachments open correctly in Zammad, clean up at your
+#    convenience. Until then the old volume is untouched and you can roll back to it.
+kubectl delete job -n <namespace> minio-to-rustfs
+kubectl delete pvc -n <namespace> <release_name>-minio
+```
+
+The Job runs as root for the `chown`, which a namespace enforcing the `restricted`
+[Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/) (or
+OpenShift's default SCC) rejects. There, drop `securityContext.runAsUser` and the `chown`, and
+leave `fsGroup` unset: the SCC assigns it per namespace and the kubelet relabels the volume to the
+same GID the rustfs pod gets. Only pin a `fsGroup` if you assign the IDs yourself.
+
+The copy Job mounts both volumes at once, so they have to be attachable to the same node - with
+`ReadWriteOnce` volumes bound to different nodes or zones the Job will not schedule. In that case
+copy at the object level instead, which needs no shared node but does need somewhere to park the
+data: before step 3, port-forward `svc/<release_name>-minio` and pull the bucket into a local
+directory with any S3 client (`rclone sync old:zammad ./attachments`); after step 3, port-forward
+`svc/<release_name>-rustfs-svc` and push it back (`rclone sync ./attachments new:zammad`). Skip
+step 4, and in step 3 drop both `--set zammadConfig.initJob.enabled=false` and
+`--set rustfs.replicaCount=0`, so that rustfs runs and the init job creates the bucket for you.
+
+Zammad could in principle also move the attachments itself, via the `Database` or `File` provider
+and back - see [How to migrate from `File` to `S3` storage](#how-to-migrate-from-file-to-s3-storage)
+for the `Store::File.move` mechanism. That needs no external tooling, but the intermediate provider
+has to hold every attachment, so it is rarely practical for an installation that is already on S3.
 
 ### From Chart Version 17.x to 18.0.0
 
@@ -348,7 +512,7 @@ you hit this, pass `--force-conflicts` to `helm upgrade` - see
   - `zammadConfig.scheduler.replicas` and `zammadConfig.websocket.replicas` can now be set to `0` to disable
     those components. They may only run once per cluster, so any value above `1` is capped to `1`.
 
-#### Data migration
+#### PostgreSQL data migration
 
 The new subchart provisions a fresh, empty PostgreSQL cluster on its own volume, so the migration is a
 non-destructive logical dump/restore (adjust namespace, release name and credentials to your setup).

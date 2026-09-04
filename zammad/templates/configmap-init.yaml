@@ -72,3 +72,52 @@ data:
 
     echo "elasticsearch init complete :)"
 {{ end }}
+{{ if include "zammad.s3.initialisation" . }}
+  s3-init: |-
+    #!/bin/bash
+    set -e
+
+    # Unlike the former minio subchart (defaultBuckets), the rustfs chart does not
+    # provision buckets, and Zammad never creates the bucket either - it only ever
+    # reads from it. Create it here so that enabling the S3 storage provider works
+    # out of the box. Reads its configuration from S3_URL via Zammad's own S3
+    # provider, so it always targets the same endpoint and bucket as Zammad does.
+    bundle exec rails r - <<'RUBY'
+      require 'aws-sdk-s3'
+
+      bucket = Store::Provider::S3::Config.bucket
+      client = Store::Provider::S3.client
+
+      attempts = 0
+
+      begin
+        begin
+          client.head_bucket(bucket: bucket)
+          puts "S3 bucket '#{bucket}' already exists."
+        rescue Aws::S3::Errors::NotFound, Aws::S3::Errors::NoSuchBucket
+          puts "S3 bucket '#{bucket}' does not exist yet, creating it…"
+          begin
+            client.create_bucket(bucket: bucket)
+          rescue Aws::S3::Errors::BucketAlreadyOwnedByYou, Aws::S3::Errors::BucketAlreadyExists
+            # The bucket showed up between the check and the create, e.g. because
+            # the server was still adopting an existing data directory.
+            puts "S3 bucket '#{bucket}' appeared in the meantime."
+          end
+        end
+      # Rescued on the outer begin, so that a networking error raised while
+      #   creating the bucket is retried too - Ruby does not enter the rescue
+      #   clauses of the same begin block again.
+      rescue Seahorse::Client::NetworkingError => e
+        # A fresh install races the rustfs pod's startup; retry instead of
+        # crash-looping the whole init job pod.
+        attempts += 1
+        raise if attempts > 30
+
+        puts "S3 service not reachable yet (#{e.message}), retrying in 5s…"
+        sleep 5
+        retry
+      end
+    RUBY
+
+    echo "s3 init complete :)"
+{{ end }}
