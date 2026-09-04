@@ -82,13 +82,6 @@ sources:
       url: https://github.com/yannh/kubeconform.git
       versionfilter:
         kind: semver
-  kind-version:
-    name: kind-version
-    kind: gittag
-    spec:
-      url: https://github.com/kubernetes-sigs/kind.git
-      versionfilter:
-        kind: semver
 
 conditions: {}
 
@@ -206,16 +199,6 @@ targets:
     spec:
       file: .github/workflows/ci.yaml
       key: "$.env.kubeconform-version"
-  kind-version-ci:
-    name: kind-version
-    kind: yaml
-    sourceid: kind-version
-    # {{ if .github.enabled }}
-    scmid: zammad-helm
-    # {{ end }}
-    spec:
-      file: .github/workflows/ci.yaml
-      key: "$.env.kind-version"
 # {{ if .github.enabled }}
 scms:
   zammad-helm:
