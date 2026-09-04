@@ -7,7 +7,6 @@ on:
 env:
   helm-version: v4.2.4
   kubeconform-version: v0.8.0
-  kind-version: v0.33.0
 
 jobs:
   super-linter:
@@ -148,10 +147,6 @@ jobs:
         with:
           config: .github/kind-config.yaml
           node_image: kindest/node:${{ matrix.k8s }}
-          # Kubernetes 1.37+ node images dropped the kubeadm v1beta3 config
-          # format that older kind releases emit; kind needs to be at least
-          # as new as the newest node image tested above.
-          version: "${{ env.kind-version }}"
           # Keep the kubectl client used by later steps within kubectl's
           # supported +/-1 minor version skew of the cluster's API server.
           kubectl_version: ${{ matrix.k8s }}
