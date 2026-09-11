@@ -14,7 +14,7 @@ data:
 
     if ! (bundle exec rails r 'puts User.any?' 2> /dev/null | grep -q true); then
         bundle exec rake db:migrate db:seed
-    {{- if .Values.zammadConfig.elasticsearch.enabled }}
+    {{- if .Values.zammadConfig.elasticsearch.initialisation }}
 
         # Connections between pods of the same cluster are not external, so exclude Elasticsearch
         #   from proxy routing. Only done on first install, so that admins can change the value later.
