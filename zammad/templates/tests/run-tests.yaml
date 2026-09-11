@@ -30,6 +30,14 @@ data:
           puts 'Storage volume not enabled, not testing it…'
           {{- end }}
 
+          {{- if and .Values.zammadConfig.elasticsearch.initialisation .Release.IsInstall }}
+          puts 'Checking if the Elasticsearch host is excluded from proxy routing…'
+          if Setting.get('proxy_no').to_s.exclude?('{{ include "zammad.elasticsearchHost" . }}')
+            raise "Elasticsearch host is missing from the 'proxy_no' setting."
+          end
+          puts '  Elasticsearch host is excluded from proxy routing.'
+          {{- end }}
+
         end
       end
     end
