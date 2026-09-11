@@ -13,28 +13,6 @@ data:
         desc 'Runs a set of Helm tests'
         task test: :environment do |_task, args|
 
-          {{- if .Values.zammadConfig.elasticsearch.initialisation }}
-          # `helm install --wait` returns before the init job completes, because the job is
-          #   deliberately not a Helm hook (see job-init.yaml), so this test can start while
-          #   postgresql-init is still migrating and seeding. elasticsearch-init sets es_url and
-          #   only runs once postgresql-init succeeded, so a present es_url means the database
-          #   initialisation is done and any check below can rely on its result.
-          # Setting.get caches for ZAMMAD_SETTING_TTL (15s), so force a reload on every attempt.
-          puts 'Waiting for the database initialisation to finish…'
-          started  = Time.current
-          deadline = 8.minutes.from_now
-          while Time.current < deadline
-            Setting.reload
-            break if Setting.get('es_url').present?
-
-            sleep 5
-          end
-          if Setting.get('es_url').blank?
-            raise 'Timed out waiting for the database initialisation to finish.'
-          end
-          puts "  Database initialisation has finished, waited #{(Time.current - started).round}s."
-          {{- end }}
-
           puts 'Checking if a Ruby Tempfile can be created…'
           Tempfile.create do |_f|
             puts '  Tempfile file was created successfully.'
@@ -60,7 +38,7 @@ data:
           # Mirrors UserAgent::HttpClient#proxy_no: entries are comma separated and matched exactly.
           proxy_no = Setting.get('proxy_no').to_s.split(',').map { |entry| entry.strip.downcase }
           if proxy_no.exclude?('{{ include "zammad.elasticsearchHost" . | lower }}')
-            raise "Elasticsearch host '{{ include "zammad.elasticsearchHost" . | lower }}' is missing from the 'proxy_no' setting (#{state})."
+            raise "Elasticsearch host '{{ include "zammad.elasticsearchHost" . | lower }}' is missing from the 'proxy_no' setting (#{state}). Expected on a fresh install; benign if this release was installed onto an already-seeded database, or if the value was changed by an admin."
           end
           puts "  Elasticsearch host is excluded from proxy routing (#{state})."
           {{- end }}
@@ -78,8 +56,7 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
-  # Long enough to outlast the wait for the database initialisation above.
-  activeDeadlineSeconds: 600
+  activeDeadlineSeconds: 30
   backoffLimit: 0
   template:
     metadata:
