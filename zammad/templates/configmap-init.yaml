@@ -14,6 +14,14 @@ data:
 
     if ! (bundle exec rails r 'puts User.any?' 2> /dev/null | grep -q true); then
         bundle exec rake db:migrate db:seed
+    {{- if .Values.zammadConfig.elasticsearch.initialisation }}
+
+        # Elasticsearch is contacted directly, not through a configured proxy. Only done on first
+        #   install, so that admins can change the value later.
+        ELASTICSEARCH_HOST="{{ include "zammad.elasticsearchHost" . }}"
+        echo "Excluding ${ELASTICSEARCH_HOST} from proxy routing..."
+        bundle exec rails r "Setting.set('proxy_no', '${ELASTICSEARCH_HOST}')"
+    {{- end }}
     else
         echo Executing migrations...
         bundle exec rake db:migrate
@@ -21,6 +29,9 @@ data:
         echo Synchronizing locales and translations...
         bundle exec rails r "Locale.sync; Translation.sync"
     fi
+
+    # Also store a value in the Rails cache that can be used to detect job completion.
+    bundle exec rails r "Rails.cache.write('helm-postgresql-init-done-{{ .Release.Revision }}', true, { expires_in: 1.hour })"
 
     echo "postgresql init complete :)"
   postgresql-init-post: |-

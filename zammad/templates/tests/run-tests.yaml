@@ -13,6 +13,20 @@ data:
         desc 'Runs a set of Helm tests'
         task test: :environment do |_task, args|
 
+          {{- if .Values.zammadConfig.initJob.enabled }}
+          # Helm does not wait for jobs, so make sure zammad-init completed.
+          puts 'Waiting for the database initialisation to finish…'
+          (started, deadline)  = Time.current, 5.minutes.from_now
+          while Time.current < deadline
+            break if Rails.cache.read('helm-postgresql-init-done-{{ .Release.Revision }}')
+            sleep 5
+          end
+          if !Rails.cache.read('helm-postgresql-init-done-{{ .Release.Revision }}')
+            raise 'Timed out waiting for the database initialisation to finish.'
+          end
+          puts "  Database initialisation has finished, waited #{(Time.current - started).round}s."
+          {{- end }}
+
           puts 'Checking if a Ruby Tempfile can be created…'
           Tempfile.create do |_f|
             puts '  Tempfile file was created successfully.'
@@ -30,6 +44,16 @@ data:
           puts 'Storage volume not enabled, not testing it…'
           {{- end }}
 
+          {{- if and .Values.zammadConfig.elasticsearch.initialisation .Release.IsInstall }}
+          puts 'Checking if the Elasticsearch host is excluded from proxy routing…'
+          Setting.reload # Settings cache might be stale, so refresh.
+          proxy_no = Setting.get('proxy_no')
+          if proxy_no != '{{ include "zammad.elasticsearchHost" . }}'
+            raise "Elasticsearch host '{{ include "zammad.elasticsearchHost" . }}' is missing from the 'proxy_no' setting (#{proxy_no})."
+          end
+          puts "  Elasticsearch host is excluded from proxy routing (#{proxy_no})."
+          {{- end }}
+
         end
       end
     end
@@ -43,7 +67,9 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
-  activeDeadlineSeconds: 30
+  # Outlasts the wait for the database initialisation above, so that its own timeout message
+  #   reaches the log instead of Kubernetes killing the pod with DeadlineExceeded first.
+  activeDeadlineSeconds: 600
   backoffLimit: 0
   template:
     metadata:
@@ -53,8 +79,10 @@ spec:
         {{- include "zammad.podSpec.deployment" . | nindent 8 }}
         containers:
           - name: zammad-run-tests
-            # Use securityContext etc. from railsserver to have identical setup.
-            {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.railsserver) .) | nindent 12 }}
+            # Use securityContext etc. from railsserver to have identical setup, but not its
+            #   probes: this container runs a rake task and never listens on the railsserver port,
+            #   so the startup probe would always fail and kill it after failureThreshold periods.
+            {{- include "zammad.containerSpec" (merge (dict "containerConfig" (omit .Values.zammadConfig.railsserver "startupProbe" "livenessProbe" "readinessProbe")) .) | nindent 12 }}
             command: ['bundle']
             args: ['exec', 'rake', 'zammad:helm:test']
             env:
