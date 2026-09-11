@@ -46,6 +46,7 @@ data:
 
           {{- if and .Values.zammadConfig.elasticsearch.initialisation .Release.IsInstall }}
           puts 'Checking if the Elasticsearch host is excluded from proxy routing…'
+          Setting.reload # Settings cache might be stale, so refresh.
           proxy_no = Setting.get('proxy_no')
           if proxy_no != '{{ include "zammad.elasticsearchHost" . }}'
             raise "Elasticsearch host '{{ include "zammad.elasticsearchHost" . }}' is missing from the 'proxy_no' setting (#{proxy_no})."
