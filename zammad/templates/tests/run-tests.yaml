@@ -35,7 +35,7 @@ data:
           # Mirrors UserAgent::HttpClient#proxy_no: entries are comma separated and matched exactly.
           proxy_no = Setting.get('proxy_no').to_s.split(',').map { |entry| entry.strip.downcase }
           if proxy_no.exclude?('{{ include "zammad.elasticsearchHost" . | lower }}')
-            raise "Elasticsearch host is missing from the 'proxy_no' setting. Expected on a fresh install; benign if this release was installed onto an already-seeded database, or if the value was changed by an admin."
+            raise "Elasticsearch host '{{ include "zammad.elasticsearchHost" . | lower }}' is missing from the 'proxy_no' setting, which is #{Setting.get('proxy_no').inspect}. Expected on a fresh install; benign if this release was installed onto an already-seeded database, or if the value was changed by an admin."
           end
           puts '  Elasticsearch host is excluded from proxy routing.'
           {{- end }}
