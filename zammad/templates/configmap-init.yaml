@@ -30,6 +30,9 @@ data:
         bundle exec rails r "Locale.sync; Translation.sync"
     fi
 
+    # Also store a value in the Rails cache that can be used to detect job completion.
+    bundle exec rails r "Rails.cache.write('helm-postgresql-init-done-{{ .Release.Revision }}', true, { expires_in: 1.hour })"
+
     echo "postgresql init complete :)"
   postgresql-init-post: |-
     #!/bin/bash

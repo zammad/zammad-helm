@@ -13,6 +13,20 @@ data:
         desc 'Runs a set of Helm tests'
         task test: :environment do |_task, args|
 
+          {{- if .Values.zammadConfig.initJob.enabled }}
+          # Helm does not wait for jobs, so make sure zammad-init completed.
+          puts 'Waiting for the database initialisation to finish…'
+          (started, deadline)  = Time.current, 5.minutes.from_now
+          while Time.current < deadline
+            break if Rails.cache.read('helm-postgresql-init-done-{{ .Release.Revision }}')
+            sleep 5
+          end
+          if !Rails.cache.read('helm-postgresql-init-done-{{ .Release.Revision }}')
+            raise 'Timed out waiting for the database initialisation to finish.'
+          end
+          puts "  Database initialisation has finished, waited #{(Time.current - started).round}s."
+          {{- end }}
+
           puts 'Checking if a Ruby Tempfile can be created…'
           Tempfile.create do |_f|
             puts '  Tempfile file was created successfully.'
@@ -31,36 +45,12 @@ data:
           {{- end }}
 
           {{- if and .Values.zammadConfig.elasticsearch.initialisation .Release.IsInstall }}
-          # `helm install --wait` does not wait for Jobs (that needs --wait-for-jobs) and the init
-          #   job is deliberately not a Helm hook (see job-init.yaml), so this test can start while
-          #   postgresql-init is still migrating and seeding. elasticsearch-init sets es_url and only
-          #   runs once postgresql-init succeeded, so a present es_url means proxy_no has been
-          #   written if it was going to be. Observed waits are up to 90s.
-          # Setting.get caches for ZAMMAD_SETTING_TTL (15s), so force a reload on every attempt.
-          puts 'Waiting for the database initialisation to finish…'
-          started  = Time.current
-          deadline = 5.minutes.from_now
-          while Time.current < deadline
-            Setting.reload
-            break if Setting.get('es_url').present?
-
-            sleep 5
-          end
-          if Setting.get('es_url').blank?
-            raise 'Timed out waiting for the database initialisation to finish.'
-          end
-          puts "  Database initialisation has finished, waited #{(Time.current - started).round}s."
-
           puts 'Checking if the Elasticsearch host is excluded from proxy routing…'
-          # Seed counts tell apart "db:seed never finished" from "the write itself did not happen":
-          #   users appear with the 2nd seed file, overviews and schedulers near the end.
-          state = "proxy_no=#{Setting.get('proxy_no').inspect}, system_init_done=#{Setting.get('system_init_done').inspect}, users=#{User.count}, overviews=#{Overview.count}, schedulers=#{Scheduler.count}"
-          # Mirrors UserAgent::HttpClient#proxy_no: entries are comma separated and matched exactly.
-          proxy_no = Setting.get('proxy_no').to_s.split(',').map { |entry| entry.strip.downcase }
-          if proxy_no.exclude?('{{ include "zammad.elasticsearchHost" . | lower }}')
-            raise "Elasticsearch host '{{ include "zammad.elasticsearchHost" . | lower }}' is missing from the 'proxy_no' setting (#{state}). Expected on a fresh install; benign if this release was installed onto an already-seeded database, or if the value was changed by an admin."
+          proxy_no = Setting.get('proxy_no')
+          if proxy_no != '{{ include "zammad.elasticsearchHost" . }}'
+            raise "Elasticsearch host '{{ include "zammad.elasticsearchHost" . }}' is missing from the 'proxy_no' setting (#{proxy_no})."
           end
-          puts "  Elasticsearch host is excluded from proxy routing (#{state})."
+          puts "  Elasticsearch host is excluded from proxy routing (#{proxy_no})."
           {{- end }}
 
         end
