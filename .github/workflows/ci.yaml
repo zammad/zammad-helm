@@ -167,5 +167,17 @@ jobs:
         run: kubectl create --namespace zammad --filename zammad/ci/full-objects.yaml
 
       # Use --force-conflicts because of https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing.
+      # TEMPORARY (#470): --skip-clean-up keeps the namespace so the step below can collect pod
+      #   logs, to attribute where helm test spends its time. Revert with the step below.
       - name: Run chart-testing (install)
-        run: ct install --config .github/ct.yaml --helm-extra-args '--timeout 900s --force-conflicts'
+        run: ct install --config .github/ct.yaml --skip-clean-up --helm-extra-args '--timeout 900s --force-conflicts'
+
+      # TEMPORARY (#470): see above. Runs on success too, since the timing is what is measured.
+      - name: Dump pod logs
+        if: always()
+        run: |
+          for pod in $(kubectl get pods --namespace zammad --output name); do
+            echo "::group::${pod}"
+            kubectl logs --namespace zammad --all-containers --timestamps "${pod}" || true
+            echo "::endgroup::"
+          done

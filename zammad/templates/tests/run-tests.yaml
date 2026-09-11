@@ -21,6 +21,7 @@ data:
           #   initialisation is done and any check below can rely on its result.
           # Setting.get caches for ZAMMAD_SETTING_TTL (15s), so force a reload on every attempt.
           puts 'Waiting for the database initialisation to finish…'
+          started  = Time.current
           deadline = 8.minutes.from_now
           while Time.current < deadline
             Setting.reload
@@ -31,7 +32,7 @@ data:
           if Setting.get('es_url').blank?
             raise 'Timed out waiting for the database initialisation to finish.'
           end
-          puts '  Database initialisation has finished.'
+          puts "  Database initialisation has finished, waited #{(Time.current - started).round}s."
           {{- end }}
 
           puts 'Checking if a Ruby Tempfile can be created…'
@@ -88,8 +89,10 @@ spec:
         {{- include "zammad.podSpec.deployment" . | nindent 8 }}
         containers:
           - name: zammad-run-tests
-            # Use securityContext etc. from railsserver to have identical setup.
-            {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.railsserver) .) | nindent 12 }}
+            # Use securityContext etc. from railsserver to have identical setup, but not its
+            #   probes: this container runs a rake task and never listens on the railsserver port,
+            #   so the startup probe would always fail and kill it after failureThreshold periods.
+            {{- include "zammad.containerSpec" (merge (dict "containerConfig" (omit .Values.zammadConfig.railsserver "startupProbe" "livenessProbe" "readinessProbe")) .) | nindent 12 }}
             command: ['bundle']
             args: ['exec', 'rake', 'zammad:helm:test']
             env:
