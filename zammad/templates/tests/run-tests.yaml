@@ -31,6 +31,26 @@ data:
           {{- end }}
 
           {{- if and .Values.zammadConfig.elasticsearch.initialisation .Release.IsInstall }}
+          # `helm install --wait` does not wait for Jobs (that needs --wait-for-jobs) and the init
+          #   job is deliberately not a Helm hook (see job-init.yaml), so this test can start while
+          #   postgresql-init is still migrating and seeding. elasticsearch-init sets es_url and only
+          #   runs once postgresql-init succeeded, so a present es_url means proxy_no has been
+          #   written if it was going to be. Observed waits are up to 90s.
+          # Setting.get caches for ZAMMAD_SETTING_TTL (15s), so force a reload on every attempt.
+          puts 'Waiting for the database initialisation to finish…'
+          started  = Time.current
+          deadline = 5.minutes.from_now
+          while Time.current < deadline
+            Setting.reload
+            break if Setting.get('es_url').present?
+
+            sleep 5
+          end
+          if Setting.get('es_url').blank?
+            raise 'Timed out waiting for the database initialisation to finish.'
+          end
+          puts "  Database initialisation has finished, waited #{(Time.current - started).round}s."
+
           puts 'Checking if the Elasticsearch host is excluded from proxy routing…'
           # Seed counts tell apart "db:seed never finished" from "the write itself did not happen":
           #   users appear with the 2nd seed file, overviews and schedulers near the end.
@@ -56,7 +76,9 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
-  activeDeadlineSeconds: 30
+  # Outlasts the wait for the database initialisation above, so that its own timeout message
+  #   reaches the log instead of Kubernetes killing the pod with DeadlineExceeded first.
+  activeDeadlineSeconds: 600
   backoffLimit: 0
   template:
     metadata:
