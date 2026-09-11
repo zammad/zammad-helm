@@ -32,12 +32,15 @@ data:
 
           {{- if and .Values.zammadConfig.elasticsearch.initialisation .Release.IsInstall }}
           puts 'Checking if the Elasticsearch host is excluded from proxy routing…'
+          # Seed counts tell apart "db:seed never finished" from "the write itself did not happen":
+          #   users appear with the 2nd seed file, overviews and schedulers near the end.
+          state = "proxy_no=#{Setting.get('proxy_no').inspect}, system_init_done=#{Setting.get('system_init_done').inspect}, users=#{User.count}, overviews=#{Overview.count}, schedulers=#{Scheduler.count}"
           # Mirrors UserAgent::HttpClient#proxy_no: entries are comma separated and matched exactly.
           proxy_no = Setting.get('proxy_no').to_s.split(',').map { |entry| entry.strip.downcase }
           if proxy_no.exclude?('{{ include "zammad.elasticsearchHost" . | lower }}')
-            raise "Elasticsearch host '{{ include "zammad.elasticsearchHost" . | lower }}' is missing from the 'proxy_no' setting, which is #{Setting.get('proxy_no').inspect}. Expected on a fresh install; benign if this release was installed onto an already-seeded database, or if the value was changed by an admin."
+            raise "Elasticsearch host '{{ include "zammad.elasticsearchHost" . | lower }}' is missing from the 'proxy_no' setting (#{state})."
           end
-          puts '  Elasticsearch host is excluded from proxy routing.'
+          puts "  Elasticsearch host is excluded from proxy routing (#{state})."
           {{- end }}
 
         end
