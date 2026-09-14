@@ -43,8 +43,6 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
-  # Outlasts the wait for the database initialisation above, so that its own timeout message
-  #   reaches the log instead of Kubernetes killing the pod with DeadlineExceeded first.
   activeDeadlineSeconds: 600
   backoffLimit: 0
   template:
