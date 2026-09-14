@@ -71,6 +71,9 @@ helm repo add zammad https://zammad.github.io/zammad-helm
 helm upgrade --install zammad zammad/zammad
 ```
 
+Database migration and seeding run in a separate init job. `--wait` does not wait for jobs, so add
+`--wait --wait-for-jobs` if your tooling must not continue until Zammad is initialised.
+
 Once the Zammad pod is ready, it can be accessed using the ingress or port forwarding.
 To use port forwarding:
 

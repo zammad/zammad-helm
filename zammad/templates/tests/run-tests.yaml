@@ -43,7 +43,7 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
-  activeDeadlineSeconds: 30
+  activeDeadlineSeconds: 600
   backoffLimit: 0
   template:
     metadata:
@@ -53,8 +53,10 @@ spec:
         {{- include "zammad.podSpec.deployment" . | nindent 8 }}
         containers:
           - name: zammad-run-tests
-            # Use securityContext etc. from railsserver to have identical setup.
-            {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.railsserver) .) | nindent 12 }}
+            # Use securityContext etc. from railsserver to have identical setup, but not its
+            #   probes: this container runs a rake task and never listens on the railsserver port,
+            #   so the startup probe would always fail and kill it after failureThreshold periods.
+            {{- include "zammad.containerSpec" (merge (dict "containerConfig" (omit .Values.zammadConfig.railsserver "startupProbe" "livenessProbe" "readinessProbe")) .) | nindent 12 }}
             command: ['bundle']
             args: ['exec', 'rake', 'zammad:helm:test']
             env:
