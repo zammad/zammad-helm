@@ -24,7 +24,7 @@ dependencies:
     version: 0.20.0
     condition: zammadConfig.elasticsearch.enabled
   - name: rustfs
-    version: 1.0.0-rc.5
+    version: 1.0.0
     repository: https://charts.rustfs.com
     condition: zammadConfig.rustfs.enabled
   - name: memcached

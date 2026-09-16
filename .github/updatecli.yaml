@@ -33,17 +33,19 @@ sources:
       #   the resulting Elasticsearch version.
       versionfilter:
         pattern: "0.20.x"
-  # Disabled while the subchart is pinned to a 1.0.0 release candidate: a semver
-  #   filter would not match prereleases anyway. Enable this together with the
-  #   corresponding target below once Chart.yaml pins the 1.0.0 GA release.
-  # rustfs:
-  #   name: rustfs
-  #   kind: helmchart
-  #   spec:
-  #     url: https://charts.rustfs.com
-  #     name: rustfs
-  #     versionfilter:
-  #       pattern: "1.x.x"
+  rustfs:
+    name: rustfs
+    kind: helmchart
+    spec:
+      url: https://charts.rustfs.com
+      name: rustfs
+      # Patch level only: this subchart's version tracks the RustFS version exactly, so a
+      #   chart minor release carries a RustFS minor release, and this is the store that
+      #   holds the attachments. Raise the pattern deliberately after checking the RustFS
+      #   release notes - reading an existing data directory has regressed between releases
+      #   before, see https://github.com/rustfs/rustfs/issues/7014.
+      versionfilter:
+        pattern: "1.0.x"
   memcached:
     name: memcached
     kind: helmchart
@@ -124,19 +126,18 @@ targets:
       file: "Chart.yaml"
       key: "$.dependencies[0].version"
       versionincrement: patch
-  # See the commented out rustfs source above.
-  # rustfs:
-  #   name: rustfs
-  #   kind: helmchart
-  #   sourceid: rustfs
-  #   # {{ if .github.enabled }}
-  #   scmid: zammad-helm
-  #   # {{ end }}
-  #   spec:
-  #     name: "zammad"
-  #     file: "Chart.yaml"
-  #     key: "$.dependencies[1].version"
-  #     versionincrement: patch
+  rustfs:
+    name: rustfs
+    kind: helmchart
+    sourceid: rustfs
+    # {{ if .github.enabled }}
+    scmid: zammad-helm
+    # {{ end }}
+    spec:
+      name: "zammad"
+      file: "Chart.yaml"
+      key: "$.dependencies[1].version"
+      versionincrement: patch
   memcached:
     name: memcached
     kind: helmchart
