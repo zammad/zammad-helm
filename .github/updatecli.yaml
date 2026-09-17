@@ -39,13 +39,8 @@ sources:
     spec:
       url: https://charts.rustfs.com
       name: rustfs
-      # Patch level only: this subchart's version tracks the RustFS version exactly, so a
-      #   chart minor release carries a RustFS minor release, and this is the store that
-      #   holds the attachments. Raise the pattern deliberately after checking the RustFS
-      #   release notes - reading an existing data directory has regressed between releases
-      #   before, see https://github.com/rustfs/rustfs/issues/7014.
       versionfilter:
-        pattern: "1.0.x"
+        pattern: "1.x.x"
   memcached:
     name: memcached
     kind: helmchart
