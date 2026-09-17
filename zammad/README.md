@@ -339,6 +339,9 @@ kubectl annotate pvc -n <namespace> <release_name>-minio helm.sh/resource-policy
 # 3. Phase one: upgrade with everything scaled to zero. This creates the new, empty rustfs
 #    volume without ever starting rustfs on it, so it stays pristine for the copy below.
 #    The init job is disabled here because the bucket comes with the copied data.
+#    Port my-values.yaml to the new keys first (zammadConfig.minio -> zammadConfig.rustfs
+#    with enabled: true, minio: -> rustfs:, see above) - the chart deliberately refuses to
+#    render while the removed keys are still present.
 #    Set rustfs.storageclass.dataStorageSize in my-values.yaml to at least the size of the
 #    old volume beforehand - it defaults to 10Gi and a PVC cannot be shrunk again later.
 #    Read the old size with:
