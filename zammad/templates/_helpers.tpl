@@ -211,38 +211,90 @@ redis sentinel secret name
 {{- end -}}
 
 {{/*
+Whether the init job should provision the S3 bucket. This only applies to the
+bundled rustfs instance; an external S3 service is never modified, neither via
+externalS3Url nor via a complete S3_URL supplied through secrets.s3.
+Renders a non-empty string when enabled, so it can be used in "if" conditions.
+*/}}
+{{- define "zammad.s3.initialisation" -}}
+{{- if and .Values.zammadConfig.rustfs.enabled .Values.zammadConfig.rustfs.bucketInitialisation (not .Values.zammadConfig.rustfs.externalS3Url) (not .Values.secrets.s3.useExisting) -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
+Name of the resources created by the rustfs subchart. Mirrors the subchart's
+"rustfs.fullname" logic so that the derived service name stays correct even if
+rustfs.nameOverride/fullnameOverride are changed.
+*/}}
+{{- define "zammad.rustfsName" -}}
+{{- $rustfs := .Values.rustfs | default dict -}}
+{{- if $rustfs.fullnameOverride -}}
+{{- $rustfs.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $base := default "rustfs" $rustfs.nameOverride -}}
+{{- if contains $base .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $base | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+In-cluster S3 endpoint (host:port) of the bundled rustfs subchart. The subchart
+appends "-svc" to its fullname for the client facing Service.
+*/}}
+{{- define "zammad.rustfsEndpoint" -}}
+{{- $port := dig "service" "endpoint" "port" 9000 (.Values.rustfs | default dict) -}}
+{{ include "zammad.rustfsName" . }}-svc:{{ $port }}
+{{- end -}}
+
+{{/*
 S3 access URL
 */}}
 {{- define "zammad.env.S3_URL" -}}
-{{- with .Values.zammadConfig.minio.externalS3Url -}}
-- name: S3_URL
-  value: {{ . | quote }}
-{{- else -}}
-{{- if .Values.zammadConfig.minio.enabled -}}
-{{- if .Values.minio.auth.existingSecret -}}
-- name: MINIO_ROOT_USER
-  valueFrom:
-    secretKeyRef:
-      key: root-user
-      name: {{ .Values.minio.auth.existingSecret }}
-- name: MINIO_ROOT_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      key: root-password
-      name: {{ .Values.minio.auth.existingSecret }}
-- name: S3_URL
-  value: "http://$(MINIO_ROOT_USER):$(MINIO_ROOT_PASSWORD)@{{ include "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
-{{- else -}}
-- name: S3_URL
-  value: "http://{{ .Values.minio.auth.rootUser }}:{{ .Values.minio.auth.rootPassword }}@{{ include "zammad.fullname" . }}-minio:9000/zammad?region=zammad&force_path_style=true"
+{{/* Helm silently ignores unknown keys, so without this an upgrade with an unchanged
+     values.yaml would leave Zammad without an S3_URL and delete the old attachment
+     volume unnoticed. */}}
+{{- if or .Values.zammadConfig.minio .Values.minio -}}
+{{- $hint := "" -}}
+{{- if and .Values.zammadConfig.minio .Values.zammadConfig.minio.enabled -}}
+{{- $hint = " The old attachment volume needs to be protected before upgrading, see the data migration in the upgrade notes." -}}
 {{- end -}}
+{{- fail (printf "zammadConfig.minio/minio were replaced by zammadConfig.rustfs/rustfs in chart 19.0.0.%s" $hint) -}}
 {{- end -}}
-{{- if .Values.secrets.s3.useExisting -}}
+{{/* Order matters: up to 18.x externalS3Url took precedence over secrets.s3, so
+     keep it that way to not silently move an existing installation to a different
+     endpoint. */}}
+{{- if .Values.zammadConfig.rustfs.externalS3Url -}}
+- name: S3_URL
+  value: {{ .Values.zammadConfig.rustfs.externalS3Url | quote }}
+{{- else if .Values.secrets.s3.useExisting -}}
 - name: S3_URL
   valueFrom:
     secretKeyRef:
       name: {{ .Values.secrets.s3.secretName }}
       key: {{ .Values.secrets.s3.secretKey }}
+{{- else if .Values.zammadConfig.rustfs.enabled -}}
+{{- $bucket := .Values.zammadConfig.rustfs.bucket -}}
+{{- $region := dig "config" "rustfs" "region" "zammad" (.Values.rustfs | default dict) -}}
+{{- if .Values.rustfs.secret.existingSecret -}}
+- name: RUSTFS_ACCESS_KEY
+  valueFrom:
+    secretKeyRef:
+      key: RUSTFS_ACCESS_KEY
+      name: {{ .Values.rustfs.secret.existingSecret }}
+- name: RUSTFS_SECRET_KEY
+  valueFrom:
+    secretKeyRef:
+      key: RUSTFS_SECRET_KEY
+      name: {{ .Values.rustfs.secret.existingSecret }}
+- name: S3_URL
+  value: "http://$(RUSTFS_ACCESS_KEY):$(RUSTFS_SECRET_KEY)@{{ include "zammad.rustfsEndpoint" . }}/{{ $bucket }}?region={{ $region }}&force_path_style=true"
+{{- else -}}
+- name: S3_URL
+  value: "http://{{ .Values.rustfs.secret.rustfs.access_key }}:{{ .Values.rustfs.secret.rustfs.secret_key }}@{{ include "zammad.rustfsEndpoint" . }}/{{ $bucket }}?region={{ $region }}&force_path_style=true"
 {{- end -}}
 {{- end -}}
 {{- end -}}

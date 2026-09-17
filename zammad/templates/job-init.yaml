@@ -103,6 +103,19 @@ spec:
               readOnly: true
               subPath: elasticsearch-init
         {{- end }}
+        {{- if include "zammad.s3.initialisation" . }}
+        - name: s3-init
+          {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.initContainers.s3) .) | nindent 10 }}
+          env:
+            {{- include "zammad.env" . | nindent 12 }}
+            {{- include "zammad.env.failOnPendingMigrations" . | nindent 12 }}
+          volumeMounts:
+            {{- include "zammad.volumeMounts" . | nindent 12 }}
+            - name: {{ include "zammad.fullname" . }}-init
+              mountPath: /docker-entrypoint.sh
+              readOnly: true
+              subPath: s3-init
+        {{- end }}
       containers:
         - name: postgresql-init-post
           {{- include "zammad.containerSpec" (merge (dict "containerConfig" .Values.zammadConfig.initContainers.postgresql) .) | nindent 10 }}
