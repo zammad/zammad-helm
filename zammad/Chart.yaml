@@ -36,6 +36,6 @@ dependencies:
     repository: oci://ghcr.io/cloudpirates-io/helm-charts
     condition: zammadConfig.postgresql.enabled
   - name: redis
-    version: 0.35.0
+    version: 0.35.3
     repository: oci://ghcr.io/cloudpirates-io/helm-charts
     condition: zammadConfig.redis.enabled
