@@ -35,6 +35,28 @@ ingress:
     #     - chart-example.local
   labels: {}
 
+httpRoute:
+  enabled: false
+  apiVersion: gateway.networking.k8s.io/v1
+  kind: HTTPRoute
+  annotations: {}
+  labels: {}
+  hostnames:
+    - chart-example.local
+  parentRefs:
+    - name: example-gateway
+      namespace: kgateway
+      sectionName: https
+  httpsRedirect:
+    enabled: true
+    parentRefs:
+      - name: example-gateway
+        namespace: kgateway
+        sectionName: http
+  matches:
+    - path:
+        type: PathPrefix
+        value: /
 
 # Please note that passwords for PostgreSQL, Redis and S3 may not
 #   contain special characters which would require URL encoding.

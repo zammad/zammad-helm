@@ -1,0 +1,85 @@
+{{- if .Values.httpRoute.enabled }}
+---
+apiVersion: {{ .Values.httpRoute.apiVersion | default "gateway.networking.k8s.io/v1" }}
+kind: {{ .Values.httpRoute.kind | default "HTTPRoute" }}
+metadata:
+  name: {{ include "zammad.fullname" . }}
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+    {{- with .Values.httpRoute.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.httpRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.httpRoute.parentRefs }}
+  parentRefs:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.httpRoute.hostnames }}
+  hostnames:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    - {{- if .Values.httpRoute.matches }}
+      matches:
+        {{- toYaml .Values.httpRoute.matches | nindent 8 }}
+      {{- end }}
+      {{- if .Values.httpRoute.filters }}
+      filters:
+        {{- toYaml .Values.httpRoute.filters | nindent 8 }}
+      {{- end }}
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: {{ include "zammad.fullname" . }}-nginx
+          port: {{ .Values.service.port }}
+      {{- with .Values.httpRoute.timeouts }}
+      timeouts:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.httpRoute.sessionPersistence }}
+      sessionPersistence:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.httpRoute.additionalRules }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- if .Values.httpRoute.httpsRedirect.enabled }}
+---
+apiVersion: {{ .Values.httpRoute.apiVersion | default "gateway.networking.k8s.io/v1" }}
+kind: {{ .Values.httpRoute.kind | default "HTTPRoute" }}
+metadata:
+  name: {{ include "zammad.fullname" . }}-redirect
+  labels:
+    {{- include "zammad.labels" . | nindent 4 }}
+    {{- with .Values.httpRoute.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.httpRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.httpRoute.httpsRedirect.parentRefs }}
+  parentRefs:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.httpRoute.hostnames }}
+  hostnames:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    - {{- if .Values.httpRoute.matches }}
+      matches:
+        {{- toYaml .Values.httpRoute.matches | nindent 8 }}
+      {{- end }}
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+{{- end }}
+{{- end }}
