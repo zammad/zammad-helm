@@ -28,7 +28,7 @@ dependencies:
     repository: https://charts.rustfs.com
     condition: zammadConfig.rustfs.enabled
   - name: memcached
-    version: 0.14.10
+    version: 0.14.11
     repository: oci://ghcr.io/cloudpirates-io/helm-charts
     condition: zammadConfig.memcached.enabled
   - name: postgres
