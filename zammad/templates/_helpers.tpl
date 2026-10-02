@@ -37,9 +37,7 @@ Common labels
 {{- define "zammad.labels" -}}
 helm.sh/chart: {{ include "zammad.chart" . }}
 {{ include "zammad.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
