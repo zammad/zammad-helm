@@ -211,8 +211,6 @@ scms:
       branch: "main"
       commitmessage:
         hidecredit: true
-        squash: true
-        body: "Dependency updates via updatecli"
 
 actions:
   github:
