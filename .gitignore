@@ -5,3 +5,5 @@ zammad/Chart.lock
 zammad/index.yaml
 zammad/requirements.lock
 values.yaml
+
+/.vscode
