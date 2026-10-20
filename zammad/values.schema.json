@@ -98,7 +98,9 @@
                   "type": "object",
                   "properties": {
                     "path": { "type": "string" },
-                    "pathType": { "enum": ["Exact", "Prefix", "ImplementationSpecific"] }
+                    "pathType": {
+                      "enum": ["Exact", "Prefix", "ImplementationSpecific"]
+                    }
                   }
                 }
               }
@@ -117,7 +119,11 @@
         "redis": {
           "allOf": [
             { "$ref": "#/definitions/secretRef" },
-            { "properties": { "sentinel": { "$ref": "#/definitions/secretRef" } } }
+            {
+              "properties": {
+                "sentinel": { "$ref": "#/definitions/secretRef" }
+              }
+            }
           ]
         },
         "s3": { "$ref": "#/definitions/secretRef" }
@@ -172,9 +178,18 @@
             {
               "properties": {
                 "replicas": { "$ref": "#/definitions/replicas" },
-                "trustedProxies": { "type": "array", "items": { "type": "string" } },
-                "extraHeaders": { "type": "array", "items": { "type": "string" } },
-                "websocketExtraHeaders": { "type": "array", "items": { "type": "string" } },
+                "trustedProxies": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "extraHeaders": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "websocketExtraHeaders": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
                 "clientMaxBodySize": { "type": ["string", "integer"] },
                 "knowledgeBaseUrl": { "type": "string" },
                 "listenIpv4": { "type": "boolean" },
@@ -233,7 +248,11 @@
         "scheduler": {
           "allOf": [
             { "$ref": "#/definitions/component" },
-            { "properties": { "replicas": { "$ref": "#/definitions/singleReplica" } } }
+            {
+              "properties": {
+                "replicas": { "$ref": "#/definitions/singleReplica" }
+              }
+            }
           ]
         },
         "storageVolume": {
@@ -242,11 +261,16 @@
             "enabled": { "type": "boolean" },
             "existingClaim": { "$ref": "#/definitions/optionalString" }
           },
-          "if": { "properties": { "enabled": { "const": true } }, "required": ["enabled"] },
+          "if": {
+            "properties": { "enabled": { "const": true } },
+            "required": ["enabled"]
+          },
           "then": {
             "description": "An existing PersistentVolumeClaim with ReadWriteMany access is required.",
             "required": ["existingClaim"],
-            "properties": { "existingClaim": { "type": "string", "minLength": 1 } }
+            "properties": {
+              "existingClaim": { "type": "string", "minLength": 1 }
+            }
           }
         },
         "tmpDirVolume": { "$ref": "#/definitions/object" },
@@ -283,7 +307,10 @@
                         "pullPolicy": { "$ref": "#/definitions/pullPolicy" }
                       }
                     },
-                    "command": { "type": "array", "items": { "type": "string" } }
+                    "command": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
                   }
                 }
               ]
