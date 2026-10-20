@@ -9,8 +9,8 @@ metadata:
   annotations:
     {{- include "zammad.annotations" . | nindent 4 }}
 spec:
-  # Not scalable, may only run once per cluster: allow 0 (disabled) or 1, cap higher values at 1.
-  replicas: {{ max 0 (min 1 (.Values.zammadConfig.websocket.replicas | int)) }}
+  # Not scalable, may only run once per cluster: values.schema.json only allows 0 (disabled) or 1.
+  replicas: {{ .Values.zammadConfig.websocket.replicas }}
   strategy:
     type: Recreate
   selector:

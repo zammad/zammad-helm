@@ -76,7 +76,7 @@ data:
     fi
 
   {{ if .Values.zammadConfig.elasticsearch.reindex }}
-    bundle exec rake "zammad:searchindex:rebuild[{{ .Values.zammadConfig.elasticsearch.reindexWorkers | int }}]"
+    bundle exec rake "zammad:searchindex:rebuild[{{ .Values.zammadConfig.elasticsearch.reindexWorkers }}]"
   {{ else }}
     echo "Checking if an elasticsearch index already exists…"
 
@@ -88,7 +88,7 @@ data:
       echo "Elasticsearch index exists, no automatic reindexing is needed."
     else
       echo "Elasticsearch index does not exist yet, create it now…"
-      bundle exec rake "zammad:searchindex:rebuild[{{ .Values.zammadConfig.elasticsearch.reindexWorkers | int }}]"
+      bundle exec rake "zammad:searchindex:rebuild[{{ .Values.zammadConfig.elasticsearch.reindexWorkers }}]"
     fi
   {{ end }}
 

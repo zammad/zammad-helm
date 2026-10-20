@@ -418,13 +418,9 @@ volumes for the Zammad Rails stack
 - name: {{ include "zammad.fullname" . }}-tmp
   {{- toYaml .Values.zammadConfig.tmpDirVolume | nindent 2 }}
 {{- if .Values.zammadConfig.storageVolume.enabled }}
-{{- if .Values.zammadConfig.storageVolume.existingClaim }}
 - name: {{ include "zammad.fullname" . }}-storage
   persistentVolumeClaim:
-    claimName: {{ .Values.zammadConfig.storageVolume.existingClaim | default (include "zammad.fullname" .) }}
-{{- else }}
-  {{ fail "Please provide an existing PersistentVolumeClaim with ReadWriteMany access if you enable .Values.zammadConfig.storageVolume." }}
-{{- end -}}
+    claimName: {{ .Values.zammadConfig.storageVolume.existingClaim }}
 {{- end -}}
 {{- if .Values.autoWizard.enabled }}
 - name: autowizard

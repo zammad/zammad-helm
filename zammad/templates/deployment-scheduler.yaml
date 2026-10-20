@@ -11,8 +11,8 @@ metadata:
     checkov.io/skip1: CKV_K8S_8=Liveness Probe Should be Configured - not possible with scheduler
     checkov.io/skip2: CKV_K8S_9=Readiness Probe Should be Configured - not possible with scheduler
 spec:
-  # Not scalable, may only run once per cluster: allow 0 (disabled) or 1, cap higher values at 1.
-  replicas: {{ max 0 (min 1 (.Values.zammadConfig.scheduler.replicas | int)) }}
+  # Not scalable, may only run once per cluster: values.schema.json only allows 0 (disabled) or 1.
+  replicas: {{ .Values.zammadConfig.scheduler.replicas }}
   strategy:
     type: Recreate
   selector:

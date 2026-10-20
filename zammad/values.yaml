@@ -329,8 +329,7 @@ zammadConfig:
       pass: zammad
 
   scheduler:
-    # This component may only run once per cluster, so only 0 (disabled) and 1 are supported.
-    #   Higher values are capped to 1.
+    # This component may only run once per cluster, so only 0 (disabled) and 1 are allowed.
     replicas: 1
     resources: {}
       # requests:
@@ -409,8 +408,7 @@ zammadConfig:
     #   readOnly: true
 
   websocket:
-    # This component may only run once per cluster, so only 0 (disabled) and 1 are supported.
-    #   Higher values are capped to 1.
+    # This component may only run once per cluster, so only 0 (disabled) and 1 are allowed.
     replicas: 1
     startupProbe:
       tcpSocket:

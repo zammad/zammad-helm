@@ -265,6 +265,14 @@ of the container that runs it: `zammadConfig.initContainers.elasticsearch.resour
 you hit this, pass `--force-conflicts` to `helm upgrade` - see
 [HIP-0023](https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing).
 
+### From Chart Version 19.2.x to 19.3.0
+
+- The chart's own values are now validated against `values.schema.json`. Values of the wrong type,
+  e.g. numbers passed as strings via `--set-string` or quoted in a GitOps tool, now fail with an
+  error that names the value. Labels and annotations must be strings.
+- `zammadConfig.scheduler.replicas` and `zammadConfig.websocket.replicas` only allow `0` or `1`.
+  Higher values are no longer capped to `1`, but rejected.
+
 ### From Chart Version 18.x to 19.0.0
 
 #### Minio subchart replaced with RustFS
