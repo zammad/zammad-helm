@@ -45,7 +45,7 @@ spec:
                 - "bundle"
                 - "exec"
                 - "rake"
-                - "zammad:searchindex:rebuild"
+                - "zammad:searchindex:rebuild[{{ .Values.zammadConfig.elasticsearch.reindexWorkers | int }}]"
               env:
                 {{- include "zammad.env" . | nindent 16 }}
               volumeMounts:

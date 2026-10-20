@@ -253,6 +253,7 @@ kubectl create job my-reindex-job --from=cronjob/zammad-cronjob-reindex
 
 This cronjob never runs by default, but you can change `zammadConfig.cronJob.reindex.suspend`
 and `zammadConfig.cronJob.reindex.schedule` if you want to run it periodically.
+To use more CPU cores for reindexing, raise `zammadConfig.elasticsearch.reindexWorkers` (and the CPU resources accordingly).
 
 ## Upgrading
 
