@@ -99,9 +99,9 @@ zammadConfig:
     pass: ""
     port: 9200
     reindex: false
-    # number of parallel workers (CPU cores) used when rebuilding the search index
-    # (zammad-init job and reindex cronjob)
-    reindexWorkers: 1
+    # number of parallel worker processes (CPU cores) used when rebuilding the search index
+    # (zammad-init job and reindex cronjob); 0 indexes in a single process without forking
+    reindexWorkers: 0
     schema: http
     user: ""
 
