@@ -265,7 +265,7 @@ of the container that runs it: `zammadConfig.initContainers.elasticsearch.resour
 you hit this, pass `--force-conflicts` to `helm upgrade` - see
 [HIP-0023](https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing).
 
-### From Chart Version 19.2.x to 19.3.0
+### From Chart Version 19.x to 20.0.0
 
 - The chart's own values are now validated against `values.schema.json`. Values of the wrong type,
   e.g. numbers passed as strings via `--set-string` or quoted in a GitOps tool, now fail with an

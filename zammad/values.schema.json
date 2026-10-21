@@ -266,7 +266,6 @@
             "required": ["enabled"]
           },
           "then": {
-            "description": "An existing PersistentVolumeClaim with ReadWriteMany access is required.",
             "required": ["existingClaim"],
             "properties": {
               "existingClaim": { "type": "string", "minLength": 1 }
