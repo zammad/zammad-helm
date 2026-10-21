@@ -329,8 +329,7 @@ zammadConfig:
       pass: zammad
 
   scheduler:
-    # This component may only run once per cluster, so only 0 (disabled) and 1 are supported.
-    #   Higher values are capped to 1.
+    # This component may only run once per cluster, so only 0 (disabled) and 1 are allowed.
     replicas: 1
     resources: {}
       # requests:
@@ -379,8 +378,8 @@ zammadConfig:
       #      app.kubernetes.io/name: zammad
 
   storageVolume:
-    # Enable this for 'File' based storage in Zammad. You must provide an externally managed 'extistingClaim'
-    #   with 'ReadWriteMany' permisssion in this case.
+    # Enable this for 'File' based storage in Zammad. This requires 'existingClaim': an externally
+    #   managed PersistentVolumeClaim with 'ReadWriteMany' access.
     enabled: false
     ##
     ## A manually managed Persistent Volume and Claim
@@ -409,8 +408,7 @@ zammadConfig:
     #   readOnly: true
 
   websocket:
-    # This component may only run once per cluster, so only 0 (disabled) and 1 are supported.
-    #   Higher values are capped to 1.
+    # This component may only run once per cluster, so only 0 (disabled) and 1 are allowed.
     replicas: 1
     startupProbe:
       tcpSocket:

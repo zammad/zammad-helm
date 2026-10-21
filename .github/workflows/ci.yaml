@@ -54,6 +54,35 @@ jobs:
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct.yaml
 
+  # Helm 3 validates values.schema.json with a different JSON schema library than Helm 4.
+  lint-chart-helm3:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        helm:
+          # minimum version from zammad/README.md and latest Helm 3 release
+          - v3.8.0
+          - v3.22.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v5
+        with:
+          version: "${{ matrix.helm }}"
+
+      - name: Lint and render ci values
+        working-directory: zammad
+        run: |
+          helm repo add elastic https://helm.elastic.co
+          helm repo add rustfs https://charts.rustfs.com
+          helm dependency build .
+          for values in ci/*-values.yaml; do
+            helm lint . --values "${values}"
+            helm template zammad . --values "${values}" > /dev/null
+          done
+
   kubeconform-chart:
     runs-on: ubuntu-24.04
     needs:
