@@ -189,11 +189,11 @@ zammadConfig:
     zammad:
       securityContext:
         runAsUser: null
-  volumePermissions:
-    enabled: false
+    volumePermissions:
+      enabled: false
   tmpDirVolume:
     emptyDir:
-      medium: memory
+      medium: Memory
 
 memcached:
   podSecurityContext:
