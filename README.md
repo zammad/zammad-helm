@@ -7,12 +7,21 @@
 
 A [Helm](https://helm.sh) chart to install [Zammad](https://zammad.org) on [Kubernetes](https://kubernetes.io)
 
+The chart is published as an OCI artifact to `oci://ghcr.io/zammad/charts/zammad`:
+
+```console
+helm upgrade --install zammad oci://ghcr.io/zammad/charts/zammad
+```
+
 Please see [zammad/README.md](zammad/README.md) for detailed information & instructions.
+
+**Note:** The classic Helm repository at `https://zammad.github.io/zammad-helm` is no longer updated.
+Its last chart version is 20.0.2. Please switch to the OCI registry.
 
 ## Sources
 
 - [Helm chart sources](https://github.com/zammad/zammad-helm)
-- [Helm repository source](https://github.com/zammad/zammad-helm/tree/gh-pages)
+- [Helm chart OCI registry](https://github.com/zammad/zammad-helm/pkgs/container/charts%2Fzammad)
 - [Helm releases](https://github.com/zammad/zammad-helm/releases)
 
 ## Contributing
