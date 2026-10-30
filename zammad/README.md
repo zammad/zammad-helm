@@ -279,8 +279,8 @@ helm repo remove zammad
 ```
 
 In GitOps tools, change the chart source as well. For example, in Argo CD set `repoURL: ghcr.io/zammad/charts`
-and `chart: zammad`. In Flux, use an `OCIRepository` or a `HelmRepository` with `type: oci` and
-`url: oci://ghcr.io/zammad/charts`.
+and `chart: zammad`. In Flux, use an `OCIRepository` with `url: oci://ghcr.io/zammad/charts/zammad`
+and the chart version as `ref.tag`, or a `HelmRepository` with `type: oci` and `url: oci://ghcr.io/zammad/charts`.
 
 ### From Chart Version 19.x to 20.0.0
 

@@ -30,12 +30,17 @@ jobs:
         env:
           CR_GENERATE_RELEASE_NOTES: true
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          # Registry credentials for `cr push`, read from the environment so
+          # the token isn't passed on the command line.
+          CR_USERNAME: "${{ github.actor }}"
+          CR_PASSWORD: "${{ secrets.GITHUB_TOKEN }}"
         with:
           charts_dir: .
           # Publish to the OCI registry only. This skips the gh-pages index
           # update; the GitHub release is still created, as chart-releaser
           # uses its tag to detect changed charts.
           skip_upload: true
+          # Lets a rerun recover from a failed OCI push: the existing GitHub
+          # release is skipped and only missing chart versions are pushed.
+          skip_existing: true
           oci_registry_url: "oci://ghcr.io/${{ github.repository_owner }}/charts"
-          oci_username: "${{ github.actor }}"
-          oci_password: "${{ secrets.GITHUB_TOKEN }}"
