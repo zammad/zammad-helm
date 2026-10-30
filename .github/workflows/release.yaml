@@ -7,9 +7,6 @@ on:
     branches:
       - main
 
-env:
-  helm-version: v4.3.1
-
 jobs:
   release:
     permissions:
@@ -27,11 +24,6 @@ jobs:
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Install Helm
-        uses: azure/setup-helm@v5
-        with:
-          version: "${{ env.helm-version }}"
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.8.0

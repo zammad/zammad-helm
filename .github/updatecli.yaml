@@ -179,16 +179,6 @@ targets:
     spec:
       file: .github/workflows/ci.yaml
       key: "$.env.helm-version"
-  helm-version-release:
-    name: helm-version-release
-    kind: yaml
-    sourceid: helm-version
-    # {{ if .github.enabled }}
-    scmid: zammad-helm
-    # {{ end }}
-    spec:
-      file: .github/workflows/release.yaml
-      key: "$.env.helm-version"
   kubeconform-version-ci:
     name: kubeconform-version
     kind: yaml
