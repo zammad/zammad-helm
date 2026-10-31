@@ -268,10 +268,14 @@ of the container that runs it: `zammadConfig.initContainers.elasticsearch.resour
 you hit this, pass `--force-conflicts` to `helm upgrade` - see
 [HIP-0023](https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing).
 
-### Switching to the OCI Registry
+### From Chart Version 20.x to 21.0.0
 
-Chart versions newer than 20.0.2 are only published to `oci://ghcr.io/zammad/charts/zammad`.
-The release itself doesn't change. Keep your usual flags and values files and only replace the chart reference:
+#### Switching to the OCI Registry
+
+Chart versions 21.0.0 and newer are only published to `oci://ghcr.io/zammad/charts/zammad`.
+The classic Helm repository at `https://zammad.github.io/zammad-helm` stays at 20.0.2, so `helm upgrade`
+from there no longer finds new versions. The chart itself has no breaking changes. Keep your usual flags
+and values files and only replace the chart reference:
 
 ```console
 helm upgrade zammad oci://ghcr.io/zammad/charts/zammad
