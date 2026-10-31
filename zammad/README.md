@@ -64,12 +64,15 @@ Be aware that the Zammad Helm chart version is different from the actual Zammad 
 
 ## Installing the Chart
 
-To install the chart use the following:
+The chart is published as an OCI artifact on GitHub Container Registry. To install the chart use the following:
 
 ```console
-helm repo add zammad https://zammad.github.io/zammad-helm
-helm upgrade --install zammad zammad/zammad
+helm upgrade --install zammad oci://ghcr.io/zammad/charts/zammad
 ```
+
+The classic Helm repository at `https://zammad.github.io/zammad-helm` is no longer updated. Its last
+chart version is 20.0.2. If you installed the chart from there, see
+[Switching to the OCI Registry](#switching-to-the-oci-registry).
 
 Database migration and seeding run in a separate init job. `--wait` does not wait for jobs, so add
 `--wait --wait-for-jobs` if your tooling must not continue until Zammad is initialised.
@@ -97,7 +100,7 @@ See [Customizing the Chart Before Installing](https://helm.sh/docs/intro/using_h
 To see all configurable options with detailed comments, visit the chart's [values.yaml](./values.yaml), or run this configuration command:
 
 ```console
-helm show values zammad/zammad
+helm show values oci://ghcr.io/zammad/charts/zammad
 ```
 
 ### Choosing the Storage Provider
@@ -264,6 +267,24 @@ of the container that runs it: `zammadConfig.initContainers.elasticsearch.resour
 `helm upgrade` fail with `Apply failed with 1 conflict: conflict with "elastic-operator" ...`. If
 you hit this, pass `--force-conflicts` to `helm upgrade` - see
 [HIP-0023](https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing).
+
+### From Chart Version 20.x to 21.0.0
+
+#### Switching to the OCI Registry
+
+Chart versions 21.0.0 and newer are only published to `oci://ghcr.io/zammad/charts/zammad`.
+The classic Helm repository at `https://zammad.github.io/zammad-helm` stays at 20.0.2, so `helm upgrade`
+from there no longer finds new versions. The chart itself has no breaking changes. Keep your usual flags
+and values files and only replace the chart reference:
+
+```console
+helm upgrade zammad oci://ghcr.io/zammad/charts/zammad
+helm repo remove zammad
+```
+
+In GitOps tools, change the chart source as well. For example, in Argo CD set `repoURL: ghcr.io/zammad/charts`
+and `chart: zammad`. In Flux, use an `OCIRepository` with `url: oci://ghcr.io/zammad/charts/zammad`
+and the chart version as `ref.tag`, or a `HelmRepository` with `type: oci` and `url: oci://ghcr.io/zammad/charts`.
 
 ### From Chart Version 19.x to 20.0.0
 
