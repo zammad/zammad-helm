@@ -130,6 +130,17 @@ zammadConfig:
 
   nginx:
     replicas: 1
+    # Deployment update strategy, see
+    #   https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+    #   'type: Recreate' stops old Pods before starting new ones; rollingUpdate is then ignored.
+    #   scheduler and websocket always use Recreate, as they may only run once per cluster.
+    #   Helm 4: switching an existing release from chart < 22.1.0 directly to Recreate needs a
+    #   one-off 'helm upgrade --server-side=false'.
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
     trustedProxies: []
     # Request scheme passed to Zammad as X-Forwarded-Proto. Empty keeps the ingress's X-Forwarded-Proto.
     # Set "https" if TLS ends at a proxy in front of the ingress and the ingress reports "http".
@@ -237,6 +248,17 @@ zammadConfig:
 
   railsserver:
     replicas: 1
+    # Deployment update strategy, see
+    #   https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+    #   'type: Recreate' stops old Pods before starting new ones; rollingUpdate is then ignored.
+    #   scheduler and websocket always use Recreate, as they may only run once per cluster.
+    #   Helm 4: switching an existing release from chart < 22.1.0 directly to Recreate needs a
+    #   one-off 'helm upgrade --server-side=false'.
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
     startupProbe:
       tcpSocket:
         port: 3000
