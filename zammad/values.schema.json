@@ -13,6 +13,20 @@
       "minimum": 0,
       "maximum": 1
     },
+    "deploymentStrategy": {
+      "description": "Deployment .spec.strategy, see https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy",
+      "type": "object",
+      "properties": {
+        "type": { "enum": ["Recreate", "RollingUpdate"] },
+        "rollingUpdate": {
+          "type": "object",
+          "properties": {
+            "maxSurge": { "type": ["integer", "string"] },
+            "maxUnavailable": { "type": ["integer", "string"] }
+          }
+        }
+      }
+    },
     "stringMap": {
       "type": "object",
       "additionalProperties": { "type": "string" }
@@ -178,6 +192,7 @@
             {
               "properties": {
                 "replicas": { "$ref": "#/definitions/replicas" },
+                "strategy": { "$ref": "#/definitions/deploymentStrategy" },
                 "trustedProxies": {
                   "type": "array",
                   "items": { "type": "string" }
@@ -216,6 +231,7 @@
             {
               "properties": {
                 "replicas": { "$ref": "#/definitions/replicas" },
+                "strategy": { "$ref": "#/definitions/deploymentStrategy" },
                 "trustedProxies": { "type": "string" },
                 "listenAddress": { "type": "string" },
                 "webConcurrency": { "type": "integer", "minimum": 0 },

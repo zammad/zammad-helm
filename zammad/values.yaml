@@ -130,6 +130,14 @@ zammadConfig:
 
   nginx:
     replicas: 1
+    # Deployment update strategy, see
+    #   https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+    #   Defaults to RollingUpdate. Use 'type: Recreate' to stop old Pods before starting new ones.
+    strategy: {}
+    #   type: RollingUpdate
+    #   rollingUpdate:
+    #     maxSurge: 25%
+    #     maxUnavailable: 25%
     trustedProxies: []
     extraHeaders: []
       # - 'HeaderName "Header Value"'
@@ -228,6 +236,14 @@ zammadConfig:
 
   railsserver:
     replicas: 1
+    # Deployment update strategy, see
+    #   https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+    #   Defaults to RollingUpdate. Use 'type: Recreate' to stop old Pods before starting new ones.
+    strategy: {}
+    #   type: RollingUpdate
+    #   rollingUpdate:
+    #     maxSurge: 25%
+    #     maxUnavailable: 25%
     startupProbe:
       tcpSocket:
         port: 3000

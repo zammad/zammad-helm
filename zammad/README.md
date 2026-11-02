@@ -171,6 +171,27 @@ zammadConfig:
       masterName: mymaster
 ```
 
+### Deployment Update Strategy
+
+The `nginx` and `railsserver` Deployments accept a `strategy` value under `zammadConfig.<component>`,
+see the Kubernetes
+[Deployment documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy).
+It defaults to the Kubernetes default (`RollingUpdate`). `scheduler` and `websocket` may only run once
+per cluster, so they always use `Recreate` and cannot be configured.
+
+```yaml
+zammadConfig:
+  railsserver:
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 0
+  nginx:
+    strategy:
+      type: Recreate
+```
+
 ### Deploying on OpenShift
 
 To deploy on OpenShift unprivileged and with [arbitrary UIDs and GIDs](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids):
