@@ -350,6 +350,28 @@
               }
             }
           }
+        },
+        "helmTests": {
+          "type": "object",
+          "properties": {
+            "connection": {
+              "allOf": [
+                { "$ref": "#/definitions/container" },
+                {
+                  "properties": {
+                    "image": {
+                      "type": "object",
+                      "properties": {
+                        "repository": { "type": "string" },
+                        "tag": { "type": "string" },
+                        "pullPolicy": { "$ref": "#/definitions/pullPolicy" }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
         }
       }
     },
