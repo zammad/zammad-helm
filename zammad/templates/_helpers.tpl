@@ -32,14 +32,20 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Create zammad version
+*/}}
+{{- define "zammad.version" -}}
+{{- $v := splitList "@" (.Values.image.tag | default .Chart.AppVersion) | first | trunc 63 -}}
+{{- regexReplaceAll "^[^A-Za-z0-9]+|[^A-Za-z0-9]+$" $v "" -}}
+{{- end -}}
+
+{{/*
 Common labels
 */}}
 {{- define "zammad.labels" -}}
 helm.sh/chart: {{ include "zammad.chart" . }}
 {{ include "zammad.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+app.kubernetes.io/version: {{ include "zammad.version" . | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- with .Values.commonLabels }}
 {{ toYaml . }}
