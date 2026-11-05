@@ -28,8 +28,8 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-        {{- end }}
           command: ['wget']
           # Discard the response, the root filesystem is read-only.
-          args: ['-q', '-O', '/dev/null', '{{ include "zammad.fullname" . }}-nginx:{{ .Values.service.port }}']
+          args: ['-q', '-O', '/dev/null', '{{ include "zammad.fullname" $ }}-nginx:{{ $.Values.service.port }}']
+        {{- end }}
       restartPolicy: Never
