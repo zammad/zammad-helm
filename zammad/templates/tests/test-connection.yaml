@@ -14,9 +14,22 @@ spec:
       labels:
         {{- include "zammad.labels" . | nindent 8 }}
     spec:
+      {{- include "zammad.podSpec" . | nindent 6 }}
       containers:
+        {{- with .Values.zammadConfig.helmTests.connection }}
         - name: wget
-          image: busybox
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          {{- with .resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           command: ['wget']
-          args: ['{{ include "zammad.fullname" . }}-nginx:{{ .Values.service.port }}']
+          # Discard the response, the root filesystem is read-only.
+          args: ['-q', '-O', '/dev/null', '{{ include "zammad.fullname" $ }}-nginx:{{ $.Values.service.port }}']
+        {{- end }}
       restartPolicy: Never

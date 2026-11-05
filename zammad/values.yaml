@@ -625,6 +625,30 @@ zammadConfig:
       podSpec: {}
       # my-podspec: "value"
 
+  # Jobs run by "helm test". Their pods use the global imagePullSecrets, serviceAccount,
+  #   securityContext and scheduling settings.
+  helmTests:
+    # Checks that the nginx service responds.
+    connection:
+      image:
+        repository: alpine
+        tag: "3.24.3"
+        pullPolicy: IfNotPresent
+      resources: {}
+        # requests:
+        #   cpu: 10m
+        #   memory: 16Mi
+        # limits:
+        #   cpu: 100m
+        #   memory: 32Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        privileged: false
+
 # additional environment vars added to all zammad services (values should be unique between deployment and global extraEnv)
 extraEnv: []
   # - name: FOO_BAR
