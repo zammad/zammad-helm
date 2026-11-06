@@ -309,7 +309,7 @@ S3 access URL
 Redis Variables
 */}}
 {{- define "zammad.env.redisVariables" -}}
-{{- if .Values.zammadConfig.redis.sentinel.username }}
+{{- if and .Values.zammadConfig.redis.sentinel.enabled .Values.zammadConfig.redis.username }}
 - name: REDIS_USERNAME
   value: "{{ .Values.zammadConfig.redis.username }}"
 {{- end }}
