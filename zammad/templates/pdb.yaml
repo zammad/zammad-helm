@@ -13,11 +13,13 @@ metadata:
   annotations:
     {{- include "zammad.annotations" $ | nindent 4 }}
 spec:
-  {{- with $.Values.podDisruptionBudget.minAvailable }}
-  minAvailable: {{ . }}
+  {{- with $.Values.podDisruptionBudget }}
+  {{- if not (eq (toString .minAvailable) "") }}
+  minAvailable: {{ .minAvailable }}
   {{- end }}
-  {{- with $.Values.podDisruptionBudget.maxUnavailable }}
-  maxUnavailable: {{ . }}
+  {{- if not (eq (toString .maxUnavailable) "") }}
+  maxUnavailable: {{ .maxUnavailable }}
+  {{- end }}
   {{- end }}
   selector:
     matchLabels:
