@@ -527,7 +527,7 @@ zammadConfig:
       enabled: true
       image:
         repository: alpine
-        tag: "3.24.3"
+        tag: "3.24.4"
         pullPolicy: IfNotPresent
       command:
         - /bin/sh
@@ -632,7 +632,7 @@ zammadConfig:
     connection:
       image:
         repository: alpine
-        tag: "3.24.3"
+        tag: "3.24.4"
         pullPolicy: IfNotPresent
       resources: {}
         # requests:
