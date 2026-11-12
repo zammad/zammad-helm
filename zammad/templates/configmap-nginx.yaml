@@ -92,6 +92,7 @@ data:
             proxy_set_header Host $http_host;
             proxy_set_header CLIENT_IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Forwarded "";
             proxy_read_timeout 86400;
             proxy_pass http://zammad-railsserver;
         }
@@ -104,6 +105,7 @@ data:
             proxy_set_header Host $http_host;
             proxy_set_header CLIENT_IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Forwarded "";
             {{- range .Values.zammadConfig.nginx.extraHeaders }}
             proxy_set_header {{ . }};
             {{- end }}
