@@ -14,7 +14,6 @@ jobs:
       packages: write # needed for ghcr access
       id-token: write # needed for keyless signing
       attestations: write # to create the build provenance attestation
-      artifact-metadata: write # to create the attestation's storage record
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -83,3 +82,5 @@ jobs:
           subject-name: "ghcr.io/${{ github.repository_owner }}/charts/zammad"
           subject-digest: ${{ steps.chart.outputs.digest }}
           push-to-registry: true
+          # Needs the artifact-metadata permission, which the actionlint in super-linter v7 rejects.
+          create-storage-record: false
