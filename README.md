@@ -18,6 +18,17 @@ Please see [zammad/README.md](zammad/README.md) for detailed information & instr
 **Note:** The classic Helm repository at `https://zammad.github.io/zammad-helm` is no longer updated.
 Its last chart version is 20.0.2. Please switch to the OCI registry.
 
+## Verifying the Chart
+
+Starting with 21.1.3, each chart version has a signed build provenance attestation, stored next to the chart in the registry.
+It links the chart to the release workflow run and the commit it was built from:
+
+```console
+gh attestation verify oci://ghcr.io/zammad/charts/zammad:<version> --owner zammad
+```
+
+Add `--bundle-from-oci` to read the attestation from the registry instead of the GitHub API.
+
 ## Sources
 
 - [Helm chart sources](https://github.com/zammad/zammad-helm)
