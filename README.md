@@ -27,6 +27,8 @@ It links the chart to the release workflow run and the commit it was built from:
 gh attestation verify oci://ghcr.io/zammad/charts/zammad:<version> --owner zammad
 ```
 
+Add `--bundle-from-oci` to read the attestation from the registry instead of the GitHub API.
+
 ## Sources
 
 - [Helm chart sources](https://github.com/zammad/zammad-helm)

@@ -57,7 +57,8 @@ jobs:
         id: chart
         if: steps.chart-releaser.outputs.chart_version != ''
         env:
-          # The packaged chart identity, e.g. "zammad-21.1.2".
+          # The packaged chart identity, e.g. "zammad-21.1.2". This and the steps below assume
+          # that only the zammad chart is released; with more charts, this becomes a list.
           CHART: ${{ steps.chart-releaser.outputs.chart_version }}
           CHART_REF: "oci://ghcr.io/${{ github.repository_owner }}/charts/zammad"
         run: |
