@@ -135,6 +135,8 @@ zammadConfig:
       # - 'HeaderName "Header Value"'
     websocketExtraHeaders: []
       # - 'HeaderName "Header Value"'
+    cableExtraHeaders: []
+      # - 'HeaderName "Header Value"'
     # Maximum upload size
     clientMaxBodySize: 50M
     knowledgeBaseUrl: ""
