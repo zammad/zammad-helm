@@ -82,6 +82,9 @@ data:
             proxy_set_header Forwarded "";
             proxy_set_header X-Forwarded-Scheme "";
             proxy_set_header X-Forwarded-Ssl "";
+            {{- with .Values.zammadConfig.nginx.scheme }}
+            proxy_set_header X-Forwarded-Proto {{ . }};
+            {{- end }}
             {{- range .Values.zammadConfig.nginx.websocketExtraHeaders }}
             proxy_set_header {{ . }};
             {{- end }}
@@ -100,6 +103,9 @@ data:
             proxy_set_header Forwarded "";
             proxy_set_header X-Forwarded-Scheme "";
             proxy_set_header X-Forwarded-Ssl "";
+            {{- with .Values.zammadConfig.nginx.scheme }}
+            proxy_set_header X-Forwarded-Proto {{ . }};
+            {{- end }}
             {{- range .Values.zammadConfig.nginx.cableExtraHeaders }}
             proxy_set_header {{ . }};
             {{- end }}
@@ -119,6 +125,9 @@ data:
             proxy_set_header Forwarded "";
             proxy_set_header X-Forwarded-Scheme "";
             proxy_set_header X-Forwarded-Ssl "";
+            {{- with .Values.zammadConfig.nginx.scheme }}
+            proxy_set_header X-Forwarded-Proto {{ . }};
+            {{- end }}
             # Only an SSO proxy may set the login, see extraHeaders in values.yaml.
             proxy_set_header X-Forwarded-User "";
             proxy_set_header Remote-User "";

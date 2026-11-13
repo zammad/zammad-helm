@@ -182,6 +182,7 @@
                   "type": "array",
                   "items": { "type": "string" }
                 },
+                "scheme": { "enum": ["", "http", "https"] },
                 "extraHeaders": {
                   "type": "array",
                   "items": { "type": "string" }
