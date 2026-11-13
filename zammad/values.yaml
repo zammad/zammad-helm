@@ -131,7 +131,13 @@ zammadConfig:
   nginx:
     replicas: 1
     trustedProxies: []
+    # Extra proxy_set_header lines for "/", "/cable" and "/ws". They come after the chart's defaults, which
+    # clear Forwarded, X-Forwarded-Scheme, X-Forwarded-Ssl and, on "/", X-Forwarded-User and Remote-User,
+    # so a header listed here is passed on again. For SSO, pass on the one login header your proxy sets:
+    #   extraHeaders: ['X-Forwarded-User $http_x_forwarded_user']
     extraHeaders: []
+      # - 'HeaderName "Header Value"'
+    cableExtraHeaders: []
       # - 'HeaderName "Header Value"'
     websocketExtraHeaders: []
       # - 'HeaderName "Header Value"'

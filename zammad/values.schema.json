@@ -186,6 +186,10 @@
                   "type": "array",
                   "items": { "type": "string" }
                 },
+                "cableExtraHeaders": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
                 "websocketExtraHeaders": {
                   "type": "array",
                   "items": { "type": "string" }
