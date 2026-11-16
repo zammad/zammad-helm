@@ -268,6 +268,19 @@ of the container that runs it: `zammadConfig.initContainers.elasticsearch.resour
 you hit this, pass `--force-conflicts` to `helm upgrade` - see
 [HIP-0023](https://helm.sh/community/hips/hip-0023/#conflicts-and-forcing).
 
+### From Chart Version 21.x to 22.0.0
+
+The chart's nginx now clears the same request headers as the nginx configuration shipped with Zammad:
+`Forwarded`, `X-Forwarded-Scheme` and `X-Forwarded-Ssl` everywhere, `X-Forwarded-User` and `Remote-User`
+on `/`. Zammad 7.2.3 and newer answer requests with an outer `Forwarded` header with `500` errors
+(`IP spoofing attack?!`), and a client could otherwise choose its own SSO login.
+
+- The request scheme now only comes from `X-Forwarded-Proto`. If TLS ends at a proxy in front of your
+  ingress and login fails with "CSRF token verification failed!", set `zammadConfig.nginx.scheme: https`.
+- With SSO, pass on the one header your proxy sets, e.g.
+  `zammadConfig.nginx.extraHeaders: ['X-Forwarded-User $http_x_forwarded_user']`.
+  Make sure that proxy overwrites the header, so clients cannot set it.
+
 ### From Chart Version 20.x to 21.0.0
 
 #### Switching to the OCI Registry

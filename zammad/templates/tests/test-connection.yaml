@@ -7,7 +7,8 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
-  activeDeadlineSeconds: 10
+  # Counts from job start, so leave room for scheduling and image pull.
+  activeDeadlineSeconds: 60
   backoffLimit: 0
   template:
     metadata:
@@ -30,6 +31,6 @@ spec:
           {{- end }}
           command: ['wget']
           # Discard the response, the root filesystem is read-only.
-          args: ['-q', '-O', '/dev/null', '{{ include "zammad.fullname" $ }}-nginx:{{ $.Values.service.port }}']
+          args: ['-q', '-T', '10', '-O', '/dev/null', '{{ include "zammad.fullname" $ }}-nginx:{{ $.Values.service.port }}']
         {{- end }}
       restartPolicy: Never
