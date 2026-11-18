@@ -345,9 +345,21 @@ Redis Variables
       key: {{ .Values.secrets.redis.sentinel.secretKey }}
 {{- end }}
 {{- else }}
+{{- $redis := .Values.zammadConfig.redis }}
+{{- $auth := "" }}
+{{- if or $redis.pass .Values.secrets.redis.useExisting }}
+{{- $auth = printf "%s:$(REDIS_PASSWORD)@" ($redis.username | default "") }}
+{{- else if $redis.username }}
+{{- /* keep the colon: redis-client reads "user@" as a password, not a username */}}
+{{- $auth = printf "%s:@" $redis.username }}
+{{- end }}
+{{- $host := $redis.host }}
+{{- if $redis.enabled }}
+{{- $host = printf "%s-redis" .Release.Name }}
+{{- end }}
 # standalone
 - name: REDIS_URL
-  value: "redis{{ if .Values.zammadConfig.redis.tls }}s{{ end }}://{{ .Values.zammadConfig.redis.username }}:$(REDIS_PASSWORD)@{{ if .Values.zammadConfig.redis.enabled }}{{ .Release.Name }}-redis{{ else }}{{ .Values.zammadConfig.redis.host }}{{ end }}:{{ .Values.zammadConfig.redis.port }}"
+  value: "redis{{ if $redis.tls }}s{{ end }}://{{ $auth }}{{ $host }}:{{ $redis.port }}"
 {{- end }}
 {{- end }}
 
