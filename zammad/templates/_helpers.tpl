@@ -314,7 +314,7 @@ Redis Variables
   valueFrom:
     secretKeyRef:
       name: {{ include "zammad.redisSecretName" . }}
-      key: {{ .Values.secrets.redis.secretUserKey }}
+      key: {{ .Values.secrets.redis.secretUserKey | quote }}
 {{- else if and .Values.zammadConfig.redis.sentinel.enabled .Values.zammadConfig.redis.username }}
 - name: REDIS_USERNAME
   value: "{{ .Values.zammadConfig.redis.username }}"
@@ -344,7 +344,7 @@ Redis Variables
   valueFrom:
     secretKeyRef:
       name: {{ include "zammad.redisSentinelSecretName" . }}
-      key: {{ .Values.secrets.redis.sentinel.secretUserKey }}
+      key: {{ .Values.secrets.redis.sentinel.secretUserKey | quote }}
 {{- else if .Values.zammadConfig.redis.sentinel.username }}
 - name: REDIS_SENTINEL_USERNAME
   value: "{{ .Values.zammadConfig.redis.sentinel.username }}"
@@ -397,7 +397,7 @@ environment variables for the Zammad Rails stack
   valueFrom:
     secretKeyRef:
       name: {{ include "zammad.postgresqlSecretName" . }}
-      key: {{ .Values.secrets.postgresql.secretUserKey }}
+      key: {{ .Values.secrets.postgresql.secretUserKey | quote }}
 {{- else }}
   value: {{ .Values.zammadConfig.postgresql.user }}
 {{- end }}
