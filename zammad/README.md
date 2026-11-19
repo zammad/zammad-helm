@@ -137,6 +137,40 @@ I, [2024-01-24T11:06:14.566513#168-5980]  INFO -- : Moved file dbaa01dd0df3a33bc
 I, [2024-01-24T11:06:14.627896#168-5980]  INFO -- : storage remove '/opt/zammad/storage/fs/e81f/fb09/c5a26/f2081/f93401a/cbe8fff/9983e56c86fccb48d17a2eb1e5900b5b'
 ```
 
+### Using Existing Secrets for Credentials
+
+Passwords for PostgreSQL, Redis and an external Elasticsearch can be read from existing Kubernetes Secrets
+(`secrets.<service>.useExisting`, `secretName`, `secretKey`). Usernames can be read from the same Secret by
+additionally setting `secretUserKey` to the key holding the username. This is useful if credentials are generated
+and rotated by an external secret manager such as OpenBao or HashiCorp Vault.
+
+```yaml
+secrets:
+  postgresql:
+    useExisting: true
+    secretName: my-postgresql-credentials
+    secretKey: password
+    secretUserKey: username
+  redis:
+    useExisting: true
+    secretName: my-redis-credentials
+    secretKey: password
+    secretUserKey: username
+    sentinel: # only relevant when Redis Sentinel is used
+      useExisting: true
+      secretName: my-redis-sentinel-credentials
+      secretKey: password
+      secretUserKey: username
+  elasticsearch: # only used for an external Elasticsearch
+    useExisting: true
+    secretName: my-elasticsearch-credentials
+    secretKey: password
+    secretUserKey: username
+```
+
+If `secretUserKey` is empty (the default) or `useExisting` is `false`, the username from `zammadConfig.*` is used.
+The bundled ECK Elasticsearch always uses the `elastic` user.
+
 ### Redis Sentinel
 
 The chart can talk to Redis through Sentinel instead of a direct connection, either using the bundled Redis subchart or an external Redis/Sentinel setup.

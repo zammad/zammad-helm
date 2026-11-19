@@ -309,7 +309,13 @@ S3 access URL
 Redis Variables
 */}}
 {{- define "zammad.env.redisVariables" -}}
-{{- if and .Values.zammadConfig.redis.sentinel.enabled .Values.zammadConfig.redis.username }}
+{{- if and .Values.secrets.redis.useExisting .Values.secrets.redis.secretUserKey }}
+- name: REDIS_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "zammad.redisSecretName" . }}
+      key: {{ .Values.secrets.redis.secretUserKey }}
+{{- else if and .Values.zammadConfig.redis.sentinel.enabled .Values.zammadConfig.redis.username }}
 - name: REDIS_USERNAME
   value: "{{ .Values.zammadConfig.redis.username }}"
 {{- end }}
@@ -333,7 +339,13 @@ Redis Variables
 {{- end }}
 - name: REDIS_SENTINEL_NAME
   value: "{{ .Values.zammadConfig.redis.sentinel.masterName | default "mymaster" }}"
-{{- if .Values.zammadConfig.redis.sentinel.username }}
+{{- if and .Values.secrets.redis.sentinel.useExisting .Values.secrets.redis.sentinel.secretUserKey }}
+- name: REDIS_SENTINEL_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "zammad.redisSentinelSecretName" . }}
+      key: {{ .Values.secrets.redis.sentinel.secretUserKey }}
+{{- else if .Values.zammadConfig.redis.sentinel.username }}
 - name: REDIS_SENTINEL_USERNAME
   value: "{{ .Values.zammadConfig.redis.sentinel.username }}"
 {{- end }}
@@ -348,7 +360,11 @@ Redis Variables
 {{- $redis := .Values.zammadConfig.redis }}
 {{- $auth := "" }}
 {{- if or $redis.pass .Values.secrets.redis.useExisting }}
-{{- $auth = printf "%s:$(REDIS_PASSWORD)@" ($redis.username | default "") }}
+{{- $user := $redis.username | default "" }}
+{{- if and .Values.secrets.redis.useExisting .Values.secrets.redis.secretUserKey }}
+{{- $user = "$(REDIS_USERNAME)" }}
+{{- end }}
+{{- $auth = printf "%s:$(REDIS_PASSWORD)@" $user }}
 {{- else if $redis.username }}
 {{- /* keep the colon: redis-client reads "user@" as a password, not a username */}}
 {{- $auth = printf "%s:@" $redis.username }}
@@ -377,7 +393,14 @@ environment variables for the Zammad Rails stack
 - name: POSTGRESQL_PORT
   value: {{ .Values.zammadConfig.postgresql.port | toString | toYaml }}
 - name: POSTGRESQL_USER
+{{- if and .Values.secrets.postgresql.useExisting .Values.secrets.postgresql.secretUserKey }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "zammad.postgresqlSecretName" . }}
+      key: {{ .Values.secrets.postgresql.secretUserKey }}
+{{- else }}
   value: {{ .Values.zammadConfig.postgresql.user }}
+{{- end }}
 - name: POSTGRESQL_PASS
   valueFrom:
     secretKeyRef:
