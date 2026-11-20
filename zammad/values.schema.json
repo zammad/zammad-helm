@@ -38,6 +38,7 @@
       "properties": {
         "useExisting": { "type": "boolean" },
         "secretKey": { "type": "string" },
+        "secretUserKey": { "type": "string" },
         "secretName": { "type": "string" }
       }
     },

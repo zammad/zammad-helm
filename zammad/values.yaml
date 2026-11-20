@@ -39,6 +39,10 @@ ingress:
 # Please note that passwords for PostgreSQL, Redis and S3 may not
 #   contain special characters which would require URL encoding.
 # See also https://github.com/zammad/zammad-helm/issues/251
+#
+# Usernames can optionally be read from the same existing secret as the password:
+#   set useExisting: true and secretUserKey to the key holding the username.
+#   If secretUserKey is empty, the username from zammadConfig.* is used.
 secrets:
   autowizard:
     useExisting: false
@@ -51,18 +55,26 @@ secrets:
     useExisting: false
     secretKey: password
     secretName: elastic-credentials
+    # key of the username in the existing secret (requires useExisting: true)
+    secretUserKey: ""
   postgresql:
     useExisting: false
     secretKey: postgresql-pass
     secretName: postgresql-pass
+    # key of the username in the existing secret (requires useExisting: true)
+    secretUserKey: ""
   redis:
     useExisting: false
     secretKey: redis-password
     secretName: redis-pass
+    # key of the username in the existing secret (requires useExisting: true)
+    secretUserKey: ""
     sentinel:
       useExisting: false
       secretKey: redis-sentinel-password
       secretName: redis-sentinel-pass
+      # key of the username in the existing secret (requires useExisting: true)
+      secretUserKey: ""
   s3:
     useExisting: false
     secretKey: s3-url
