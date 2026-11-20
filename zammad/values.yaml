@@ -753,24 +753,12 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-# can be used to add additional init containers
+# additional init containers for the zammad-init job and the reindex cronjob,
+#   they run on every run of either job (e.g. a database proxy as native sidecar)
 initContainers: []
-  # - name: s3-restore
-  #   image: some-aws-s3-restore:latest
-  #   env:
-  #     - name: AWS_DEFAULT_REGION
-  #       value: "eu-central-1"
-  #     - name: AWS_ACCESS_KEY_ID
-  #       value: "xxxxxxxxxxxx"
-  #     - name: AWS_SECRET_ACCESS_KEY
-  #       value: "xxxxxxxxxxxx"
-  #     - name: SYNC_DIR
-  #       value: "/opt/zammad"
-  #     - name: AWS_SYNC_BUCKET
-  #       value: "some-backup-bucket"
-  #   volumeMounts:
-  #     - name: help-zammad
-  #       mountPath: /opt/zammad
+  # - name: db-proxy
+  #   image: some-db-proxy:latest
+  #   restartPolicy: Always
 
 
 # dependency charts config
