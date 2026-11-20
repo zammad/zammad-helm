@@ -759,6 +759,9 @@ initContainers: []
   # - name: db-proxy
   #   image: some-db-proxy:latest
   #   restartPolicy: Always
+  #   startupProbe:
+  #     tcpSocket:
+  #       port: 5432
 
 
 # dependency charts config
