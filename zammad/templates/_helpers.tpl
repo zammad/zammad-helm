@@ -349,7 +349,7 @@ Redis Variables
 - name: REDIS_SENTINEL_USERNAME
   value: "{{ .Values.zammadConfig.redis.sentinel.username }}"
 {{- end }}
-{{- if or .Values.zammadConfig.redis.sentinel.pass .Values.secrets.redis.useExisting }}
+{{- if or .Values.zammadConfig.redis.sentinel.pass .Values.secrets.redis.sentinel.useExisting }}
 - name: REDIS_SENTINEL_PASSWORD
   valueFrom:
     secretKeyRef:

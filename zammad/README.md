@@ -171,6 +171,12 @@ secrets:
 If `secretUserKey` is empty (the default) or `useExisting` is `false`, the username from `zammadConfig.*` is used.
 The bundled ECK Elasticsearch always uses the `elastic` user.
 
+Usernames and passwords must not contain characters that require URL encoding, as they are used in URLs like
+`REDIS_URL` (see [#251](https://github.com/zammad/zammad-helm/issues/251)).
+
+When the bundled PostgreSQL (`zammadConfig.postgresql.enabled: true`) is used, its subchart still creates the
+database user from `postgres.auth.username`. A username read from a secret therefore has to match that value.
+
 ### Redis Sentinel
 
 The chart can talk to Redis through Sentinel instead of a direct connection, either using the bundled Redis subchart or an external Redis/Sentinel setup.

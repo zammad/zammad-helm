@@ -36,7 +36,7 @@ ingress:
   labels: {}
 
 
-# Please note that passwords for PostgreSQL, Redis and S3 may not
+# Please note that usernames and passwords for PostgreSQL, Redis and S3 may not
 #   contain special characters which would require URL encoding.
 # See also https://github.com/zammad/zammad-helm/issues/251
 #
